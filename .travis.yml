@@ -11,7 +11,7 @@ script:
 deploy:
   provider: pages
   skip-cleanup: true
-  github-token: 'fcb659f1b19c0dea28acd722cef2150597673654'
+  github-token: '8afcfef6378b78a09781953bfc447bb5e223532a'
   keep-history: true
   on:
     branch: master
