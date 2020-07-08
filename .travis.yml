@@ -5,16 +5,16 @@ node_js:
 cache: npm
 branches:
   only:
-    - gh-pages-source # build master branch only
+    - gh-pages-source # build gh-pages-source branch only
 script:
   - hexo generate # generate static files
 deploy:
   provider: pages
   skip_cleanup: true
   github_token: $GH_TOKEN  # Set in the settings page of your repository, as a secure variable
-  keep_history: true
+  keep_history: false
   target_branch: master
   email: druidlangde@gmail.com
   name: learn
   on:
-    branch: master
+    branch: gh-pages-source
