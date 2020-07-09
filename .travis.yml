@@ -16,5 +16,6 @@ deploy:
   target_branch: master
   email: druidlangde@gmail.com
   name: learn
+  local_dir: public/
   on:
     branch: gh-pages-source
