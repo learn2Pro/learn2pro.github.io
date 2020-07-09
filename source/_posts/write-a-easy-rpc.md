@@ -25,7 +25,7 @@ categories:
 
 ## INFRA
 大部分的RPC主要分为三个部分，客户端，服务端，注册中心
-![](/image/rpc/easy_rpc.png)
+![](/image/rpc/easy_rpc.svg)
 * 客户端
     * 客户端主要是服务的调用方，他有几种operation:1.从注册中心拉去配置 2.和服务端建立连接 3.向服务端发起request
 * 注册中心
