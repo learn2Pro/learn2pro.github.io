@@ -2,7 +2,7 @@
 title: 详解雪花算法
 date: 2020-07-09 09:37:20
 tags:
-- algorithm
+- Algorithm
 categories:
 - Technology
 ---
