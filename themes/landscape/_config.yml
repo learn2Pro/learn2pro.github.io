@@ -35,3 +35,5 @@ twitter:
 google_plus:
 fb_admins: '100023269004018'
 fb_app_id:
+mathjax:
+   enable: true

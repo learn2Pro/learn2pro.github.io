@@ -102,3 +102,15 @@ deploy:
   repo: https://github.com/<username>/<project>
   # example, https://github.com/hexojs/hexojs.github.io
   branch: master
+
+math:
+  engine: 'mathjax' # or 'katex'
+  mathjax:
+    src: "//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+    config:
+      # MathJax config
+  katex:
+    css: #custom_css_source
+    js: #custom_js_source # not used
+    config:
+      # KaTeX config
