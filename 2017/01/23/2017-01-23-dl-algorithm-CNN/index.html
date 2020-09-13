@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-90773148-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+  
+  <title>深度学习-初识CNN | Learn2Pro博客精选</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="在上一次的文章bird学习路径的迭代原理便是CNN网络，本文将介绍Flabby-bird的整个实现算法概述  卷积神经网络(Convolutional Neural Network, CNN)是深度学习技术中极具代表的网络结构之一，在图像处理领域取得了很大的成功，在国际标准的ImageNet数据集上，许多成功的模型都是基于CNN的。CNN相较于传统的图像处理算法的优点之一在于，避免了对图像复杂的前">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深度学习-初识CNN">
+<meta property="og:url" content="http://learn2pro.tech/2017/01/23/2017-01-23-dl-algorithm-CNN/index.html">
+<meta property="og:site_name" content="Learn2Pro博客精选">
+<meta property="og:description" content="在上一次的文章bird学习路径的迭代原理便是CNN网络，本文将介绍Flabby-bird的整个实现算法概述  卷积神经网络(Convolutional Neural Network, CNN)是深度学习技术中极具代表的网络结构之一，在图像处理领域取得了很大的成功，在国际标准的ImageNet数据集上，许多成功的模型都是基于CNN的。CNN相较于传统的图像处理算法的优点之一在于，避免了对图像复杂的前">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://learn2pro.tech/image/cnn/2.jpg">
+<meta property="og:image" content="http://learn2pro.tech/image/cnn/6.jpg">
+<meta property="og:image" content="http://learn2pro.tech/image/cnn/8.jpg">
+<meta property="og:image" content="http://learn2pro.tech/image/cnn/5.jpg">
+<meta property="og:image" content="http://learn2pro.tech/image/cnn/1.jpg">
+<meta property="og:image" content="http://learn2pro.tech/image/cnn/0.gif">
+<meta property="og:image" content="http://learn2pro.tech/image/cnn/11.jpg">
+<meta property="og:image" content="http://learn2pro.tech/image/cnn/13.jpg">
+<meta property="og:image" content="http://learn2pro.tech/image/cnn/0.jpg">
+<meta property="og:image" content="http://learn2pro.tech/image/cnn/12.jpg">
+<meta property="og:image" content="http://learn2pro.tech/image/cnn/4.jpg">
+<meta property="og:image" content="http://learn2pro.tech/image/cnn/9.jpg">
+<meta property="og:image" content="http://learn2pro.tech/image/cnn/14.jpg">
+<meta property="og:image" content="http://learn2pro.tech/image/cnn/3.jpg">
+<meta property="og:image" content="http://learn2pro.tech/image/cnn/7.jpg">
+<meta property="og:image" content="http://learn2pro.tech/image/cnn/10.jpg">
+<meta property="og:image" content="http://learn2pro.tech/image/bird/0.jpg">
+<meta property="article:published_time" content="2017-01-23T11:06:00.000Z">
+<meta property="article:modified_time" content="2020-09-13T12:17:09.725Z">
+<meta property="article:author" content="learn">
+<meta property="article:tag" content="DL">
+<meta property="article:tag" content="Algorithm">
+<meta property="article:tag" content="CNN">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://learn2pro.tech/image/cnn/2.jpg">
+<meta property="fb:admins" content="100023269004018">
+  
+    <link rel="alternate" href="https://github.com/learn2pro" title="Learn2Pro博客精选" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <!-- Calendly badge widget begin -->
+  <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
+  <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript"></script>
+  <script type="text/javascript">Calendly.initBadgeWidget({ url: 'https://calendly.com/druidlangde/mock-interview', text: 'Schedule time with me', color: '#00a2ff', textColor: '#ffffff', branding: true });</script>
+  <!-- Calendly badge widget end -->
+<meta name="generator" content="Hexo 4.2.1"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+<body>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Learn2Pro博客精选</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Learn2Pro</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="https://github.com/learn2pro" target="_blank" rel="noopener" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://learn2pro.tech"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-2017-01-23-dl-algorithm-CNN" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/01/23/2017-01-23-dl-algorithm-CNN/" class="article-date">
+  <time datetime="2017-01-23T11:06:00.000Z" itemprop="datePublished">2017-01-23</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Technology/">Technology</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      深度学习-初识CNN
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在上一次的文章bird学习路径的迭代原理便是CNN网络，本文将介绍Flabby-bird的整个实现算法<br>概述</p>
+<p><img src="/image/cnn/2.jpg" alt=""></p>
+<p>卷积神经网络(Convolutional Neural Network, CNN)是深度学习技术中极具代表的网络结构之一，在图像处理领域取得了很大的成功，在国际标准的ImageNet数据集上，许多成功的模型都是基于CNN的。CNN相较于传统的图像处理算法的优点之一在于，避免了对图像复杂的前期预处理过程（提取人工特征等），可以直接输入原始图像。</p>
+<p>图像处理中，往往会将图像看成是一个或多个的二维向量，如之前博文中提到的MNIST手写体图片就可以看做是一个28 × 28的二维向量（黑白图片，只有一个颜色通道；如果是RGB表示的彩色图片则有三个颜色通道，可表示为三张二维向量）。传统的神经网络都是采用全连接的方式，即输入层到隐藏层的神经元都是全部连接的，这样做将导致参数量巨大，使得网络训练耗时甚至难以训练，而CNN则通过局部连接、权值共享等方法避免这一困难，有趣的是，这些方法都是受到现代生物神经网络相关研究的启发（感兴趣可阅读以下部分）。</p>
+<p>下面重点介绍下CNN中的局部连接(Sparse Connectivity)和权值共享(Shared Weights)方法，理解它们很重要。<br>局部连接与权值共享</p>
+<p>下图是一个很经典的图示，左边是全连接，右边是局部连接。</p>
+<p><img src="/image/cnn/6.jpg" alt=""></p>
+<a id="more"></a>
+
+<p>对于一个1000 × 1000的输入图像而言，如果下一个隐藏层的神经元数目为10^6个，采用全连接则有1000 × 1000 × 10^6 = 10^12个权值参数，如此数目巨大的参数几乎难以训练；而采用局部连接，隐藏层的每个神经元仅与图像中10 × 10的局部图像相连接，那么此时的权值参数数量为10 × 10 × 10^6 = 10^8，将直接减少4个数量级。</p>
+<p>尽管减少了几个数量级，但参数数量依然较多。能不能再进一步减少呢？能！方法就是权值共享。具体做法是，在局部连接中隐藏层的每一个神经元连接的是一个10 × 10的局部图像，因此有10 × 10个权值参数，将这10 × 10个权值参数共享给剩下的神经元，也就是说隐藏层中10^6个神经元的权值参数相同，那么此时不管隐藏层神经元的数目是多少，需要训练的参数就是这 10 × 10个权值参数（也就是卷积核(也称滤波器)的大小），如下图。</p>
+<p><img src="/image/cnn/8.jpg" alt=""></p>
+<p>这大概就是CNN的一个神奇之处，尽管只有这么少的参数，依旧有出色的性能。但是，这样仅提取了图像的一种特征，如果要多提取出一些特征，可以增加多个卷积核，不同的卷积核能够得到图像的不同映射下的特征，称之为Feature Map。如果有100个卷积核，最终的权值参数也仅为100 × 100 = 10^4个而已。另外，偏置参数也是共享的，同一种滤波器共享一个。</p>
+<p>卷积神经网络的核心思想是：局部感受野(local field)，权值共享以及时间或空间亚采样这三种思想结合起来，获得了某种程度的位移、尺度、形变不变性（？不够理解透彻？）。<br>网络结构</p>
+<p>下图是一个经典的CNN结构，称为LeNet-5网络。</p>
+<p><img src="/image/cnn/5.jpg" alt=""></p>
+<p>可以看出，CNN中主要有两种类型的网络层，分别是卷积层和池化/采样层(Pooling)。卷积层的作用是提取图像的各种特征；池化层的作用是对原始特征信号进行抽象，从而大幅度减少训练参数，另外还可以减轻模型过拟合的程度。<br>卷积层</p>
+<p><img src="/image/cnn/1.jpg" alt=""></p>
+<p>卷积层是卷积核在上一级输入层上通过逐一滑动窗口计算而得，卷积核中的每一个参数都相当于传统神经网络中的权值参数，与对应的局部像素相连接，将卷积核的各个参数与对应的局部像素值相乘之和，（通常还要再加上一个偏置参数），得到卷积层上的结果。如下图所示。</p>
+<p>下面的动图能够更好地解释卷积过程：</p>
+<p><img src="/image/cnn/0.gif" alt=""></p>
+<p>池化/采样层</p>
+<p>通过卷积层获得了图像的特征之后，理论上我们可以直接使用这些特征训练分类器（如softmax），但是这样做将面临巨大的计算量的挑战，而且容易产生过拟合的现象。为了进一步降低网络训练参数及模型的过拟合程度，我们对卷积层进行池化/采样(Pooling)处理。池化/采样的方式通常有以下两种：</p>
+<pre><code>Max-Pooling: 选择Pooling窗口中的最大值作为采样值；
+
+Mean-Pooling: 将Pooling窗口中的所有值相加取平均，以平均值作为采样值；</code></pre><p>如下图所示。</p>
+<p><img src="/image/cnn/11.jpg" alt=""></p>
+<p>LeNet-5网络详解</p>
+<p>以上较详细地介绍了CNN的网络结构和基本原理，下面介绍一个经典的CNN模型：LeNet-5网络。</p>
+<p><img src="/image/cnn/13.jpg" alt=""></p>
+<p><img src="/image/cnn/0.jpg" alt=""></p>
+<p><img src="/image/cnn/12.jpg" alt=""></p>
+<p><img src="/image/cnn/4.jpg" alt=""></p>
+<p><img src="/image/cnn/9.jpg" alt=""></p>
+<p><img src="/image/cnn/14.jpg" alt=""></p>
+<p><img src="/image/cnn/3.jpg" alt=""></p>
+<p><img src="/image/cnn/7.jpg" alt=""></p>
+<p>LeNet-5网络在MNIST数据集上的结果</p>
+<p><img src="/image/cnn/10.jpg" alt=""></p>
+<p>Flabby-bird整个的学习过程如下：</p>
+<p><img src="/image/bird/0.jpg" alt=""></p>
+<p>代码如下:</p>
+<p>Initialize replay memory D to size N<br>Initialize action-value function Q with random weights<br>for episode = 1, M do<br>    Initialize state s_1<br>    for t = 1, T do<br>        With probability ϵ select random action a_t<br>        otherwise select a_t=max_a  Q(s_t,a; θ<em>i)<br>        Execute action a_t in emulator and observe r_t and s</em>(t+1)<br>        Store transition (s_t,a_t,r_t,s_(t+1)) in D<br>        Sample a minibatch of transitions (s_j,a_j,r_j,s_(j+1)) from D<br>        Set y_j:=<br>            r_j for terminal s_(j+1)<br>            r_j+γ*max_(a^’ )  Q(s_(j+1),a’; θ<em>i) for non-terminal s</em>(j+1)<br>        Perform a gradient step on (y_j-Q(s_j,a_j; θ_i))^2 with respect to θ<br>    end for<br>end for</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://learn2pro.tech/2017/01/23/2017-01-23-dl-algorithm-CNN/" data-id="ckf12d0dy0001zgk0h42x97qu" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Algorithm/" rel="tag">Algorithm</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CNN/" rel="tag">CNN</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DL/" rel="tag">DL</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/01/23/2017-01-22-dl-demo-flabby-bird/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          深度学习-CNN训练Flabby bird  突破一万分
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/01/01/hello-world/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Hello World</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Essay/">Essay</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Technology/">Technology</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Algorithm/" rel="tag">Algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CNN/" rel="tag">CNN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DEMO/" rel="tag">DEMO</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DL/" rel="tag">DL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Infra/" rel="tag">Infra</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ML/" rel="tag">ML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SVM/" rel="tag">SVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/default/" rel="tag">default</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/infra/" rel="tag">infra</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rpc/" rel="tag">rpc</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Algorithm/" style="font-size: 20px;">Algorithm</a> <a href="/tags/CNN/" style="font-size: 10px;">CNN</a> <a href="/tags/DEMO/" style="font-size: 10px;">DEMO</a> <a href="/tags/DL/" style="font-size: 13.33px;">DL</a> <a href="/tags/Infra/" style="font-size: 10px;">Infra</a> <a href="/tags/ML/" style="font-size: 10px;">ML</a> <a href="/tags/SVM/" style="font-size: 10px;">SVM</a> <a href="/tags/default/" style="font-size: 16.67px;">default</a> <a href="/tags/infra/" style="font-size: 10px;">infra</a> <a href="/tags/rpc/" style="font-size: 10px;">rpc</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/07/22/infra-design/">我眼中如何设计一个高可用系统</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/18/ali-learn/">Wonderful tour in alibaba</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/18/manachers-algorithm/">什么是马拉车(manacher&#39;s)算法</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/09/snowflake-alg/">详解雪花算法</a>
+          </li>
+        
+          <li>
+            <a href="/2019/07/09/write-a-easy-rpc/">Step by Step写一个简易的RPC</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 learn<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+</body>
+</html>

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-90773148-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+  
+  <title>我眼中如何设计一个高可用系统 | Learn2Pro博客精选</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="系统定位一个系统明确之初，就应该定义它设计的目标，比如现有的很多大型电商系统，可用性是它设计的目标，全年要达到5个9，而很多银行系统要求很强的事务性，那强一致就是其设计目标，保证不能错；还有一些系统需要很低的延迟等；定义好我们系统的目标后，围绕这些东西可以有很多设计理念可以运用； 高可用系统高可用系统设计上，首先定义好我们可用率的目标，比如是99.999%，表示全量最多不可用5分钟，有了指标后，我">
+<meta property="og:type" content="article">
+<meta property="og:title" content="我眼中如何设计一个高可用系统">
+<meta property="og:url" content="http://learn2pro.tech/2020/07/22/infra-design/index.html">
+<meta property="og:site_name" content="Learn2Pro博客精选">
+<meta property="og:description" content="系统定位一个系统明确之初，就应该定义它设计的目标，比如现有的很多大型电商系统，可用性是它设计的目标，全年要达到5个9，而很多银行系统要求很强的事务性，那强一致就是其设计目标，保证不能错；还有一些系统需要很低的延迟等；定义好我们系统的目标后，围绕这些东西可以有很多设计理念可以运用； 高可用系统高可用系统设计上，首先定义好我们可用率的目标，比如是99.999%，表示全量最多不可用5分钟，有了指标后，我">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-07-22T01:28:40.000Z">
+<meta property="article:modified_time" content="2020-09-13T12:17:09.725Z">
+<meta property="article:author" content="learn">
+<meta property="article:tag" content="Infra">
+<meta name="twitter:card" content="summary">
+<meta property="fb:admins" content="100023269004018">
+  
+    <link rel="alternate" href="https://github.com/learn2pro" title="Learn2Pro博客精选" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <!-- Calendly badge widget begin -->
+  <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
+  <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript"></script>
+  <script type="text/javascript">Calendly.initBadgeWidget({ url: 'https://calendly.com/druidlangde/mock-interview', text: 'Schedule time with me', color: '#00a2ff', textColor: '#ffffff', branding: true });</script>
+  <!-- Calendly badge widget end -->
+<meta name="generator" content="Hexo 4.2.1"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+<body>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Learn2Pro博客精选</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Learn2Pro</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="https://github.com/learn2pro" target="_blank" rel="noopener" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://learn2pro.tech"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-infra-design" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/07/22/infra-design/" class="article-date">
+  <time datetime="2020-07-22T01:28:40.000Z" itemprop="datePublished">2020-07-22</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Technology/">Technology</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      我眼中如何设计一个高可用系统
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="系统定位"><a href="#系统定位" class="headerlink" title="系统定位"></a>系统定位</h2><p>一个系统明确之初，就应该定义它设计的目标，比如现有的很多大型电商系统，可用性是它设计的目标，全年要达到5个9，而很多银行系统要求很强的事务性，那强一致就是其设计目标，保证不能错；还有一些系统需要很低的延迟等；定义好我们系统的目标后，围绕这些东西可以有很多设计理念可以运用；</p>
+<h2 id="高可用系统"><a href="#高可用系统" class="headerlink" title="高可用系统"></a>高可用系统</h2><p>高可用系统设计上，首先定义好我们可用率的目标，比如是99.999%，表示全量最多不可用5分钟，有了指标后，我们就要拆分下如何如何达到这个目标，因为大部分系统肯定不能自己闭环，你要依赖外部服务，db，mq等；</p>
+<ol>
+<li>强依赖（典型的后端的db，或者不可或缺的外部服务）</li>
+<li>弱依赖（忍受容错，可以被降级掉）</li>
+</ol>
+<p>整体服务的可用率就可以计算出来了，<em>假设强依赖之间是相互独立的</em><br>$$<br>self * \prod_{dependencies}availability = 0.9999 * \prod_{dependencies} 0.9999 = 0.9997<br>$$<br>可以看出要达到最终的目标，我们需要提升自己，或者强依赖；还有一些情况是当我们不知道对方的SLA时，如何预估这个值来帮助我们设计系统，此时会用到两个指标来预估；</p>
+<ul>
+<li>Mean Time Between Failure (MTBF)</li>
+<li>Mean Time to Recover (MTTR)<br>$$<br>Availability Estimate = MTBF / (MTBF + MTTR)<br>$$<br>比如MTBF=150days，MTTR=1hour，我们可以预估一个可用率是99.97%，有了以上数据支撑后，需要技术上做一些事情来支撑，可用率的提升，简单总结为以下几点：<h3 id="容量管理"><a href="#容量管理" class="headerlink" title="容量管理"></a>容量管理</h3>我们需要很清楚自己的系统，知道他在不同资源下的水位,如何设计系统限流等<h3 id="网络管理"><a href="#网络管理" class="headerlink" title="网络管理"></a>网络管理</h3>你需要清楚自己服务的部署情况，是否会有跨机房的通信，网络延迟是怎样的，是否会导致堆积，如何处理Dos，如何做Load Balance,网络的FO等<h3 id="服务管理"><a href="#服务管理" class="headerlink" title="服务管理"></a>服务管理</h3>将自身服务按照有状态和无状态进行拆分，因为你的业务特点，可能会面临每时每刻的峰值变换，要能方便的scale-out<h3 id="Isolation"><a href="#Isolation" class="headerlink" title="Isolation"></a>Isolation</h3>有了独立的Replica之后，我们可以显著的提升可用率，它的计算模式变为了：<br>$$<br>self * \prod_{dependencies}not/availability = 0.9999 * \prod_{dependencies} 0.001 = 0.9997<br>$$<br><code>level0</code>:我们需要互相独立的available zone来提供服务，方便基础设施出现问题后进行切换<br><code>level1</code>:关键性的模块支持副本，提升这些模块的可用率，避免一些单点问题<h3 id="容灾管理"><a href="#容灾管理" class="headerlink" title="容灾管理"></a>容灾管理</h3>设计的目标是出现故障后，如何缩短恢复的时间，梳理业务的预案，出现问题后available zone的切换方案，关键模块的切换方案，或者能不能做到自动化的FO<br>；梳理主链路，一些弱依赖出现问题能否直接降级掉，减低风险;容灾也需要经常测试，因为不同场景的切换，可能导致流量超过某个zone的承载极限，最好能支持快速的auto-scaling;<h3 id="变更管理"><a href="#变更管理" class="headerlink" title="变更管理"></a>变更管理</h3>系统出现问题的情况很多都是由于变更(部署，热变更)等，所以我们需要遵循一些变更的best practice:<br><code>灰度发布</code>，小批量多次进行发布，减少影响范围<br><code>蓝绿发布</code>，整个发布分成两个部分，当一个部分出现问题，可以FO到另外部分，然后快速回滚，进行恢复<br><code>功能开关</code>，新功能上线的时候默认把开关关闭，少量打开确认无问题后，才全量放开<br><code>测试</code>，包括代码部分的单测，集成测试；上线后的灰度测试等；测试需要覆盖正常和异常的情况<h3 id="监控-amp-报警"><a href="#监控-amp-报警" class="headerlink" title="监控&amp;报警"></a>监控&amp;报警</h3>我们需要对系统有深入且实时的了解，以便做出正确的应对</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://learn2pro.tech/2020/07/22/infra-design/" data-id="ckf12d0e8000azgk0ccalbwv3" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Infra/" rel="tag">Infra</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2020/07/18/ali-learn/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Wonderful tour in alibaba</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Essay/">Essay</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Technology/">Technology</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Algorithm/" rel="tag">Algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CNN/" rel="tag">CNN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DEMO/" rel="tag">DEMO</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DL/" rel="tag">DL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Infra/" rel="tag">Infra</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ML/" rel="tag">ML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SVM/" rel="tag">SVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/default/" rel="tag">default</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/infra/" rel="tag">infra</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rpc/" rel="tag">rpc</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Algorithm/" style="font-size: 20px;">Algorithm</a> <a href="/tags/CNN/" style="font-size: 10px;">CNN</a> <a href="/tags/DEMO/" style="font-size: 10px;">DEMO</a> <a href="/tags/DL/" style="font-size: 13.33px;">DL</a> <a href="/tags/Infra/" style="font-size: 10px;">Infra</a> <a href="/tags/ML/" style="font-size: 10px;">ML</a> <a href="/tags/SVM/" style="font-size: 10px;">SVM</a> <a href="/tags/default/" style="font-size: 16.67px;">default</a> <a href="/tags/infra/" style="font-size: 10px;">infra</a> <a href="/tags/rpc/" style="font-size: 10px;">rpc</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/07/22/infra-design/">我眼中如何设计一个高可用系统</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/18/ali-learn/">Wonderful tour in alibaba</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/18/manachers-algorithm/">什么是马拉车(manacher&#39;s)算法</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/09/snowflake-alg/">详解雪花算法</a>
+          </li>
+        
+          <li>
+            <a href="/2019/07/09/write-a-easy-rpc/">Step by Step写一个简易的RPC</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 learn<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+</body>
+</html>

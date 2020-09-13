@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-90773148-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+  
+  <title>深度学习-机器学习经典算法 | Learn2Pro博客精选</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="机器学习的算法主要包含监督学习和非监督学习两个大类： 监督学习：简单的说便是，样本集带有属性，需要根据样本集判断新的采样点的属性，常见的knn，svm 非监督学习：与监督学习相反，样本集没有属性信息，需要划分出样本集的分类，常见k-means;    K-means k-means,k代表将要聚类出的k个cluster，算法流程： 1.随机选出样本集N中k个采样点作为cluster的中心； 2.样">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深度学习-机器学习经典算法">
+<meta property="og:url" content="http://learn2pro.tech/2017/01/24/2017-01-23-dl-algorithm-SVM/index.html">
+<meta property="og:site_name" content="Learn2Pro博客精选">
+<meta property="og:description" content="机器学习的算法主要包含监督学习和非监督学习两个大类： 监督学习：简单的说便是，样本集带有属性，需要根据样本集判断新的采样点的属性，常见的knn，svm 非监督学习：与监督学习相反，样本集没有属性信息，需要划分出样本集的分类，常见k-means;    K-means k-means,k代表将要聚类出的k个cluster，算法流程： 1.随机选出样本集N中k个采样点作为cluster的中心； 2.样">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://learn2pro.tech/image/svm_pic/ou.png">
+<meta property="og:image" content="http://learn2pro.tech/image/svm_pic/min.png">
+<meta property="og:image" content="http://learn2pro.tech/image/svm_pic/manha.png">
+<meta property="og:image" content="http://learn2pro.tech/image/svm_pic/che.png">
+<meta property="og:image" content="http://learn2pro.tech/image/svm_pic/knn.png">
+<meta property="og:image" content="http://learn2pro.tech/image/svm_pic/svm1.png">
+<meta property="og:image" content="http://learn2pro.tech/image/svm_pic/svm3.jpg">
+<meta property="og:image" content="http://learn2pro.tech/image/svm_pic/svm4.jpg">
+<meta property="article:published_time" content="2017-01-24T03:06:43.000Z">
+<meta property="article:modified_time" content="2020-09-13T12:17:09.725Z">
+<meta property="article:author" content="learn">
+<meta property="article:tag" content="Algorithm">
+<meta property="article:tag" content="ML">
+<meta property="article:tag" content="SVM">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://learn2pro.tech/image/svm_pic/ou.png">
+<meta property="fb:admins" content="100023269004018">
+  
+    <link rel="alternate" href="https://github.com/learn2pro" title="Learn2Pro博客精选" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <!-- Calendly badge widget begin -->
+  <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
+  <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript"></script>
+  <script type="text/javascript">Calendly.initBadgeWidget({ url: 'https://calendly.com/druidlangde/mock-interview', text: 'Schedule time with me', color: '#00a2ff', textColor: '#ffffff', branding: true });</script>
+  <!-- Calendly badge widget end -->
+<meta name="generator" content="Hexo 4.2.1"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+<body>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Learn2Pro博客精选</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Learn2Pro</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="https://github.com/learn2pro" target="_blank" rel="noopener" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://learn2pro.tech"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-2017-01-23-dl-algorithm-SVM" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/01/24/2017-01-23-dl-algorithm-SVM/" class="article-date">
+  <time datetime="2017-01-24T03:06:43.000Z" itemprop="datePublished">2017-01-24</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Technology/">Technology</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      深度学习-机器学习经典算法
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>机器学习的算法主要包含监督学习和非监督学习两个大类：</p>
+<p>监督学习：简单的说便是，样本集带有属性，需要根据样本集判断新的采样点的属性，常见的knn，svm</p>
+<p>非监督学习：与监督学习相反，样本集没有属性信息，需要划分出样本集的分类，常见k-means;</p>
+<p>   K-means</p>
+<p>k-means,k代表将要聚类出的k个cluster，算法流程：</p>
+<p>1.随机选出样本集N中k个采样点作为cluster的中心；</p>
+<p>2.样板集N中其他采样点选取离自己距离最近的k个cluster center点作为自己的中心点然后</p>
+<p>3.通过2我们获得了k个cluster，每个cluster里面有很多点，通过这些点算出每个cluster的中心点（离中心最近的点）</p>
+<p>4.重复2,3 直到结果收敛</p>
+<p>5.在此算法中比较重要的是距离的计算，根据不同场景使用不同的方式，常用几种距离：</p>
+<p>欧几里得距离（Euclidean Distance）</p>
+<p>欧氏距离是最常见的距离度量，衡量的是多维空间中各个点之间的绝对距离。公式如下：</p>
+<p><img src="/image/svm_pic/ou.png" alt=""></p>
+<a id="more"></a>
+
+<p>明可夫斯基距离（Minkowski Distance）</p>
+<p>明氏距离是欧氏距离的推广，是对多个距离度量公式的概括性的表述。公式如下：</p>
+<p><img src="/image/svm_pic/min.png" alt=""></p>
+<p>这里的p值是一个变量，当p=2的时候就得到了上面的欧氏距离。</p>
+<p>曼哈顿距离（Manhattan Distance）</p>
+<p>曼哈顿距离来源于城市区块距离，是将多个维度上的距离进行求和后的结果，即当上面的明氏距离中p=1时得到的距离度量公式，如下：</p>
+<p><img src="/image/svm_pic/manha.png" alt=""></p>
+<p>切比雪夫距离（Chebyshev Distance）<br>切比雪夫距离起源于国际象棋中国王的走法，我们知道国际象棋国王每次只能往周围的8格中走一步，那么如果要从棋盘中A格（x1， y1）走到B格（x2， y2）最少需要走几步？扩展到多维空间，其实切比雪夫距离就是当p趋向于无穷大时的明氏距离：</p>
+<p><img src="/image/svm_pic/che.png" alt=""></p>
+<p>其实上面的曼哈顿距离、欧氏距离和切比雪夫距离都是明可夫斯基距离在特殊条件下的应用。</p>
+<pre><code>Knn</code></pre><p>Knn算法的核心思想便是找出离采样点最近的K个样本点，用这K个样本点来判断采样点的类别，Knn的样本集很大，如果将每个点去运算一次，会造成效率非常低，一般是维护一个最大堆，堆的大小是k，每进来一个样本点动态调整最大堆K；Knn算法比较简单，精确度不及SVM。</p>
+<p><img src="/image/svm_pic/knn.png" alt=""></p>
+<pre><code>SVM
+
+支持向量机（Support Vector Machine，常简称为SVM）是一种监督式学习的方法，可广泛地应用于统计分类以及回归分析。支持向量机属于一般化线性分类器，这族分类器的特点是他们能够同时最小化经验误差与最大化几何边缘区，因此支持向量机也被称为最大边缘区分类器。</code></pre><p>支持向量机将向量映射到一个更高维的空间里，在这个空 间里建立有一个最大间隔超平面。在分开数据的超平面的两边建有两个互相平行的超平面，分隔超平面使两个平行超平面的距离最大化。假定平行超平面间的距离或差距越大，分类器的总误差越小。</p>
+<p><img src="/image/svm_pic/svm1.png" alt=""></p>
+<p>简单的说svm的输入是一些带有属性的样本集，输出是一个平面（高维超平面） ，SVM算法的实质是找出一个能够将某个值最大化的超平面，这个值便是样本集中的点到超平面的距离，所以SVM到最后也转换为求极值问题。</p>
+<p><img src="/image/svm_pic/svm3.jpg" alt=""></p>
+<p>但是会联想到一个问题，如果产生的数据集本来就不是线性可分的改如何处理呢，如下所示：</p>
+<p><img src="/image/svm_pic/svm4.jpg" alt=""></p>
+<pre><code>这里就要提到傅里叶变换的思想，在时域不能解决的问题我们会转换到频域来进行处理，既然在当前数据集的维度空间不是线性可分的，将数据集映射到更高维度的空间很可能是线性可分的了，就想圆在二维空间是非线性的但在三维空间就是个平面，映射到高维空间同时带来一个问题：在高维空间上求解一个带约束的极值问题显然比在低维空间上计算量要大得多，这就是所谓的“维数灾难”。</code></pre><p>于是就引入了“核函数”，核函数的价值在于将特征从低维到高维的转换。</p>
+<pre><code>从上图我们可以看出一个理想的分界应该是一个“圆圈”而不是一条线（超平面）。如果用 X1 和 X2 来表示这个二维平面的两个坐标的话，我们知道一条二次曲线（圆圈是二次曲线的一种特殊情况）的方程可以写作这样的形式：</code></pre><p>a1X1+a2X21+a3X2+a4X22+a5X1X2+a6=0</p>
+<p>注意上面的形式，如果我们构造另外一个五维的空间，其中五个坐标的值分别为 Z1=X1, Z2=X21, Z3=X2, Z4=X22, Z5=X1X2，那么显然，上面的方程在新的坐标系下可以写作：</p>
+<p>∑i=15aiZi+a6=0</p>
+<p>关于新的坐标 Z ，这正是一个超平面 的方程！也就是说，如果我们做一个映射 ϕ:R2→R5 ，将 X 按照上面的规则映射为 Z ，那么在新的空间中原来的数据将变成线性可分的，从而使用之前我们推导的线性分类算法就可以进行处理了。这正是 Kernel 方法处理非线性问题的基本思想。</p>
+<p>最后明显可以看到可以使用一个平面来讲数据集切分</p>
+<p>![](/image/svm_pic/svm -la.gif)</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://learn2pro.tech/2017/01/24/2017-01-23-dl-algorithm-SVM/" data-id="ckf12d0e20004zgk0321w520z" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Algorithm/" rel="tag">Algorithm</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ML/" rel="tag">ML</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SVM/" rel="tag">SVM</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/01/24/hexo/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          HEXO+GITHUB搭建个人博客
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/01/23/2017-01-22-dl-demo-flabby-bird/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">深度学习-CNN训练Flabby bird  突破一万分</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Essay/">Essay</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Technology/">Technology</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Algorithm/" rel="tag">Algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CNN/" rel="tag">CNN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DEMO/" rel="tag">DEMO</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DL/" rel="tag">DL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Infra/" rel="tag">Infra</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ML/" rel="tag">ML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SVM/" rel="tag">SVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/default/" rel="tag">default</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/infra/" rel="tag">infra</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rpc/" rel="tag">rpc</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Algorithm/" style="font-size: 20px;">Algorithm</a> <a href="/tags/CNN/" style="font-size: 10px;">CNN</a> <a href="/tags/DEMO/" style="font-size: 10px;">DEMO</a> <a href="/tags/DL/" style="font-size: 13.33px;">DL</a> <a href="/tags/Infra/" style="font-size: 10px;">Infra</a> <a href="/tags/ML/" style="font-size: 10px;">ML</a> <a href="/tags/SVM/" style="font-size: 10px;">SVM</a> <a href="/tags/default/" style="font-size: 16.67px;">default</a> <a href="/tags/infra/" style="font-size: 10px;">infra</a> <a href="/tags/rpc/" style="font-size: 10px;">rpc</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/07/22/infra-design/">我眼中如何设计一个高可用系统</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/18/ali-learn/">Wonderful tour in alibaba</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/18/manachers-algorithm/">什么是马拉车(manacher&#39;s)算法</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/09/snowflake-alg/">详解雪花算法</a>
+          </li>
+        
+          <li>
+            <a href="/2019/07/09/write-a-easy-rpc/">Step by Step写一个简易的RPC</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 learn<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+</body>
+</html>
