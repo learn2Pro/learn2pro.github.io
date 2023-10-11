@@ -99,9 +99,9 @@ theme: landscape
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: 'git'
-  repo: https://github.com/<username>/<project>
+  repo: https://github.com/learn2pro/learn2pro.github.io
   # example, https://github.com/hexojs/hexojs.github.io
-  branch: master
+  branch: gh-pages
 
 math:
   engine: 'mathjax' # or 'katex'
