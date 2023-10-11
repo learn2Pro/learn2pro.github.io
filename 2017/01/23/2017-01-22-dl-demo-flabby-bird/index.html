@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-90773148-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+  
+  <title>深度学习-CNN训练Flabby bird  突破一万分 | Learn2Pro博客精选</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="环境 opencv&#x2F;mxnet&#x2F;python 1.安装opencv (ps:编译mxnet首先需要cv库) 1$ yum install cmake gcc gcc-c++">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深度学习-CNN训练Flabby bird  突破一万分">
+<meta property="og:url" content="http://learn2pro.tech/2017/01/23/2017-01-22-dl-demo-flabby-bird/index.html">
+<meta property="og:site_name" content="Learn2Pro博客精选">
+<meta property="og:description" content="环境 opencv&#x2F;mxnet&#x2F;python 1.安装opencv (ps:编译mxnet首先需要cv库) 1$ yum install cmake gcc gcc-c++">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://learn2pro.tech/image/bird/bird.gif">
+<meta property="og:image" content="http://learn2pro.tech/image/bird/2.jpg">
+<meta property="og:image" content="http://learn2pro.tech/image/bird/bird.gif">
+<meta property="article:published_time" content="2017-01-23T11:06:00.000Z">
+<meta property="article:modified_time" content="2020-09-13T11:35:06.787Z">
+<meta property="article:author" content="learn">
+<meta property="article:tag" content="DL">
+<meta property="article:tag" content="DEMO">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://learn2pro.tech/image/bird/bird.gif">
+<meta property="fb:admins" content="100023269004018">
+  
+    <link rel="alternate" href="https://github.com/learn2pro" title="Learn2Pro博客精选" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <!-- Calendly badge widget begin -->
+  <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
+  <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript"></script>
+  <script type="text/javascript">Calendly.initBadgeWidget({ url: 'https://calendly.com/druidlangde/mock-interview', text: 'Schedule time with me', color: '#00a2ff', textColor: '#ffffff', branding: true });</script>
+  <!-- Calendly badge widget end -->
+<meta name="generator" content="Hexo 4.2.1"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+<body>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Learn2Pro博客精选</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Learn2Pro</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="https://github.com/learn2pro" target="_blank" rel="noopener" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://learn2pro.tech"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-2017-01-22-dl-demo-flabby-bird" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/01/23/2017-01-22-dl-demo-flabby-bird/" class="article-date">
+  <time datetime="2017-01-23T11:06:00.000Z" itemprop="datePublished">2017-01-23</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Technology/">Technology</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      深度学习-CNN训练Flabby bird  突破一万分
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><img src="/image/bird/bird.gif" alt=""></p>
+<p>环境 opencv/mxnet/python</p>
+<p>1.安装opencv (ps:编译mxnet首先需要cv库)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ yum install cmake gcc gcc-c++</span><br></pre></td></tr></table></figure>
+
+<a id="more"></a>
+<p>使用yum源安装以上工具，源配置可以设置为ali的yum源（ps：国内访问很快）</p>
+<p>安装后测试cmake –version测试版本看是否成功</p>
+<p>然后down opencv源码</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">$ wget https://github.com/Itseez/opencv/archive/2.4.13.zip</span><br><span class="line">``` </span><br><span class="line"></span><br><span class="line">down到安装目录，然后解压unzip 2.4.13.zip</span><br><span class="line">进入opencv目录后</span><br><span class="line">检查是否有CMakeLists.txt文件 该文件是用来生成makefile的</span><br><span class="line">然后：</span><br><span class="line"></span><br><span class="line">``` bash</span><br><span class="line">$ make</span><br><span class="line">$ make install</span><br><span class="line">``` </span><br><span class="line"></span><br><span class="line">安装opencv</span><br><span class="line">等待安装ing。。。。最好配置( -j8)不然比较慢,安装完成后 需要配置cv的lib*.so文件</span><br><span class="line">主要有以下3种方式：（1）用ln将需要的so文件链接到/usr/lib或者/lib这两个默认的目录下边 </span><br><span class="line"></span><br><span class="line">``` bash</span><br><span class="line">$ ln -s /usr/<span class="built_in">local</span>/lib/*.so /usr/lib</span><br><span class="line">$ sudo ldconfig</span><br><span class="line">``` </span><br><span class="line"></span><br><span class="line">（2）修改LD_LIBRARY_PATH</span><br><span class="line"></span><br><span class="line">``` bash</span><br><span class="line">$ <span class="built_in">export</span> LD_LIBRARY_PATH=/usr/<span class="built_in">local</span>/lib:<span class="variable">$LD_LIBRARY_PATH</span></span><br><span class="line">$ sudo ldconfig</span><br><span class="line">``` </span><br><span class="line"></span><br><span class="line">（3）修改/etc/ld.so.conf vim /etc/ld.so.conf </span><br><span class="line">加一行</span><br><span class="line"></span><br><span class="line">``` bash</span><br><span class="line">$ /usr/<span class="built_in">local</span>/lib</span><br><span class="line">$ sudo  ldconfig</span><br></pre></td></tr></table></figure>
+
+<p>然后进入samples目录测试opencv安装是否成功</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /samples/c</span><br><span class="line">$ ./facedetect --cascade=<span class="string">"/usr/local/share/OpenCV/haarcascades/haarcascade_frontalface_alt.xml"</span> --scale=1.5 lena.jpg</span><br><span class="line">``` </span><br><span class="line"></span><br><span class="line">如果出现</span><br><span class="line">![](/image/bird/1.jpg)</span><br><span class="line">则表示opencv安装完成</span><br><span class="line">接着需要配置PKG_CONFIG_PATH路径</span><br><span class="line"></span><br><span class="line">``` bash</span><br><span class="line">$ vi  /etc/bashrc</span><br><span class="line">``` </span><br><span class="line"></span><br><span class="line">末尾加入一句</span><br><span class="line"></span><br><span class="line">``` bash</span><br><span class="line">$ <span class="built_in">export</span> PKG_CONFIG_PATH=/usr/<span class="built_in">local</span>/lib/pkgpath:<span class="variable">$PKG_CONFIG_PATH</span></span><br><span class="line">$ <span class="built_in">source</span> /etc/bashrc</span><br><span class="line">``` </span><br><span class="line"></span><br><span class="line">2.安装mxnet平台（ps：进入正题）</span><br><span class="line"> mxnet 是一个非常优秀的深度学习的框架。足够灵活，速度足够快，扩展新的功能比较容易。</span><br><span class="line"> </span><br><span class="line">``` bash</span><br><span class="line">$ git <span class="built_in">clone</span> --recursive https://github.com/dmlc/mxnet</span><br><span class="line">``` </span><br><span class="line"></span><br><span class="line">这里提醒注意一定不要忘记--recursive参数，因为mxnet依赖于DMLC通用工具包http://dmlc.ml/，--recursive参数可以自动加载mshadow等依赖</span><br><span class="line">编译mxnet平台需要支持c++11 gcc4.8.x版本以上才支持c++11</span><br><span class="line">所以需要升级gcc版本 yum源中是没有4.8以上版本的所以需要手动升级</span><br><span class="line">gcc4.x版本保留用来编译gcc4.8x可以参考此处升级：</span><br><span class="line">http://www.mudbest.com/centos%E5%8D%87%E7%BA%A7gcc4-4-7%E5%8D%87%E7%BA%A7gcc4-8%E6%89%8B%E8%AE%B0/</span><br><span class="line">编译gcc的过程比较耗时 最好加上make -j4 参数</span><br><span class="line">如果遇到类似*** [all-stage1-gcc] Error 2的bug 可以修改下 系统的swappiness虚拟交换内存解决</span><br><span class="line">工具准备好后</span><br><span class="line">下面进入正题编译mxnet</span><br><span class="line">mxnet用到了大量线性代数运算，需要用到blas库</span><br><span class="line">如果没安装openBlas，可以通过以下方式安装</span><br><span class="line"></span><br><span class="line">``` bash</span><br><span class="line">$ yum -y install blas blas-devel lapack lapack-devel atlas atlas-devel –nogpgcheck</span><br><span class="line">``` </span><br><span class="line"></span><br><span class="line">并且在make目录下修改config.mk中</span><br><span class="line">USE_BLAS = openblas</span><br><span class="line">单纯使用CPU进行训练的过程是非常慢的可以mxnet可以通过CUDA调用GPU的处理能力</span><br><span class="line">提升训练速度，通过配置config.mk文件配置是否编译CUDA，cuda安装可以到</span><br><span class="line">http://developer.download.nvidia.com/compute/cuda/repos下载对应版本</span><br><span class="line">安装过程参考此处</span><br><span class="line">http://blog.csdn.net/a350203223/article/details/50262535</span><br><span class="line">cuda安装完成后，在config.mk中配置如下：</span><br><span class="line">USE_CUDA = 1</span><br><span class="line">USE_CUDA_PATH = cuda安装路径</span><br><span class="line">之后编译mxnet目录：</span><br><span class="line"></span><br><span class="line">``` bash</span><br><span class="line">$ make -j4</span><br><span class="line">``` </span><br><span class="line"></span><br><span class="line">本文深度学习使用python平台：需要用到python环境</span><br><span class="line"></span><br><span class="line">3.安装python环境</span><br><span class="line"></span><br><span class="line">``` bash</span><br><span class="line">$ yum -y install python pip-python</span><br></pre></td></tr></table></figure>
+
+<p>安装python和pip pip是python插件安装工具相当于centos的yum<br>然后安装pygame包，flabby bird的程序运行用到了pygame模块：</p>
+<pre><code class="bash">$ pip install pygame
+$ <span class="built_in">cd</span> mxnet/python
+$ python setup.py install</code></pre>
+<p>安装mxnet模块 现在的版本是0.7.0<br>等待安装完成 马上就能跑了。。<br>安装完成后进入/mxnet/example/image-classification目录</p>
+<pre><code class="bash">$ python train_mnist.py</code></pre>
+<p><img src="/image/bird/2.jpg" alt=""><br>表示训练完成，mxnet模块安装完成<br>接着需要我们要去下载flabby bird python源码</p>
+<pre><code class="bash">$ git <span class="built_in">clone</span> https://github.com/learn2Pro/DRL-FlappyBird.git</code></pre>
+<p>下载完成后 我们还需要python的opencv模块<br>然后将/lib/python-version/cv2.so库文件放到python安装目录下<br>然后进入DRL-FlappyBird目录</p>
+<pre><code class="bash">$ python FlappyBirdDQN.py</code></pre>
+<p>最后效果图 ，接下来就是等待了，如果只用cpu训练是非常慢的，可以调用cuda 使用GPU加速，GPU的并行运算能力可以提升20-30倍</p>
+<p><img src="/image/bird/bird.gif" alt=""></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://learn2pro.tech/2017/01/23/2017-01-22-dl-demo-flabby-bird/" data-id="clnlt0col00006oqmajm6a1ww" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DEMO/" rel="tag">DEMO</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DL/" rel="tag">DL</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/01/24/2017-01-23-dl-algorithm-SVM/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          深度学习-机器学习经典算法
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/01/23/2017-01-23-dl-algorithm-CNN/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">深度学习-初识CNN</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Essay/">Essay</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Technology/">Technology</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Algorithm/" rel="tag">Algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CNN/" rel="tag">CNN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DEMO/" rel="tag">DEMO</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DL/" rel="tag">DL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Infra/" rel="tag">Infra</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLM/" rel="tag">LLM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ML/" rel="tag">ML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SVM/" rel="tag">SVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/default/" rel="tag">default</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/infra/" rel="tag">infra</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rpc/" rel="tag">rpc</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Algorithm/" style="font-size: 20px;">Algorithm</a> <a href="/tags/CNN/" style="font-size: 10px;">CNN</a> <a href="/tags/DEMO/" style="font-size: 10px;">DEMO</a> <a href="/tags/DL/" style="font-size: 13.33px;">DL</a> <a href="/tags/Infra/" style="font-size: 10px;">Infra</a> <a href="/tags/LLM/" style="font-size: 10px;">LLM</a> <a href="/tags/ML/" style="font-size: 10px;">ML</a> <a href="/tags/SVM/" style="font-size: 10px;">SVM</a> <a href="/tags/default/" style="font-size: 16.67px;">default</a> <a href="/tags/infra/" style="font-size: 10px;">infra</a> <a href="/tags/rpc/" style="font-size: 10px;">rpc</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/10/11/my-view-of-llm/">我对大模型的认知</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/22/infra-design/">我眼中如何设计一个高可用系统</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/18/ali-learn/">Wonderful tour in alibaba</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/18/manachers-algorithm/">什么是马拉车(manacher&#39;s)算法</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/09/snowflake-alg/">详解雪花算法</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2023 learn<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+</body>
+</html>
