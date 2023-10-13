@@ -10,9 +10,10 @@ categories:
 ## 背景
  - 2017.06 transformer模型架构论文发布
  - 2018.06 gpt-1模型发布，参数量1.17亿
- - 2019.02 gpt-2模型发布，参数量15亿，提出zero-shot，few-shot概念，decoder-only的模型通过prompt能做更多事情 
- - 2020.05 gpt-3模型发布，参数量1750亿，大力出奇迹
- - 2022.03 instruct-gpt, 基于RLHF对齐人类偏好
+ - 2019.02 gpt-2模型发布，参数量15亿，decoder-only的模型通过prompt解决非常多task，泛化能力强
+ - 2020.05 gpt-3模型发布，参数量1750亿，大力出奇迹，提出zero-shot，few-shot概念
+ - 2022.03 instruct-gpt, 参数量1750亿+RLHF，基于RLHF对齐人类偏好
+ - 2023.03 gpt-4发布，多模态，参数量预估万亿规模
  - 2022.11 chatgpt横空出世，让我们感觉到agi真的要来了
 
 当前各类AI+应用如雨后春笋般出现，AI+Law，AI+Data，AI+Market，AI+Assistant，AI+Math，很多人都觉得大模型是人类历史上另外一个iphone时刻，因为在其上可以用新的逻辑构建非常多应用，重塑当前的生态，连openai都觉得未来重点发展方向是agent，如最近出现的code-interpreter
@@ -40,5 +41,14 @@ categories:
 ## reference
  - https://lilianweng.github.io/posts/2023-06-23-agent/
  - https://medium.com/@gerardo.pdm/karpathy-the-potential-and-challenges-of-ai-agents-f53c55734050
+ - https://mp.weixin.qq.com/s/kA7FBZsT6SIvwIkRwFS-xw
+ - https://openai.com/research/instruction-following
+ - https://www.zhihu.com/question/570431477
+ - transformers: https://arxiv.org/pdf/1706.03762.pdf
+ - gpt1: https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf
+ - gpt2: https://d4mucfpksywv.cloudfront.net/better-language-models/language-models.pdf
+ - gpt3: https://arxiv.org/pdf/2005.14165.pdf
+ - instructgpt: https://openai.com/research/instruction-following
  - https://www.wolframalpha.com/input?i=exp%28x%29+from+0+to+1
+ - https://zhuanlan.zhihu.com/p/350017443
 
