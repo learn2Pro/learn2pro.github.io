@@ -89,6 +89,59 @@ ga('send', 'pageview');
       <div class="outer">
         <section id="main">
   
+    <article id="post-2017-01-23-dl-algorithm-CNN" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/01/23/2017-01-23-dl-algorithm-CNN/" class="article-date">
+  <time datetime="2017-01-23T11:06:00.000Z" itemprop="datePublished">2017-01-23</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Technology/">Technology</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/01/23/2017-01-23-dl-algorithm-CNN/">深度学习-初识CNN</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在上一次的文章bird学习路径的迭代原理便是CNN网络，本文将介绍Flabby-bird的整个实现算法<br>概述</p>
+<p><img src="/image/cnn/2.jpg" alt=""></p>
+<p>卷积神经网络(Convolutional Neural Network, CNN)是深度学习技术中极具代表的网络结构之一，在图像处理领域取得了很大的成功，在国际标准的ImageNet数据集上，许多成功的模型都是基于CNN的。CNN相较于传统的图像处理算法的优点之一在于，避免了对图像复杂的前期预处理过程（提取人工特征等），可以直接输入原始图像。</p>
+<p>图像处理中，往往会将图像看成是一个或多个的二维向量，如之前博文中提到的MNIST手写体图片就可以看做是一个28 × 28的二维向量（黑白图片，只有一个颜色通道；如果是RGB表示的彩色图片则有三个颜色通道，可表示为三张二维向量）。传统的神经网络都是采用全连接的方式，即输入层到隐藏层的神经元都是全部连接的，这样做将导致参数量巨大，使得网络训练耗时甚至难以训练，而CNN则通过局部连接、权值共享等方法避免这一困难，有趣的是，这些方法都是受到现代生物神经网络相关研究的启发（感兴趣可阅读以下部分）。</p>
+<p>下面重点介绍下CNN中的局部连接(Sparse Connectivity)和权值共享(Shared Weights)方法，理解它们很重要。<br>局部连接与权值共享</p>
+<p>下图是一个很经典的图示，左边是全连接，右边是局部连接。</p>
+<p><img src="/image/cnn/6.jpg" alt=""></p>
+        
+          <p class="article-more-link">
+            <a href="/2017/01/23/2017-01-23-dl-algorithm-CNN/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://learn2pro.tech/2017/01/23/2017-01-23-dl-algorithm-CNN/" data-id="clo8lki1p0001liqmefdu0bqs" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Algorithm/" rel="tag">Algorithm</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CNN/" rel="tag">CNN</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DL/" rel="tag">DL</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/01/01/hello-world/" class="article-date">
@@ -132,7 +185,7 @@ ga('send', 'pageview');
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://learn2pro.tech/2017/01/01/hello-world/" data-id="clnoa3bn900066gqm6d2lcxhh" class="article-share-link">Share</a>
+      <a data-url="http://learn2pro.tech/2017/01/01/hello-world/" data-id="clo8lki1t0004liqmd6y6599t" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/default/" rel="tag">default</a></li></ul>
@@ -159,7 +212,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Essay/">Essay</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Technology/">Technology</a></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Essay/">Essay</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Life/">Life</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Technology/">Technology</a></li></ul>
     </div>
   </div>
 
@@ -179,7 +232,7 @@ ga('send', 'pageview');
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/Algorithm/" style="font-size: 20px;">Algorithm</a> <a href="/tags/CNN/" style="font-size: 10px;">CNN</a> <a href="/tags/DEMO/" style="font-size: 10px;">DEMO</a> <a href="/tags/DL/" style="font-size: 13.33px;">DL</a> <a href="/tags/Infra/" style="font-size: 10px;">Infra</a> <a href="/tags/LLM/" style="font-size: 10px;">LLM</a> <a href="/tags/ML/" style="font-size: 10px;">ML</a> <a href="/tags/SVM/" style="font-size: 10px;">SVM</a> <a href="/tags/default/" style="font-size: 16.67px;">default</a> <a href="/tags/infra/" style="font-size: 10px;">infra</a> <a href="/tags/rpc/" style="font-size: 10px;">rpc</a>
+      <a href="/tags/Algorithm/" style="font-size: 20px;">Algorithm</a> <a href="/tags/CNN/" style="font-size: 10px;">CNN</a> <a href="/tags/DEMO/" style="font-size: 10px;">DEMO</a> <a href="/tags/DL/" style="font-size: 13.33px;">DL</a> <a href="/tags/Infra/" style="font-size: 10px;">Infra</a> <a href="/tags/LLM/" style="font-size: 13.33px;">LLM</a> <a href="/tags/ML/" style="font-size: 10px;">ML</a> <a href="/tags/SVM/" style="font-size: 10px;">SVM</a> <a href="/tags/default/" style="font-size: 16.67px;">default</a> <a href="/tags/infra/" style="font-size: 10px;">infra</a> <a href="/tags/rpc/" style="font-size: 10px;">rpc</a>
     </div>
   </div>
 
@@ -201,6 +254,10 @@ ga('send', 'pageview');
       <ul>
         
           <li>
+            <a href="/2023/10/27/my-three-years/">过去三年的一些感悟</a>
+          </li>
+        
+          <li>
             <a href="/2023/10/11/my-view-of-llm/">我对大模型的认知</a>
           </li>
         
@@ -214,10 +271,6 @@ ga('send', 'pageview');
         
           <li>
             <a href="/2020/07/18/manachers-algorithm/">什么是马拉车(manacher&#39;s)算法</a>
-          </li>
-        
-          <li>
-            <a href="/2020/07/09/snowflake-alg/">详解雪花算法</a>
           </li>
         
       </ul>
