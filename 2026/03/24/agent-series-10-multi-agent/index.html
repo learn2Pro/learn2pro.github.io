@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>多Agent编排：让一群Agent协同干活 | Learn2Pro博客精选</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Agent深度解析系列 - 多Agent编排：让一群Agent协同干活">
+<meta property="og:type" content="article">
+<meta property="og:title" content="多Agent编排：让一群Agent协同干活">
+<meta property="og:url" content="http://learn2pro.tech/2026/03/24/agent-series-10-multi-agent/index.html">
+<meta property="og:site_name" content="Learn2Pro博客精选">
+<meta property="og:description" content="Agent深度解析系列 - 多Agent编排：让一群Agent协同干活">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2026-03-24T04:00:00.000Z">
+<meta property="article:author" content="learn">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="LLM">
+<meta name="twitter:card" content="summary">
+<meta property="fb:admins" content="100023269004018">
+  <link rel="alternate" href="https://github.com/learn2pro" title="Learn2Pro博客精选" type="application/atom+xml">
+  <link rel="icon" href="/favicon.png">
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap"><a href="/" id="logo">Learn2Pro博客精选</a></h1>
+      <h2 id="subtitle-wrap"><a href="/" id="subtitle">Learn2Pro</a></h2>
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        <a class="main-nav-link" href="/">Home</a>
+        <a class="main-nav-link" href="/archives">Archives</a>
+      </nav>
+      <nav id="sub-nav">
+        <a id="nav-rss-link" class="nav-icon" href="https://github.com/learn2pro" target="_blank" rel="noopener" title="RSS Feed"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://learn2pro.tech"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-agent-series-10-multi-agent" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2026/03/24/agent-series-10-multi-agent/" class="article-date">
+  <time datetime="2026-03-24T04:00:00.000Z" itemprop="datePublished">2026-03-24</time>
+</a>
+    <div class="article-category">
+    <a class="article-category-link" href="/categories/Technology/">Technology</a>
+  </div>
+  </div>
+  <div class="article-inner">
+    <header class="article-header">
+  <h1 class="article-title" itemprop="name">多Agent编排：让一群Agent协同干活</h1>
+    </header>
+    <div class="article-entry" itemprop="articleBody">
+      <p>单个Agent再强，也有能力天花板。让它既写代码又做测试还管部署？结果大概率是三件事都做得半吊子。多Agent的核心逻辑和人类组织一样：<strong>专业化分工 + 协调机制</strong>。</p>
+<h2 id="为什么需要多Agent"><a href="#为什么需要多Agent" class="headerlink" title="为什么需要多Agent"></a>为什么需要多Agent</h2>
+<p>单Agent的局限性体现在三个维度：<strong>上下文窗口有限</strong>（一个Agent塞不下所有领域知识）、<strong>能力边界模糊</strong>（什么都能做 = 什么都做不好）、<strong>错误传播不可控</strong>（一步错步步错，没有纠偏机制）。</p>
+<p>多Agent系统的本质是把一个复杂任务分解成多个可独立执行的子任务，每个Agent专注自己的领域，通过明确的接口交互。这不是什么新概念——微服务架构的思想在Agent领域的复刻。</p>
+<h2 id="四种编排模式"><a href="#四种编排模式" class="headerlink" title="四种编排模式"></a>四种编排模式</h2>
+<p><strong>串行Pipeline</strong>：A做完交给B，B做完交给C。最简单，延迟最高，适合有严格先后依赖的任务。典型场景：代码生成 → 代码审查 → 测试执行。</p>
+<p><strong>并行Fan-out</strong>：同一个任务分发给多个Agent并行处理，汇总结果。适合可拆分的独立任务。比如同时用不同策略搜索信息，最后merge。延迟低但成本翻倍。</p>
+<p><strong>层级Hierarchical</strong>：有一个Supervisor Agent负责分配任务、收集结果、做最终决策。下层Agent只管执行。清晰但Supervisor是单点瓶颈。</p>
+<p><strong>协商Negotiation</strong>：多个Agent之间互相讨论、辩论，达成共识。适合需要多角度评估的场景（比如代码审查中安全Agent和性能Agent观点冲突时的仲裁）。最灵活也最难控制。</p>
+<h2 id="Supervisor-vs-P2P：怎么选"><a href="#Supervisor-vs-P2P：怎么选" class="headerlink" title="Supervisor vs P2P：怎么选"></a>Supervisor vs P2P：怎么选</h2>
+<p>Supervisor模式（中心化）：一个"经理"Agent统筹全局，分配任务给"员工"Agent。优点是控制流清晰、易调试；缺点是Supervisor挂了全挂，且Supervisor本身需要很强的规划能力。</p>
+<p>P2P模式（去中心化）：Agent之间直接通信，没有中心节点。优点是弹性好、无单点故障；缺点是协调开销大，容易出现消息风暴。</p>
+<p><strong>实践建议</strong>：大多数场景用Supervisor模式就够了。P2P适合Agent数量多（>5）、任务高度动态的场景。别为了架构优雅选P2P——调试地狱不是闹着玩的。</p>
+<h2 id="实战：代码交付Pipeline"><a href="#实战：代码交付Pipeline" class="headerlink" title="实战：代码交付Pipeline"></a>实战：代码交付Pipeline</h2>
+<p>一个典型的多Agent代码交付流水线：</p>
+<ol>
+<li><strong>规划Agent</strong>：接收需求，拆解为具体的代码任务，输出任务清单</li>
+<li><strong>编码Agent</strong>：根据任务清单逐个实现，输出代码变更</li>
+<li><strong>审查Agent</strong>：Review代码质量、安全漏洞、风格规范，输出审查意见</li>
+<li><strong>测试Agent</strong>：编写和运行测试，输出测试报告</li>
+<li><strong>部署Agent</strong>：通过CI/CD Pipeline部署到staging环境</li>
+</ol>
+<p>关键点：每个Agent之间通过<strong>结构化消息</strong>（不是自然语言聊天）传递数据。审查Agent发现问题直接打回编码Agent，形成反馈循环，但要设置<strong>最大重试次数</strong>（通常3次），避免无限循环。</p>
+<h2 id="常见坑"><a href="#常见坑" class="headerlink" title="常见坑"></a>常见坑</h2>
+<p><strong>死循环</strong>：Agent A让Agent B修改，B改完A又不满意，如此往复。解法：硬性设置最大轮次，超过就升级到人工。</p>
+<p><strong>资源竞争</strong>：多个Agent同时修改同一个文件。解法：用锁机制或者划分文件所有权。</p>
+<p><strong>结果不一致</strong>：并行Agent给出矛盾的结论。解法：需要一个仲裁机制（投票、Supervisor裁决、或者规则优先级）。</p>
+<p><strong>成本爆炸</strong>：每个Agent都用GPT-4，5个Agent跑一轮就是5倍token消耗。解法：模型分级——简单任务用小模型，只有关键决策用大模型。</p>
+<h2 id="设计原则"><a href="#设计原则" class="headerlink" title="设计原则"></a>设计原则</h2>
+<ol>
+<li><strong>明确边界</strong>：每个Agent的输入输出格式、职责范围必须精确定义，模糊地带是bug的温床</li>
+<li><strong>共享状态最小化</strong>：Agent之间通过消息传递数据，而不是共享全局状态。共享越多耦合越深</li>
+<li><strong>失败可恢复</strong>：任何一个Agent失败不应该导致整个流程崩溃。要有重试、降级、人工兜底机制</li>
+<li><strong>可观测</strong>：每个Agent的输入输出、决策过程都要可追溯，否则出了问题根本没法debug</li>
+</ol>
+<p>多Agent编排不是银弹。在引入复杂度之前，先问自己：<strong>一个Agent加上好的Prompt真的搞不定吗？</strong> 如果答案是"能"，那就别折腾多Agent。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2>
+<ul>
+<li><a href="https://codebridge.tech/multi-agent-orchestration-guide" target="_blank" rel="noopener">Codebridge多Agent编排指南</a></li>
+<li><a href="https://aws.amazon.com/blogs/machine-learning/best-practices-for-evaluating-ai-agents/" target="_blank" rel="noopener">AWS Agent评估实践</a></li>
+<li><a href="https://langchain-ai.github.io/langgraph/concepts/multi_agent/" target="_blank" rel="noopener">LangGraph Multi-Agent文档</a></li>
+<li><a href="https://github.com/crewAIInc/crewAI" target="_blank" rel="noopener">CrewAI框架</a></li>
+</ul>
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://learn2pro.tech/2026/03/24/agent-series-10-multi-agent/" data-id="agent-series-10-multi-agent" class="article-share-link">Share</a>
+      <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LLM/" rel="tag">LLM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Agent/" rel="tag">Agent</a></li></ul>
+    </footer>
+  </div>
+  <nav id="article-nav">
+  
+    <a href="/2026/03/25/agent-series-11-safety-guardrails/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">Agent安全与护栏：放权但不失控</div>
+    </a>
+  
+    <a href="/2026/03/23/agent-series-09-coding-agent/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Coding Agent：AI写代码的现在与未来</div>
+    </a>
+</nav>
+</article>
+</section>
+        <aside id="sidebar">
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget"><ul><li><a href="/2026/03/24/agent-series-10-multi-agent/">多Agent编排：让一群Agent协同干活</a></li>
+<li><a href="/2026/03/23/agent-series-09-coding-agent/">Coding Agent：AI写代码的现在与未来</a></li>
+<li><a href="/2026/03/22/agent-series-08-frameworks/">Agent框架横评：LangGraph vs CrewAI vs AutoGen</a></li>
+<li><a href="/2026/03/21/agent-series-07-planning-reasoning/">Agent规划与推理：思维链的力量</a></li>
+<li><a href="/2026/03/20/agent-series-06-memory/">Agent记忆系统：如何让AI不再失忆</a></li></ul></div>
+  </div>
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Essay/">Essay</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Life/">Life</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Technology/">Technology</a></li></ul>
+    </div>
+  </div>
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Agent/" rel="tag">Agent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLM/" rel="tag">LLM</a></li></ul>
+    </div>
+  </div>
+</aside>
+      </div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2026 learn<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+      <a href="/" class="mobile-nav-link">Home</a>
+      <a href="/archives" class="mobile-nav-link">Archives</a>
+    </nav>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+    <script src="/fancybox/jquery.fancybox.pack.js"></script>
+    <script src="/js/script.js"></script>
+  </div>
+</body>
+</html>
