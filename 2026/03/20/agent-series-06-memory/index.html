@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Agent记忆系统：如何让AI不再失忆 | Learn2Pro博客精选</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Agent深度解析系列 - Agent记忆系统：如何让AI不再失忆">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Agent记忆系统：如何让AI不再失忆">
+<meta property="og:url" content="http://learn2pro.tech/2026/03/20/agent-series-06-memory/index.html">
+<meta property="og:site_name" content="Learn2Pro博客精选">
+<meta property="og:description" content="Agent深度解析系列 - Agent记忆系统：如何让AI不再失忆">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2026-03-20T04:00:00.000Z">
+<meta property="article:author" content="learn">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="LLM">
+<meta name="twitter:card" content="summary">
+<meta property="fb:admins" content="100023269004018">
+  <link rel="alternate" href="https://github.com/learn2pro" title="Learn2Pro博客精选" type="application/atom+xml">
+  <link rel="icon" href="/favicon.png">
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap"><a href="/" id="logo">Learn2Pro博客精选</a></h1>
+      <h2 id="subtitle-wrap"><a href="/" id="subtitle">Learn2Pro</a></h2>
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        <a class="main-nav-link" href="/">Home</a>
+        <a class="main-nav-link" href="/archives">Archives</a>
+      </nav>
+      <nav id="sub-nav">
+        <a id="nav-rss-link" class="nav-icon" href="https://github.com/learn2pro" target="_blank" rel="noopener" title="RSS Feed"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://learn2pro.tech"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-agent-series-06-memory" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2026/03/20/agent-series-06-memory/" class="article-date">
+  <time datetime="2026-03-20T04:00:00.000Z" itemprop="datePublished">2026-03-20</time>
+</a>
+    <div class="article-category">
+    <a class="article-category-link" href="/categories/Technology/">Technology</a>
+  </div>
+  </div>
+  <div class="article-inner">
+    <header class="article-header">
+  <h1 class="article-title" itemprop="name">Agent记忆系统：如何让AI不再失忆</h1>
+    </header>
+    <div class="article-entry" itemprop="articleBody">
+      <p>每次对话都从零开始，是当前AI Agent最大的体验断裂点。你花了20分钟教会它项目背景，关掉窗口再打开——它什么都不记得了。记忆系统，是Agent从"工具"进化为"助手"的关键基础设施。</p>
+<h2 id="三种记忆类型"><a href="#三种记忆类型" class="headerlink" title="三种记忆类型"></a>三种记忆类型</h2>
+<p>借鉴认知科学的分类，Agent的记忆可以分为三层：</p>
+<p><strong>短期记忆（Short-term Memory）</strong>：就是上下文窗口。Claude的200K、GPT-4o的128K，本质上都是"一次对话能塞多少内容"。优点是零成本、即时可用；缺点是有硬上限，而且会话结束就蒸发。</p>
+<p><strong>工作记忆（Working Memory）</strong>：当前任务的临时状态。比如Agent在执行多步骤任务时，需要记住"我已经完成了第2步，第3步需要用到第1步的输出"。这通常由Agent框架的状态管理机制承担，LangGraph的State、AutoGen的对话历史都属于这一层。</p>
+<p><strong>长期记忆（Long-term Memory）</strong>：跨会话持久化的知识。用户的偏好、项目的上下文、历史决策记录。这是最难做好的部分，也是各框架竞争的焦点。</p>
+<h2 id="长期记忆：向量数据库-vs-文件系统"><a href="#长期记忆：向量数据库-vs-文件系统" class="headerlink" title="长期记忆：向量数据库 vs 文件系统"></a>长期记忆：向量数据库 vs 文件系统</h2>
+<p>主流方案分两派：</p>
+<table>
+<tr><th>维度</th><th>向量数据库（Pinecone/Chroma/Weaviate）</th><th>文件系统（Markdown/JSON）</th></tr>
+<tr><td>检索方式</td><td>语义相似度搜索</td><td>关键词/路径/全文搜索</td></tr>
+<tr><td>适合场景</td><td>海量非结构化知识</td><td>结构化、可人工编辑的记忆</td></tr>
+<tr><td>可解释性</td><td>低（向量距离难以直观理解）</td><td>高（打开文件就能看）</td></tr>
+<tr><td>维护成本</td><td>需要额外基础设施</td><td>几乎为零</td></tr>
+<tr><td>精确度</td><td>语义匹配可能漂移</td><td>精确但缺乏模糊匹配</td></tr>
+</table>
+<p>实际上，2026年越来越多的项目在走<strong>混合路线</strong>：结构化的元数据用文件存，大量历史对话和文档用向量库索引。</p>
+<h2 id="RAG在Agent中的角色"><a href="#RAG在Agent中的角色" class="headerlink" title="RAG在Agent中的角色"></a>RAG在Agent中的角色</h2>
+<p>检索增强生成（RAG）不是新概念，但在Agent场景中有了新的意义。传统RAG是"用户问→检索→生成回答"的单次流程。Agent RAG是<strong>多轮的、主动的</strong>：Agent在规划阶段就会主动检索相关记忆，在执行过程中根据中间结果再次检索，甚至在反思阶段检索历史错误来避免重蹈覆辙。</p>
+<p>关键区别：Agent决定<strong>何时检索、检索什么</strong>，而不是被动等用户触发。</p>
+<h2 id="框架实测对比"><a href="#框架实测对比" class="headerlink" title="框架实测对比"></a>框架实测对比</h2>
+<p><strong>Mem0</strong>：专用记忆层，自动从对话中提取事实并存储。API设计简洁（<code>add</code>/<code>search</code>/<code>get_all</code>），支持用户级和Agent级记忆隔离。适合需要"记住用户偏好"的产品场景。缺点是额外依赖，且提取的事实有时不够精确。</p>
+<p><strong>Zep</strong>：专注对话记忆，自动做对话摘要和实体提取。亮点是时间感知——它知道"用户三天前说过想吃川菜"，能处理时间衰减。适合长期对话助手场景。</p>
+<p><strong>LangChain Memory</strong>：提供<code>ConversationBufferMemory</code>、<code>ConversationSummaryMemory</code>等多种策略，灵活但需要自己组装。2026年已经与LangGraph深度整合，通过Checkpointer实现状态持久化。</p>
+<p><strong>LlamaIndex</strong>：强项在文档索引和检索，做知识库型记忆最成熟。但更像"外部知识系统"而非"个人记忆"，适合企业知识管理场景。</p>
+<h2 id="我的观点：朴素记忆最实用"><a href="#我的观点：朴素记忆最实用" class="headerlink" title="我的观点：朴素记忆最实用"></a>我的观点：朴素记忆最实用</h2>
+<p>用了一圈下来，我发现最朴素的方案反而最好用——<strong>一个MEMORY.md文件</strong>。</p>
+<p>OpenClaw的做法是维护一个Markdown文件作为长期记忆，每次会话开始时读取，重要信息随时写入。没有向量数据库，没有复杂的检索管线，就是纯文本。好处是：</p>
+<ol>
+<li><strong>完全透明</strong>：用户可以直接编辑记忆，删除不想被记住的东西</li>
+<li><strong>零基础设施</strong>：不需要任何额外服务</li>
+<li><strong>可调试</strong>：出了问题打开文件就知道Agent"记住"了什么</li>
+</ol>
+<p>当然，这在记忆量大了之后会遇到上下文窗口的限制。但对于个人助手场景，几千行的MEMORY.md配合200K的上下文窗口，已经够用了。</p>
+<p>技术上最优雅的方案不一定是最好的方案。<strong>够用、可控、可理解</strong>，才是记忆系统的第一优先级。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2>
+<ul>
+<li><a href="https://machinelearningmastery.com/best-ai-agent-memory-frameworks/" target="_blank" rel="noopener">MachineLearningMastery: Best AI Agent Memory Frameworks</a></li>
+<li><a href="https://docs.mem0.ai/" target="_blank" rel="noopener">Mem0 Documentation</a></li>
+<li><a href="https://docs.getzep.com/" target="_blank" rel="noopener">Zep Documentation</a></li>
+<li><a href="https://python.langchain.com/docs/modules/memory/" target="_blank" rel="noopener">LangChain Memory Guide</a></li>
+<li><a href="https://docs.llamaindex.ai/" target="_blank" rel="noopener">LlamaIndex Documentation</a></li>
+</ul>
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://learn2pro.tech/2026/03/20/agent-series-06-memory/" data-id="agent-series-06-memory" class="article-share-link">Share</a>
+      <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LLM/" rel="tag">LLM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Agent/" rel="tag">Agent</a></li></ul>
+    </footer>
+  </div>
+  <nav id="article-nav">
+  
+    <a href="/2026/03/21/agent-series-07-planning-reasoning/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">Agent规划与推理：思维链的力量</div>
+    </a>
+  
+    <a href="/2026/03/19/agent-series-05-a2a/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">A2A协议：Agent之间怎么对话</div>
+    </a>
+</nav>
+</article>
+</section>
+        <aside id="sidebar">
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget"><ul><li><a href="/2026/03/20/agent-series-06-memory/">Agent记忆系统：如何让AI不再失忆</a></li>
+<li><a href="/2026/03/19/agent-series-05-a2a/">A2A协议：Agent之间怎么对话</a></li>
+<li><a href="/2026/03/18/agent-series-04-mcp/">MCP协议：Agent工具调用的USB标准</a></li>
+<li><a href="/2026/03/17/agent-series-03-tool-use/">Tool Use：Agent的手和脚</a></li>
+<li><a href="/2026/03/16/agent-series-02-architecture/">Agent架构全景：一张图看懂Agent系统设计</a></li></ul></div>
+  </div>
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Essay/">Essay</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Life/">Life</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Technology/">Technology</a></li></ul>
+    </div>
+  </div>
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Agent/" rel="tag">Agent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLM/" rel="tag">LLM</a></li></ul>
+    </div>
+  </div>
+</aside>
+      </div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2026 learn<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+      <a href="/" class="mobile-nav-link">Home</a>
+      <a href="/archives" class="mobile-nav-link">Archives</a>
+    </nav>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+    <script src="/fancybox/jquery.fancybox.pack.js"></script>
+    <script src="/js/script.js"></script>
+  </div>
+</body>
+</html>
