@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>A2A协议：Agent之间怎么对话 | Learn2Pro博客精选</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Agent深度解析系列 - A2A协议：Agent之间怎么对话">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A2A协议：Agent之间怎么对话">
+<meta property="og:url" content="http://learn2pro.tech/2026/03/19/agent-series-05-a2a/index.html">
+<meta property="og:site_name" content="Learn2Pro博客精选">
+<meta property="og:description" content="Agent深度解析系列 - A2A协议：Agent之间怎么对话">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2026-03-19T04:00:00.000Z">
+<meta property="article:author" content="learn">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="LLM">
+<meta name="twitter:card" content="summary">
+<meta property="fb:admins" content="100023269004018">
+  <link rel="alternate" href="https://github.com/learn2pro" title="Learn2Pro博客精选" type="application/atom+xml">
+  <link rel="icon" href="/favicon.png">
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap"><a href="/" id="logo">Learn2Pro博客精选</a></h1>
+      <h2 id="subtitle-wrap"><a href="/" id="subtitle">Learn2Pro</a></h2>
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        <a class="main-nav-link" href="/">Home</a>
+        <a class="main-nav-link" href="/archives">Archives</a>
+      </nav>
+      <nav id="sub-nav">
+        <a id="nav-rss-link" class="nav-icon" href="https://github.com/learn2pro" target="_blank" rel="noopener" title="RSS Feed"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://learn2pro.tech"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-agent-series-05-a2a" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2026/03/19/agent-series-05-a2a/" class="article-date">
+  <time datetime="2026-03-19T04:00:00.000Z" itemprop="datePublished">2026-03-19</time>
+</a>
+    <div class="article-category">
+    <a class="article-category-link" href="/categories/Technology/">Technology</a>
+  </div>
+  </div>
+  <div class="article-inner">
+    <header class="article-header">
+  <h1 class="article-title" itemprop="name">A2A协议：Agent之间怎么对话</h1>
+    </header>
+    <div class="article-entry" itemprop="articleBody">
+      <p>MCP解决了"Agent怎么用工具"，但还有一个问题没解决：<strong>Agent怎么跟Agent协作？</strong> 当你的研究Agent找到了数据，怎么把任务交给写作Agent？写作Agent完成后，怎么通知审核Agent来检查？A2A就是为这个场景设计的协议。</p>
+<h2 id="A2A-vs-MCP：不是竞争，是分工"><a href="#A2A-vs-MCP：不是竞争，是分工" class="headerlink" title="A2A vs MCP：不是竞争，是分工"></a>A2A vs MCP：不是竞争，是分工</h2>
+<p>先把定位说清楚，这是最容易混淆的地方：</p>
+<table>
+<tr><th>维度</th><th>MCP</th><th>A2A</th></tr>
+<tr><td>解决什么</td><td>Agent如何使用工具</td><td>Agent如何与Agent协作</td></tr>
+<tr><td>类比</td><td>USB接口</td><td>HTTP协议</td></tr>
+<tr><td>通信方向</td><td>Agent → Tool（单向控制）</td><td>Agent ↔ Agent（双向对等）</td></tr>
+<tr><td>谁知道对方</td><td>Agent知道工具的Schema</td><td>Agent知道对方的Agent Card</td></tr>
+<tr><td>核心场景</td><td>调API、查数据库、执行代码</td><td>委派任务、协同工作、跨团队协作</td></tr>
+</table>
+<p>一句话：<strong>MCP是Agent的"手"，A2A是Agent的"嘴"。</strong> 手用来操作工具，嘴用来跟同事沟通。两者互补，不是替代。</p>
+<h2 id="起源：Google主导，百家响应"><a href="#起源：Google主导，百家响应" class="headerlink" title="起源：Google主导，百家响应"></a>起源：Google主导，百家响应</h2>
+<p>A2A由Google在2025年4月发布，起初叫"Agent2Agent Protocol"。与MCP不同，A2A从一开始就强调多厂商参与——首批合作伙伴包括Salesforce、SAP、Atlassian、ServiceNow等企业软件巨头。</p>
+<p>到2026年2月，已有超过100家企业宣布支持A2A。Google同样将A2A提交给Linux基金会AAIF管理，与MCP成为"兄弟协议"。</p>
+<h2 id="三个核心概念"><a href="#三个核心概念" class="headerlink" title="三个核心概念"></a>三个核心概念</h2>
+<p>A2A的设计围绕三个概念构建：</p>
+<h3 id="Agent-Card（能力名片）"><a href="#Agent-Card（能力名片）" class="headerlink" title="Agent Card（能力名片）"></a>Agent Card（能力名片）</h3>
+<p>每个Agent发布一个JSON格式的Agent Card，描述自己能做什么。类似于人类的名片+简历：</p>
+<pre><code class="json">
+{
+  "name": "research-agent",
+  "description": "深度互联网调研，返回结构化报告",
+  "url": "https://agents.example.com/research",
+  "capabilities": {
+    "streaming": true,
+    "pushNotifications": true
+  },
+  "skills": [
+    {
+      "id": "web-research",
+      "name": "Web深度调研",
+      "description": "基于关键词进行多源调研并生成报告"
+    }
+  ]
+}
+</code></pre>
+<p>Agent Card通常托管在 <code>/.well-known/agent.json</code>，其他Agent可以自动发现和读取。这个设计借鉴了OAuth的<code>.well-known</code>约定，简洁有效。</p>
+<h3 id="Task（任务）"><a href="#Task（任务）" class="headerlink" title="Task（任务）"></a>Task（任务）</h3>
+<p>A2A中的核心交互单元。一个Agent向另一个Agent发起Task，Task有完整的生命周期：</p>
+<pre><code>
+submitted → working → completed
+                   → failed
+                   → input-required（需要更多信息）
+</code></pre>
+<p><code>input-required</code> 状态很重要——它允许Agent之间进行多轮协商。"我需要你明确一下目标市场是哪个区域" → "聚焦东南亚" → 继续执行。这不是简单的请求-响应，而是真正的协作对话。</p>
+<h3 id="Message（消息）"><a href="#Message（消息）" class="headerlink" title="Message（消息）"></a>Message（消息）</h3>
+<p>Task内部的通信载体。每条Message可以包含多个Part：文本、文件、结构化数据、甚至交互式表单。这种设计让Agent之间的信息交换非常灵活——不只是传文字，可以传数据集、传图表、传中间结果。</p>
+<h2 id="三层协议栈：2026的行业共识"><a href="#三层协议栈：2026的行业共识" class="headerlink" title="三层协议栈：2026的行业共识"></a>三层协议栈：2026的行业共识</h2>
+<p>到2026年初，行业逐渐形成了一个三层协议栈共识：</p>
+<pre><code>
+┌─────────────────────────┐
+│    A2A（Agent间通信）     │  ← Agent发现、任务委派、协作
+├─────────────────────────┤
+│    MCP（工具调用）        │  ← 工具描述、调用、结果返回
+├─────────────────────────┤
+│   WebMCP（Web操作）      │  ← 浏览器控制、页面交互
+└─────────────────────────┘
+</code></pre>
+<p>这三层各司其职：WebMCP让Agent能操作网页，MCP让Agent能调用API和工具，A2A让Agent能互相协作。一个企业级Agent系统，三层都需要。</p>
+<h2 id="企业场景：为什么A2A是刚需"><a href="#企业场景：为什么A2A是刚需" class="headerlink" title="企业场景：为什么A2A是刚需"></a>企业场景：为什么A2A是刚需</h2>
+<p>单Agent能处理80%的简单任务，但企业场景往往需要多个专业Agent协作：</p>
+<p><strong>场景：智能内容工厂</strong></p>
+<ol>
+<li>用户向"项目经理Agent"提交需求："写一篇关于MCP协议的技术博客"</li>
+<li>项目经理Agent通过A2A将调研任务委派给"研究Agent"</li>
+<li>研究Agent完成调研，通过A2A将结构化资料发送给"写作Agent"</li>
+<li>写作Agent生成初稿，通过A2A提交给"审核Agent"</li>
+<li>审核Agent提出修改意见，写作Agent修订后返回终稿</li>
+</ol>
+<p>每个Agent都是独立服务，可能由不同团队维护、部署在不同基础设施上。没有A2A这样的标准协议，这种跨团队、跨系统的Agent协作就只能靠硬编码集成——脆弱、不可扩展、维护噩梦。</p>
+<p><strong>场景：企业采购流程</strong></p>
+<ul>
+<li>需求Agent（收集采购需求）→ 供应商Agent（筛选供应商）→ 合规Agent（检查合规性）→ 审批Agent（走审批流）→ 财务Agent（处理付款）</li>
+</ul>
+<p>每个环节是不同部门的Agent，A2A让它们像流水线一样衔接。</p>
+<h2 id="我的观点"><a href="#我的观点" class="headerlink" title="我的观点"></a>我的观点</h2>
+<p>A2A目前还处于早期阶段，实际落地案例远少于MCP。但它解决的是一个真实且重要的问题：<strong>当Agent数量从1个变成10个、100个时，Agent间的通信标准是绕不过去的基础设施。</strong></p>
+<p>值得注意的是，A2A和MCP都在AAIF旗下，未来很可能深度融合——一个Agent通过MCP使用工具，通过A2A与其他Agent协作，对外表现为一个统一的能力体。这种"协议栈"的思路，跟互联网的TCP/IP分层模型如出一辙。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2>
+<ul>
+<li><a href="https://google.github.io/A2A/" target="_blank" rel="noopener">Agent2Agent Protocol - Google</a></li>
+<li><a href="https://dev.to/composio/mcp-vs-a2a-the-complete-guide-to-ai-agent-protocols-3k0p" target="_blank" rel="noopener">A2A vs MCP: Understanding Agent Communication - DEV Community</a></li>
+<li><a href="https://www.infoq.com/articles/agentic-ai-architecture/" target="_blank" rel="noopener">The Rise of Agentic AI Architecture - InfoQ</a></li>
+<li><a href="https://www.linuxfoundation.org/press/a2a-protocol-joins-aaif" target="_blank" rel="noopener">A2A Joins Linux Foundation AAIF</a></li>
+</ul>
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://learn2pro.tech/2026/03/19/agent-series-05-a2a/" data-id="agent-series-05-a2a" class="article-share-link">Share</a>
+      <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LLM/" rel="tag">LLM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Agent/" rel="tag">Agent</a></li></ul>
+    </footer>
+  </div>
+  <nav id="article-nav">
+  
+    <a href="/2026/03/20/agent-series-06-memory/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">Agent记忆系统：如何让AI不再失忆</div>
+    </a>
+  
+    <a href="/2026/03/18/agent-series-04-mcp/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">MCP协议：Agent工具调用的USB标准</div>
+    </a>
+</nav>
+</article>
+</section>
+        <aside id="sidebar">
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget"><ul><li><a href="/2026/03/19/agent-series-05-a2a/">A2A协议：Agent之间怎么对话</a></li>
+<li><a href="/2026/03/18/agent-series-04-mcp/">MCP协议：Agent工具调用的USB标准</a></li>
+<li><a href="/2026/03/17/agent-series-03-tool-use/">Tool Use：Agent的手和脚</a></li>
+<li><a href="/2026/03/16/agent-series-02-architecture/">Agent架构全景：一张图看懂Agent系统设计</a></li>
+<li><a href="/2026/03/15/agent-series-01-what-is-agent/">什么是AI Agent：从聊天机器人到自主智能体</a></li></ul></div>
+  </div>
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Essay/">Essay</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Life/">Life</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Technology/">Technology</a></li></ul>
+    </div>
+  </div>
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Agent/" rel="tag">Agent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLM/" rel="tag">LLM</a></li></ul>
+    </div>
+  </div>
+</aside>
+      </div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2026 learn<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+      <a href="/" class="mobile-nav-link">Home</a>
+      <a href="/archives" class="mobile-nav-link">Archives</a>
+    </nav>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+    <script src="/fancybox/jquery.fancybox.pack.js"></script>
+    <script src="/js/script.js"></script>
+  </div>
+</body>
+</html>
