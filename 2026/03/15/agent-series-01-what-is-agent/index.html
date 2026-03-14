@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>什么是AI Agent：从聊天机器人到自主智能体 | Learn2Pro博客精选</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Agent深度解析系列 - 什么是AI Agent：从聊天机器人到自主智能体">
+<meta property="og:type" content="article">
+<meta property="og:title" content="什么是AI Agent：从聊天机器人到自主智能体">
+<meta property="og:url" content="http://learn2pro.tech/2026/03/15/agent-series-01-what-is-agent/index.html">
+<meta property="og:site_name" content="Learn2Pro博客精选">
+<meta property="og:description" content="Agent深度解析系列 - 什么是AI Agent：从聊天机器人到自主智能体">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2026-03-15T04:00:00.000Z">
+<meta property="article:author" content="learn">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="LLM">
+<meta name="twitter:card" content="summary">
+<meta property="fb:admins" content="100023269004018">
+  <link rel="alternate" href="https://github.com/learn2pro" title="Learn2Pro博客精选" type="application/atom+xml">
+  <link rel="icon" href="/favicon.png">
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap"><a href="/" id="logo">Learn2Pro博客精选</a></h1>
+      <h2 id="subtitle-wrap"><a href="/" id="subtitle">Learn2Pro</a></h2>
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        <a class="main-nav-link" href="/">Home</a>
+        <a class="main-nav-link" href="/archives">Archives</a>
+      </nav>
+      <nav id="sub-nav">
+        <a id="nav-rss-link" class="nav-icon" href="https://github.com/learn2pro" target="_blank" rel="noopener" title="RSS Feed"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://learn2pro.tech"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-agent-series-01-what-is-agent" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2026/03/15/agent-series-01-what-is-agent/" class="article-date">
+  <time datetime="2026-03-15T04:00:00.000Z" itemprop="datePublished">2026-03-15</time>
+</a>
+    <div class="article-category">
+    <a class="article-category-link" href="/categories/Technology/">Technology</a>
+  </div>
+  </div>
+  <div class="article-inner">
+    <header class="article-header">
+  <h1 class="article-title" itemprop="name">什么是AI Agent：从聊天机器人到自主智能体</h1>
+    </header>
+    <div class="article-entry" itemprop="articleBody">
+      <h2 id="一句话定义"><a href="#一句话定义" class="headerlink" title="一句话定义"></a>一句话定义</h2>
+<p>AI Agent不是聊天机器人。聊天机器人是"你问我答"，Agent是"你说目标，我去完成"。</p>
+<p>这个区别看似简单，实际上是AI应用的分水岭。ChatBot的核心循环是 <code>输入 → 生成 → 输出</code>，Agent的核心循环是 <code>感知 → 规划 → 行动 → 观察 → 再规划</code>。一个是单轮映射，一个是持续的目标驱动行为。</p>
+<h2 id="Agent的四要素"><a href="#Agent的四要素" class="headerlink" title="Agent的四要素"></a>Agent的四要素</h2>
+<p>2023年6月，OpenAI的Lilian Weng发表了一篇影响深远的博客《LLM Powered Autonomous Agents》，首次系统地定义了Agent的核心架构。三年过去，这个框架依然是理解Agent的最佳起点：</p>
+<p><strong>1. 规划（Planning）</strong></p>
+<p>Agent面对复杂任务时，不会一股脑地冲上去。它会先分解任务——把"帮我写一个完整的Web应用"拆成"设计数据模型 → 搭建后端API → 实现前端页面 → 编写测试 → 部署"。这背后是Chain-of-Thought（思维链）和Task Decomposition（任务分解）两个核心机制。</p>
+<p>更高级的Agent还具备<strong>反思能力</strong>：执行一步后回头看看，结果对不对？方向有没有偏？需不需要调整？这就是ReAct（Reasoning + Acting）模式——推理和行动交替进行，而不是闷头干到底。</p>
+<p><strong>2. 记忆（Memory）</strong></p>
+<p>人类能持续工作，靠的是记忆。Agent也一样：</p>
+<ul>
+<li><strong>短期记忆</strong>：当前对话的上下文，LLM的Context Window天然支持</li>
+<li><strong>长期记忆</strong>：跨会话的信息存储，可以是向量数据库，也可以是最朴素的文件系统（我个人用Markdown文件做记忆，简单但出奇好用）</li>
+</ul>
+<p>没有记忆的Agent就像金鱼——每次对话都是全新的开始。有记忆的Agent知道你的偏好、你的项目进度、你上次交代的事情完成到哪了。</p>
+<p><strong>3. 工具使用（Tool Use）</strong></p>
+<p>LLM的知识有截止日期，算数不靠谱，不能访问你的文件系统，不能调用API。工具使用（Tool Use / Function Calling）解决了这些问题：Agent可以调用搜索引擎获取实时信息、执行代码验证逻辑、读写文件操作数据、调用外部API完成具体任务。</p>
+<p>工具让Agent从"只会说"变成"能做事"。这是Agent和ChatBot最关键的区别。</p>
+<p><strong>4. 行动（Action）</strong></p>
+<p>有了规划、记忆和工具，最终要落地执行。Agent的行动不是一次性的输出，而是一个循环：执行 → 观察结果 → 判断是否达到目标 → 决定下一步。这个循环可能迭代很多次，直到任务完成或者确认需要人类介入。</p>
+<h2 id="从Demo到现实：2023-vs-2026"><a href="#从Demo到现实：2023-vs-2026" class="headerlink" title="从Demo到现实：2023 vs 2026"></a>从Demo到现实：2023 vs 2026</h2>
+<p>2023年的Agent是什么样？AutoGPT爆火，GPT-Engineer让人兴奋，BabyAGI概念惊艳。但说实话，它们大多停留在Demo阶段——跑起来很酷，但真用起来不稳定、成本高、经常跑偏。</p>
+<p>2026年的Agent发生了质变：</p>
+<table>
+<tr><th>维度</th><th>2023</th><th>2026</th></tr>
+<tr><td>可靠性</td><td>经常跑偏、死循环</td><td>生产级别可用</td></tr>
+<tr><td>工具调用</td><td>各家私有协议</td><td>MCP统一标准</td></tr>
+<tr><td>多Agent协作</td><td>概念验证</td><td>A2A协议落地</td></tr>
+<tr><td>推理能力</td><td>基础CoT</td><td>深度推理（o1/R1级别）</td></tr>
+<tr><td>框架生态</td><td>LangChain一家独大</td><td>LangGraph/CrewAI/AutoGen三足鼎立</td></tr>
+<tr><td>Coding Agent</td><td>"能用但不靠谱"</td><td>Cursor/Claude Code日常生产力工具</td></tr>
+</table>
+<p>最关键的转变是：<strong>Agent从"对话式AI"进化成了"任务型Agent"</strong>。不再是你一句它一句的聊天，而是你描述目标，它自主规划、执行、反馈，直到任务完成。</p>
+<h2 id="一个真实的例子"><a href="#一个真实的例子" class="headerlink" title="一个真实的例子"></a>一个真实的例子</h2>
+<p>我每天用的AI助手Tiny（基于OpenClaw），就是一个典型的Agent。今早我还在睡觉的时候，它已经：</p>
+<ol>
+<li>通过定时任务抓取了我关注的6只股票的新闻（<strong>工具使用</strong>）</li>
+<li>过滤掉噪音，只保留重大消息（<strong>规划/判断</strong>）</li>
+<li>把10条重要新闻推送到我的飞书（<strong>行动</strong>）</li>
+<li>同时统计了团队报警群过去24小时的597条报警，生成日报发到群里（<strong>多步骤任务</strong>）</li>
+</ol>
+<p>整个过程没有人类参与。这就是Agent——不是等你问问题，而是主动帮你做事。</p>
+<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2>
+<p>理解Agent的关键，不是去背"Planning、Memory、Tool Use、Action"四个词，而是理解一个本质：<strong>Agent是目标驱动的，不是指令驱动的</strong>。</p>
+<p>你不需要告诉它每一步怎么做。你只需要告诉它目标是什么，它会自己想办法。这就是为什么Agent是AI应用的下一个范式——它把人类从"操作者"变成了"决策者"。</p>
+<p>明天我们聊Agent的架构设计，一张图看懂整个系统怎么搭。</p>
+<hr>
+<p><strong>参考资料：</strong></p>
+<ul>
+<li><a href="https://lilianweng.github.io/posts/2023-06-23-agent/" target="_blank" rel="noopener">Lilian Weng - LLM Powered Autonomous Agents (2023)</a></li>
+<li><a href="https://blog.bytebytego.com/p/whats-next-in-ai-five-trends-to-watch" target="_blank" rel="noopener">ByteBytego - What's Next in AI: Five Trends to Watch in 2026</a></li>
+<li><a href="https://www.ibm.com/think/topics/agentic-reasoning" target="_blank" rel="noopener">IBM - What Is Agentic Reasoning</a></li>
+<li><a href="https://aws.amazon.com/blogs/machine-learning/evaluating-ai-agents-real-world-lessons-from-building-agentic-systems-at-amazon/" target="_blank" rel="noopener">AWS - Evaluating AI Agents: Real-world Lessons</a></li>
+</ul>
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://learn2pro.tech/2026/03/15/agent-series-01-what-is-agent/" data-id="agent-series-01-what-is-agent" class="article-share-link">Share</a>
+      <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LLM/" rel="tag">LLM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Agent/" rel="tag">Agent</a></li></ul>
+    </footer>
+  </div>
+  <nav id="article-nav">
+  
+    <a href="/2026/03/16/agent-series-02-architecture/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">Agent架构全景：一张图看懂Agent系统设计</div>
+    </a>
+</nav>
+</article>
+</section>
+        <aside id="sidebar">
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget"><ul><li><a href="/2026/03/15/agent-series-01-what-is-agent/">什么是AI Agent：从聊天机器人到自主智能体</a></li></ul></div>
+  </div>
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Essay/">Essay</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Life/">Life</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Technology/">Technology</a></li></ul>
+    </div>
+  </div>
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Agent/" rel="tag">Agent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLM/" rel="tag">LLM</a></li></ul>
+    </div>
+  </div>
+</aside>
+      </div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2026 learn<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+      <a href="/" class="mobile-nav-link">Home</a>
+      <a href="/archives" class="mobile-nav-link">Archives</a>
+    </nav>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+    <script src="/fancybox/jquery.fancybox.pack.js"></script>
+    <script src="/js/script.js"></script>
+  </div>
+</body>
+</html>
