@@ -64,65 +64,426 @@
   <h1 class="article-title" itemprop="name">Tool Use：Agent的手和脚</h1>
     </header>
     <div class="article-entry" itemprop="articleBody">
-      <p>LLM再聪明，也只是一个"嘴强王者"——它能说，但不能做。Tool Use是让Agent从"会说话的模型"变成"能干活的系统"的关键跳跃。</p>
-<h2 id="为什么Agent必须有工具"><a href="#为什么Agent必须有工具" class="headerlink" title="为什么Agent必须有工具"></a>为什么Agent必须有工具</h2>
-<p>LLM有三个硬伤，靠模型本身无法解决：</p>
-<ol>
-<li><strong>知识截止</strong>：训练数据有时间边界，问它今天的股价，它只能编。接上搜索工具，问题消失。</li>
-<li><strong>不能精确计算</strong>：让GPT算<code>17 * 384</code>，它可能算对也可能算错。接上代码解释器，100%准确。</li>
-<li><strong>不能操作外部系统</strong>：它不能发邮件、不能改数据库、不能下单购物。工具是它与真实世界交互的唯一通道。</li>
-</ol>
-<p>一句话总结：<strong>LLM负责决策，工具负责执行。</strong> Agent的价值不在于模型多强，而在于它能调动多少工具、多可靠地使用这些工具。</p>
-<h2 id="Function-Calling：工具调用的核心机制"><a href="#Function-Calling：工具调用的核心机制" class="headerlink" title="Function Calling：工具调用的核心机制"></a>Function Calling：工具调用的核心机制</h2>
-<p>Function Calling是目前主流的工具调用实现，流程分四步：</p>
-<p><strong>第一步：描述（Describe）</strong></p>
-<p>开发者用JSON Schema描述每个工具的名称、用途和参数。这些描述会作为系统提示词注入LLM上下文。</p>
-<pre><code class="json">
-{
-  "name": "get_weather",
-  "description": "获取指定城市的当前天气",
+      <h1 id="Tool-UseAgent的手和脚"><a href="#Tool-UseAgent的手和脚" class="headerlink" title="Tool Use：Agent的手和脚"></a>Tool Use：Agent的手和脚</h1>
+<blockquote><p>一个没有工具的 Agent，就像一个困在玻璃箱里的天才——看得见外面的世界，却什么都做不了。</p></blockquote>
+<p>如果你问我 Agent 技术中最关键、最实用、最值得深入理解的一个概念是什么，我的回答毫不犹豫：<strong>Tool Use（工具调用）</strong>。</p>
+<p>在上一篇文章中，我们拆解了 Agent 的四大核心模块：LLM、工具、记忆、规划。今天，我们深入其中最关键的一环——工具。没有工具，Agent 就是一个只会说不会做的"键盘侠"。有了工具，Agent 才真正拥有了改变现实世界的能力。</p>
+<p>这篇文章会带你从原理到实践，从单一工具调用到多工具编排，彻底搞懂 Tool Use 的方方面面。</p>
+<h2 id="一LLM-的能力边界为什么需要工具"><a href="#一LLM-的能力边界为什么需要工具" class="headerlink" title="一、LLM 的能力边界：为什么需要工具？"></a>一、LLM 的能力边界：为什么需要工具？</h2>
+<p>在深入讲解 Function Calling 之前，我们先聊一个最基础的问题：大语言模型（LLM）到底能做什么，不能做什么？</p>
+<p>LLM 本质上是一个<strong>文本预测机器</strong>。给它一段文字，它根据训练数据中的统计规律，输出最可能的下一个 token。它的能力令人惊叹——推理、写作、翻译、代码生成……但它有几条铁的边界：</p>
+<h3 id="11-无法访问实时数据"><a href="#11-无法访问实时数据" class="headerlink" title="1.1 无法访问实时数据"></a>1.1 无法访问实时数据</h3>
+<p>LLM 有个训练截止日期。问它"今天比特币多少钱"，它只能说"我的知识截止于 2024 年 X 月"。这不是在卖关子——它真的不知道。</p>
+<p>想象一下，你雇了一个天才分析师，但他从 2024 年起就与世隔绝，不看新闻、不上网、不接电话。你问他"特斯拉最新季报怎么样？"他只能摊手。这就是没有工具的 LLM 的处境。</p>
+<h3 id="12-无法执行代码"><a href="#12-无法执行代码" class="headerlink" title="1.2 无法执行代码"></a>1.2 无法执行代码</h3>
+<p>LLM 可以写出完美的 Python 代码，但它自己跑不了。它只能预测代码"看起来对不对"，而不知道运行结果。</p>
+<p>问它"1023 + 4579 的平方根是多少"，它可能给出一个听起来合理但完全错误的数字。这不是笑话——LLM 算术确实很差，因为它本质上是在做"看起来像数学"的文字接龙，而不是真的在计算。</p>
+<p>给它一个代码执行器，它就能写代码、跑代码、看结果、修 bug，变成一个真正的程序员助手。</p>
+<h3 id="13-无法持久化操作"><a href="#13-无法持久化操作" class="headerlink" title="1.3 无法持久化操作"></a>1.3 无法持久化操作</h3>
+<p>它不能发邮件、不能写文件、不能调用 API、不能下单购物、不能预订机票。它只能<strong>描述</strong>这些操作，而不能<strong>执行</strong>它们。</p>
+<p>这就好比你有一个绝顶聪明的朋友，他能告诉你"你应该给客户发一封邮件，内容是……"，但他没有手机、没有电脑，你得自己去发。工具就是给他一部手机。</p>
+<h3 id="14-无法感知外部世界"><a href="#14-无法感知外部世界" class="headerlink" title="1.4 无法感知外部世界"></a>1.4 无法感知外部世界</h3>
+<p>没有眼睛、没有耳朵——它只有输入给它的文字。摄像头看到什么、传感器测到什么，温度多少、湿度多少，和它没有直接关系。</p>
+<p>多模态模型（如 GPT-4o、Claude 3.5）部分解决了"看"的问题，但"实时感知"仍然需要工具来桥接。</p>
+<h3 id="15-工具如何打破边界"><a href="#15-工具如何打破边界" class="headerlink" title="1.5 工具如何打破边界"></a>1.5 工具如何打破边界</h3>
+<p><strong>工具（Tool Use）就是打破这四道墙的锤子。</strong></p>
+<p>通过给 LLM 配备工具，它能够：</p>
+<ul>
+<li>🔍 调用搜索 API 获取实时数据</li>
+<li>💻 启动代码解释器执行计算</li>
+<li>📝 写文件、发消息、操作数据库</li>
+<li>🌡️ 感知外部环境（通过传感器 API）</li>
+<li>📧 发邮件、调 API、完成真实的业务操作</li>
+</ul>
+<p>这就是为什么 Agent = LLM + Tools + Memory + Planning。工具是 Agent 伸向外部世界的手和脚。没有工具的 LLM 是哲学家，有了工具的 LLM 是工程师。</p>
+<h2 id="二Function-Calling-机制原理"><a href="#二Function-Calling-机制原理" class="headerlink" title="二、Function Calling 机制原理"></a>二、Function Calling 机制原理</h2>
+<p>Function Calling（也叫 Tool Use）是目前最主流的工具调用机制。2023 年 6 月 OpenAI 率先推出 Function Calling 能力，随后 Anthropic、Google 纷纷跟进。到今天，几乎所有主流 LLM 都支持这一能力。</p>
+<p>理解它的关键是：<strong>LLM 本身不执行任何工具，它只生成"调用指令"</strong>。</p>
+<p>这是很多初学者的误区——以为 LLM 会"自己去调 API"。实际上，LLM 只是一个"指挥官"，它说"去调这个工具，参数是这些"，然后由你的应用程序（宿主程序）去真正执行。</p>
+<h3 id="21-四步工作流程"><a href="#21-四步工作流程" class="headerlink" title="2.1 四步工作流程"></a>2.1 四步工作流程</h3>
+<p>让我们用一个具体例子走完整个流程：</p>
+<pre><code class="">用户：上海今天天气怎么样？</code></pre>
+<p style="text-align:center"><img src="images/fig01-function-calling-flow.png" alt="Function Calling 工作流程" style="max-width:100%"></p>
+<p style="text-align:center;color:#999;font-size:0.9em"><em>Function Calling 工作流程</em></p>
+<p><strong>第一步：LLM 分析意图</strong></p>
+<p>LLM 收到问题，结合工具定义（开发者预先提供的 JSON Schema），判断需要调用天气工具。这个判断过程是 LLM 内部推理完成的——它"读懂"了工具的描述和参数，决定这个问题需要借助外部工具。</p>
+<p>关键在于：<strong>你给 LLM 的工具定义越清晰，它的判断越准确</strong>。后面会详细讲工具定义的艺术。</p>
+<p><strong>第二步：生成工具调用 JSON</strong></p>
+<p>LLM 输出的不是直接回答，而是一段结构化的工具调用指令：</p>
+<pre><code class="json">{
+  "tool_calls": [{
+    "id": "call_abc123",
+    "type": "function",
+    "function": {
+      "name": "get_weather",
+      "arguments": "{\"city\": \"上海\", \"date\": \"today\"}"
+    }
+  }]
+}</code></pre>
+<p>注意几个细节：</p>
+<ul>
+<li><code>id</code> 是唯一标识，用于后续匹配响应</li>
+<li><code>arguments</code> 是 JSON 字符串（不是 JSON 对象！这是个常见的坑）</li>
+<li>LLM 可以一次返回多个 <code>tool_calls</code>（并行调用）</li>
+</ul>
+<p><strong>第三步：宿主程序执行工具</strong></p>
+<p>应用程序（不是 LLM！）解析这段 JSON，实际调用天气 API：</p>
+<pre><code class="python">result = weather_api.get(city="上海", date="today")
+# 返回: {"temperature": 22, "weather": "阴", "humidity": 78}</code></pre>
+<p>这一步完全由你的代码控制。你可以加日志、做鉴权、限速、缓存——LLM 完全不知道这些细节。</p>
+<p><strong>第四步：LLM 整合结果</strong></p>
+<p>把工具执行结果塞回对话上下文，LLM 生成最终回答：</p>
+<pre><code class="">上海今天天气阴，气温 22°C，湿度 78%。出门建议带把伞。</code></pre>
+<p>整个过程有个关键洞见：<strong>LLM 是大脑，工具是手脚，宿主程序是中枢神经系统</strong>。这三者缺一不可。</p>
+<h3 id="22-一个更复杂的真实例子"><a href="#22-一个更复杂的真实例子" class="headerlink" title="2.2 一个更复杂的真实例子"></a>2.2 一个更复杂的真实例子</h3>
+<p>上面的天气查询太简单了。来看一个更贴近实际的例子——一个投资助手：</p>
+<pre><code class="">用户："帮我分析一下特斯拉最近一周的股价走势，如果跌幅超过5%就帮我发个提醒邮件"</code></pre>
+<p>这需要 <strong>多步编排</strong>：</p>
+<pre><code class="">第1轮 LLM 调用：
+  → tool_call: get_stock_data("TSLA", period="1w")
+  
+应用程序执行，返回股价数据
+
+第2轮 LLM 调用（读到股价数据后）：
+  → tool_call: execute_python("计算涨跌幅的代码")
+  
+应用程序执行代码，返回：跌幅 -6.2%
+
+第3轮 LLM 调用（判断跌幅 &gt; 5%）：
+  → tool_call: send_email(
+      to="user@example.com", 
+      subject="TSLA 股价预警",
+      body="特斯拉本周跌幅 6.2%，建议关注..."
+  )</code></pre>
+<p>三轮对话、三次工具调用、自动完成分析和通知。这就是 Agent 的魅力——<strong>LLM 负责思考和决策，工具负责执行</strong>。</p>
+<h2 id="三工具定义JSON-Schema-的艺术"><a href="#三工具定义JSON-Schema-的艺术" class="headerlink" title="三、工具定义：JSON Schema 的艺术"></a>三、工具定义：JSON Schema 的艺术</h2>
+<p>工具调用的质量，<strong>80% 取决于工具定义的质量</strong>。这不是夸张——工具定义就是你和 LLM 之间的"契约"，写得好坏直接决定 LLM 能否正确理解和使用你的工具。</p>
+<h3 id="31-一个好的工具定义长什么样"><a href="#31-一个好的工具定义长什么样" class="headerlink" title="3.1 一个好的工具定义长什么样"></a>3.1 一个好的工具定义长什么样</h3>
+<p>以一个搜索工具为例：</p>
+<pre><code class="json">{
+  "name": "web_search",
+  "description": "在互联网上搜索实时信息。适用于：需要最新新闻、当前价格、实时数据的场景。不适用于：静态知识问答（直接用LLM回答更好）。",
   "parameters": {
     "type": "object",
     "properties": {
-      "city": { "type": "string", "description": "城市名称" }
+      "query": {
+        "type": "string",
+        "description": "搜索关键词。请使用简洁、精确的中英文关键词，避免用完整句子。例如：'上海 天气 今天' 而非 '上海今天的天气情况如何'"
+      },
+      "num_results": {
+        "type": "integer",
+        "description": "返回结果数量，默认3，最大10",
+        "default": 3,
+        "minimum": 1,
+        "maximum": 10
+      }
     },
-    "required": ["city"]
+    "required": ["query"]
   }
-}
-</code></pre>
-<p><strong>第二步：选择（Select）</strong></p>
-<p>用户说"北京今天天气怎么样"，LLM分析意图后，输出结构化的工具调用请求，而非自然语言回答。</p>
-<p><strong>第三步：调用（Execute）</strong></p>
-<p>应用层拿到LLM的调用请求，执行实际的API调用，获取真实数据。</p>
-<p><strong>第四步：返回（Return）</strong></p>
-<p>将工具执行结果喂回LLM，LLM基于真实数据生成最终回答。</p>
-<p>关键点：<strong>LLM从不直接执行工具</strong>。它只输出"我想调用什么工具、传什么参数"，实际执行权在应用层。这是安全设计——LLM是建议者，不是执行者。</p>
-<h2 id="工具设计三原则"><a href="#工具设计三原则" class="headerlink" title="工具设计三原则"></a>工具设计三原则</h2>
-<p>工具的质量直接决定Agent的可靠性。设计不好的工具，LLM要么不会用，要么用错：</p>
-<p><strong>原则一：描述清晰</strong></p>
-<p>工具描述就是给LLM看的说明书。模糊的描述 = 错误的调用。<code>"处理数据"</code> 是烂描述，<code>"将CSV文件按指定列排序并返回前N行"</code> 才是好描述。</p>
-<p><strong>原则二：参数明确</strong></p>
-<p>每个参数的类型、范围、默认值都要标注清楚。枚举值比自由文本好——<code>enum: ["asc", "desc"]</code> 远比 <code>"排序方向"</code> 更不容易出错。</p>
-<p><strong>原则三：错误可恢复</strong></p>
-<p>工具调用会失败，这是常态。好的工具在失败时返回有意义的错误信息，让LLM能理解失败原因并重试或换一种方式。返回<code>"error: 404 not found"</code> 远好于直接崩溃。</p>
-<h2 id="实战中的典型工具链"><a href="#实战中的典型工具链" class="headerlink" title="实战中的典型工具链"></a>实战中的典型工具链</h2>
-<p>不同类型的Agent配备不同的工具链：</p>
+}</code></pre>
+<p>拆解几个关键设计：</p>
+<p><strong>① description 是灵魂</strong></p>
+<p><code>description</code> 不只是说"是什么"，还说了"什么时候用"和"什么时候不用"——这极大减少误调用。LLM 读到"不适用于：静态知识问答"，就不会对"什么是光合作用"这种问题调用搜索了。</p>
+<p><strong>② 参数描述要带例子</strong></p>
+<p><code>query</code> 的描述里给了具体例子，教 LLM 如何构造好的查询。没有例子的描述就像没有样板间的楼盘——买家（LLM）不知道往里放什么家具。</p>
+<p><strong>③ 防御性约束</strong></p>
+<p><code>num_results</code> 有默认值、最小值、最大值。这防止 LLM 传入 <code>num_results: 99999</code> 打爆你的 API。</p>
+<h3 id="32-工具描述的反模式"><a href="#32-工具描述的反模式" class="headerlink" title="3.2 工具描述的反模式"></a>3.2 工具描述的反模式</h3>
+<p>❌ <strong>太简短</strong>：<code>description: "搜索"</code>——LLM 完全不知道什么时候该用</p>
+<p>❌ <strong>太冗长</strong>：写了 500 字的描述——浪费 token，LLM 反而抓不住重点</p>
+<p>❌ <strong>没有边界</strong>：只说了能做什么，不说不能做什么——导致该调用不调用的情况</p>
+<p>❌ <strong>参数无描述</strong>：<code>"city": {"type": "string"}</code>——LLM 不知道该填中文还是英文、城市名还是城市编码</p>
+<p>✅ <strong>最佳实践</strong>：50-150 字，包含用途、适用场景、不适用场景、关键参数示例。</p>
+<p style="text-align:center"><img src="images/fig02-tool-categories.png" alt="工具分类矩阵" style="max-width:100%"></p>
+<p style="text-align:center;color:#999;font-size:0.9em"><em>工具分类矩阵</em></p>
+<h2 id="四四类核心工具深度解析"><a href="#四四类核心工具深度解析" class="headerlink" title="四、四类核心工具深度解析"></a>四、四类核心工具深度解析</h2>
+<p>根据功能，工具大致分为四类。每类都有独特的设计考量。</p>
+<h3 id="41-数据获取类信息的眼睛"><a href="#41-数据获取类信息的眼睛" class="headerlink" title="4.1 数据获取类：信息的眼睛"></a>4.1 数据获取类：信息的眼睛</h3>
+<p>这类工具让 Agent 能看见外部世界的实时状态。典型代表：搜索引擎、数据库查询、API 数据拉取。</p>
+<p><strong>搜索工具</strong>是最基础的数据获取工具：</p>
+<pre><code class="python">@tool
+def web_search(query: str, num_results: int = 3) -&gt; list[dict]:
+    """搜索互联网获取实时信息"""
+    results = brave_search_api.search(query, count=num_results)
+    return [{"title": r.title, "url": r.url, "snippet": r.description} 
+            for r in results]</code></pre>
+<p><strong>设计要点</strong>：</p>
 <ul>
-<li><strong>搜索类</strong>：Web搜索、知识库检索、数据库查询。RAG本质上也是一种工具调用。</li>
-<li><strong>代码执行</strong>：Python/JS沙箱，让Agent能写代码并立即验证结果。这是最强大的工具类型——等于给了Agent一台电脑。</li>
-<li><strong>文件操作</strong>：读写文件、创建文档、管理目录。Coding Agent的核心能力。</li>
-<li><strong>浏览器控制</strong>：Playwright/Puppeteer驱动，让Agent能浏览网页、填表单、抓数据。复杂但威力巨大。</li>
-<li><strong>通信类</strong>：发邮件、发消息、调用第三方API。这类工具通常需要更严格的权限控制。</li>
+<li>返回结构化数据，不要返回原始 HTML（LLM 处理 HTML 效率极低）</li>
+<li>包含 URL，让 LLM 能进一步抓取详情</li>
+<li>适当截断内容，避免上下文窗口爆炸（搜索结果如果超过 2000 token，LLM 的注意力会显著下降）</li>
 </ul>
-<h2 id="2026趋势：从碎片化到标准化"><a href="#2026趋势：从碎片化到标准化" class="headerlink" title="2026趋势：从碎片化到标准化"></a>2026趋势：从碎片化到标准化</h2>
-<p>2025年以前，每个AI平台有自己的工具定义格式。OpenAI一套，Anthropic一套，Google又一套。开发者写一个工具要适配N个平台。</p>
-<p>2026年，<strong>MCP（Model Context Protocol）</strong> 正在统一这个混乱局面。MCP定义了一套标准的工具描述和调用协议，写一次工具，所有支持MCP的平台都能用。这个趋势对开发者是巨大利好——工具变成了可复用的资产，而不是平台绑定的代码。</p>
-<p>下一篇我们专门聊MCP。</p>
+<p><strong>数据库查询工具</strong>在企业场景极常见：</p>
+<pre><code class="python">@tool
+def query_database(sql: str, database: str = "production") -&gt; dict:
+    """执行SQL查询。只支持SELECT语句，禁止修改操作。"""
+    if not sql.strip().upper().startswith("SELECT"):
+        raise ValueError("只允许SELECT查询")
+    with get_connection(database) as conn:
+        result = conn.execute(sql)
+        return {"rows": result.fetchall(), "columns": result.keys()}</code></pre>
+<p><strong>关键设计</strong>：显式禁止危险操作（DELETE、DROP、UPDATE），在工具层做安全防护，而不是信任 LLM 的自制力。要知道，LLM 的"自制力"完全取决于 prompt——而 prompt 是可以被注入攻击的。</p>
+<h3 id="42-计算执行类思维的双手"><a href="#42-计算执行类思维的双手" class="headerlink" title="4.2 计算执行类：思维的双手"></a>4.2 计算执行类：思维的双手</h3>
+<p><strong>代码执行器</strong>是最强大也最危险的工具。它赋予了 Agent 几乎无限的能力——任何能用代码实现的事情都能做。但能力越大，风险越大。</p>
+<pre><code class="python">@tool
+def execute_python(code: str, timeout: int = 30) -&gt; dict:
+    """在安全沙箱中执行Python代码，返回输出和执行状态"""
+    sandbox = DockerSandbox(
+        image="python:3.11-slim", 
+        network_disabled=True,  # 禁止网络访问
+        memory_limit="256m",    # 限制内存
+        read_only=True          # 只读文件系统
+    )
+    try:
+        result = sandbox.run(code, timeout=timeout)
+        return {"stdout": result.stdout, "stderr": result.stderr, 
+                "exit_code": result.exit_code}
+    except TimeoutError:
+        return {"error": f"执行超时（{timeout}秒）", "exit_code": -1}</code></pre>
+<p><strong>安全原则</strong>：</p>
+<ul>
+<li>✅ 必须在沙箱（Docker/gVisor/Firecracker）中运行</li>
+<li>✅ 禁止网络访问（防止数据外泄）</li>
+<li>✅ 限制内存和执行时间（防止资源耗尽）</li>
+<li>✅ 只读文件系统（防止篡改宿主机）</li>
+<li>❌ 永远不要在宿主机直接 <code>exec()</code></li>
+</ul>
+<p>这不是可选项，是必选项。历史上已经有多起因为 Agent 代码执行不隔离导致的安全事故。</p>
+<h3 id="43-操作交互类改变世界的手"><a href="#43-操作交互类改变世界的手" class="headerlink" title="4.3 操作交互类：改变世界的手"></a>4.3 操作交互类：改变世界的手</h3>
+<p>文件操作工具是幂等性设计的好例子：</p>
+<pre><code class="python">@tool
+def write_file(path: str, content: str, mode: str = "write") -&gt; dict:
+    """写入文件。mode='write'覆盖写，mode='append'追加写。"""
+    allowed_dirs = ["/workspace", "/tmp/agent"]
+    if not any(path.startswith(d) for d in allowed_dirs):
+        raise PermissionError(f"不允许写入路径: {path}")
+    
+    with open(path, 'w' if mode == 'write' else 'a') as f:
+        f.write(content)
+    return {"success": True, "path": path, "bytes_written": len(content)}</code></pre>
+<p><strong>设计亮点</strong>：</p>
+<ul>
+<li>路径白名单防止目录遍历攻击（LLM 可能被诱导写入 <code>/etc/passwd</code>）</li>
+<li><code>mode</code> 参数明确区分覆盖和追加，避免意外数据丢失</li>
+<li>返回 <code>bytes_written</code> 让 LLM 知道操作结果</li>
+</ul>
+<h3 id="44-通信集成类连接一切的桥梁"><a href="#44-通信集成类连接一切的桥梁" class="headerlink" title="4.4 通信集成类：连接一切的桥梁"></a>4.4 通信集成类：连接一切的桥梁</h3>
+<p>邮件、Slack 消息、Webhook——这类工具让 Agent 能主动与外部系统和人交互。</p>
+<pre><code class="python">@tool  
+def call_rest_api(
+    url: str, 
+    method: str = "GET",
+    headers: dict = None,
+    body: dict = None,
+    timeout: int = 30
+) -&gt; dict:
+    """调用REST API。支持GET/POST/PUT/DELETE。"""
+    import requests
+    resp = requests.request(
+        method=method.upper(),
+        url=url,
+        headers=headers or {},
+        json=body,
+        timeout=timeout
+    )
+    return {
+        "status_code": resp.status_code,
+        "body": resp.json() if 'application/json' in resp.headers.get('content-type', '') else resp.text[:2000],
+        "success": resp.ok
+    }</code></pre>
+<p><strong>注意</strong>：对于通信类工具，建议增加人工确认步骤（Human-in-the-loop），尤其是发邮件、发消息等不可撤销操作。</p>
+<h2 id="五三大平台对比OpenAI-vs-Anthropic-vs-Google"><a href="#五三大平台对比OpenAI-vs-Anthropic-vs-Google" class="headerlink" title="五、三大平台对比：OpenAI vs Anthropic vs Google"></a>五、三大平台对比：OpenAI vs Anthropic vs Google</h2>
+<p style="text-align:center"><img src="images/fig04-platform-comparison.png" alt="三大平台 Function Calling 对比" style="max-width:100%"></p>
+<p style="text-align:center;color:#999;font-size:0.9em"><em>三大平台 Function Calling 对比</em></p>
+<p>三大平台的 Function Calling 在概念上完全相同，但 API 格式略有差异。作为开发者，了解这些差异有助于跨平台开发。</p>
+<h3 id="51-OpenAI-格式"><a href="#51-OpenAI-格式" class="headerlink" title="5.1 OpenAI 格式"></a>5.1 OpenAI 格式</h3>
+<pre><code class="python">response = client.chat.completions.create(
+    model="gpt-4o",
+    tools=[{
+        "type": "function",
+        "function": {
+            "name": "get_weather",
+            "description": "获取城市天气",
+            "parameters": {
+                "type": "object",
+                "properties": {"city": {"type": "string"}},
+                "required": ["city"]
+            }
+        }
+    }],
+    tool_choice="auto"
+)</code></pre>
+<p>OpenAI 的特点是 <code>tool_choice</code> 支持三种模式：</p>
+<ul>
+<li><code>"auto"</code>：模型自行决定是否调用（最常用）</li>
+<li><code>"required"</code>：强制调用工具</li>
+<li><code>{"type": "function", "function": {"name": "xxx"}}</code>：指定调用某个工具</li>
+</ul>
+<h3 id="52-Anthropic-格式"><a href="#52-Anthropic-格式" class="headerlink" title="5.2 Anthropic 格式"></a>5.2 Anthropic 格式</h3>
+<pre><code class="python">response = anthropic.messages.create(
+    model="claude-opus-4-5",
+    tools=[{
+        "name": "get_weather",
+        "description": "获取城市天气",
+        "input_schema": {
+            "type": "object",
+            "properties": {"city": {"type": "string"}},
+            "required": ["city"]
+        }
+    }]
+)</code></pre>
+<p><strong>主要差异</strong>：</p>
+<ul>
+<li>字段名不同：OpenAI 用 <code>parameters</code>，Anthropic 用 <code>input_schema</code></li>
+<li>Anthropic 有独特的 <code>computer_use</code> 内置工具，能直接控制电脑桌面</li>
+<li>Claude 在工具调用前会输出思考过程（<code>thinking</code> content block）</li>
+</ul>
+<h3 id="53-选择建议"><a href="#53-选择建议" class="headerlink" title="5.3 选择建议"></a>5.3 选择建议</h3>
+<ul>
+<li><strong>用什么模型就用什么格式</strong>——最简单</li>
+<li><strong>或用 LangChain/LlamaIndex 做抽象层</strong>——屏蔽差异，一份工具定义多平台通用</li>
+<li><strong>Google Gemini</strong> 最接近 OpenAPI 标准，企业集成最友好</li>
+</ul>
+<h2 id="六工具编排串行并行条件"><a href="#六工具编排串行并行条件" class="headerlink" title="六、工具编排：串行、并行、条件"></a>六、工具编排：串行、并行、条件</h2>
+<p>真实场景往往需要多个工具协作。编排策略直接影响效率和用户体验。</p>
+<p style="text-align:center"><img src="images/fig03-serial-vs-parallel.png" alt="串行 vs 并行调用" style="max-width:100%"></p>
+<p style="text-align:center;color:#999;font-size:0.9em"><em>串行 vs 并行调用</em></p>
+<h3 id="61-串行调用"><a href="#61-串行调用" class="headerlink" title="6.1 串行调用"></a>6.1 串行调用</h3>
+<p>适合有依赖关系的场景——后一步依赖前一步的结果：</p>
+<pre><code class="">用户："帮我分析最近的 AI 新闻，然后总结成中文摘要，发到我的邮箱"
+
+步骤：
+1. search("AI news latest") → 获取新闻
+2. summarize(news) → 生成摘要（依赖步骤1的结果）
+3. send_email(summary) → 发送邮件（依赖步骤2的结果）</code></pre>
+<p>总时间 = T1 + T2 + T3，无法优化。</p>
+<h3 id="62-并行调用"><a href="#62-并行调用" class="headerlink" title="6.2 并行调用"></a>6.2 并行调用</h3>
+<p>适合独立任务，效率提升显著：</p>
+<pre><code class="">用户："比较上海、北京、广州今天的天气"
+
+步骤：同时调用
+  get_weather("上海") ─┐
+  get_weather("北京") ─┼→ 整合结果 → 生成对比报告
+  get_weather("广州") ─┘</code></pre>
+<p>总时间从 3 × T 缩短到 1 × T。GPT-4o 和 Claude 3.5 都原生支持一次返回多个 <code>tool_calls</code>——模型足够聪明，能自动识别哪些调用可以并行。</p>
+<h3 id="63-条件调用"><a href="#63-条件调用" class="headerlink" title="6.3 条件调用"></a>6.3 条件调用</h3>
+<p>根据前一步结果动态决定下一步：</p>
+<pre><code class="python"># Agent 内部逻辑
+result = search(query)
+if result.confidence &lt; 0.8:
+    # 结果不够好，换策略
+    result = search(query + " site:wikipedia.org")
+    
+if result.needs_calculation:
+    calc_result = execute_python(result.formula)</code></pre>
+<p>这种 <strong>观察-思考-行动</strong> 的循环就是 ReAct 框架的核心，也是现代 Agent 系统最常见的运行模式。</p>
+<h2 id="七工具设计的五大原则"><a href="#七工具设计的五大原则" class="headerlink" title="七、工具设计的五大原则"></a>七、工具设计的五大原则</h2>
+<p style="text-align:center"><img src="images/fig05-tool-design-radar.png" alt="工具设计质量评估" style="max-width:100%"></p>
+<p style="text-align:center;color:#999;font-size:0.9em"><em>工具设计质量评估</em></p>
+<h3 id="原则一描述胜过命名"><a href="#原则一描述胜过命名" class="headerlink" title="原则一：描述胜过命名"></a>原则一：描述胜过命名</h3>
+<p>工具名字不重要，描述最重要。LLM 通过阅读 <code>description</code> 来决定何时调用工具。名字只是代号，描述才是说明书。</p>
+<p>❌ 差：<code>description: "搜索工具"</code></p>
+<p>✅ 好：<code>description: "在互联网实时搜索信息，适合需要当前数据的场景；对于常识性问题请直接回答，无需调用此工具"</code></p>
+<h3 id="原则二参数宁少勿多"><a href="#原则二参数宁少勿多" class="headerlink" title="原则二：参数宁少勿多"></a>原则二：参数宁少勿多</h3>
+<p>每多一个参数，LLM 填错的概率就提升一倍。经验法则：<strong>核心参数 ≤ 3 个，可选参数 ≤ 5 个</strong>。</p>
+<p>如果确实需要复杂输入，考虑：</p>
+<ul>
+<li>把复杂参数折叠到一个 JSON 字符串</li>
+<li>拆成多个简单工具（<code>search_by_name</code> + <code>search_by_id</code>）而不是一个复杂工具（<code>search</code> + 十个参数）</li>
+</ul>
+<h3 id="原则三幂等性优先"><a href="#原则三幂等性优先" class="headerlink" title="原则三：幂等性优先"></a>原则三：幂等性优先</h3>
+<p><code>read_file</code> 天然幂等，调用多次结果相同。<code>delete_file</code> 不幂等——调用两次第二次会报错。</p>
+<p>对于非幂等操作，建议在工具内部做去重检查，或者返回"已执行过"的提示而不是报错。</p>
+<h3 id="原则四错误信息要对-LLM-友好"><a href="#原则四错误信息要对-LLM-友好" class="headerlink" title="原则四：错误信息要对 LLM 友好"></a>原则四：错误信息要对 LLM 友好</h3>
+<pre><code class="python"># ❌ 差
+raise Exception("Error")
+
+# ✅ 好  
+raise ValueError("参数 'city' 不能为空。请提供城市名，如 '上海' 或 'Shanghai'")</code></pre>
+<p>LLM 会把错误信息读回去，决定怎么重试。有意义的错误信息 = 更好的自动恢复能力。</p>
+<h3 id="原则五超时和兜底必须处理"><a href="#原则五超时和兜底必须处理" class="headerlink" title="原则五：超时和兜底必须处理"></a>原则五：超时和兜底必须处理</h3>
+<p>任何外部调用都可能卡死或失败。没有超时处理的工具会让整个 Agent 永远等待：</p>
+<pre><code class="python">try:
+    result = external_api.call(timeout=30)
+except TimeoutError:
+    return {"error": "服务超时（30秒），建议稍后重试或换用其他方式"}
+except Exception as e:
+    return {"error": f"调用失败: {str(e)}，请检查参数后重试"}</code></pre>
+<h2 id="八常见陷阱与防坑指南"><a href="#八常见陷阱与防坑指南" class="headerlink" title="八、常见陷阱与防坑指南"></a>八、常见陷阱与防坑指南</h2>
+<h3 id="陷阱一工具描述太聪明"><a href="#陷阱一工具描述太聪明" class="headerlink" title="陷阱一：工具描述"太聪明""></a>陷阱一：工具描述"太聪明"</h3>
+<p>有些开发者会写复杂的条件逻辑在描述里，试图"引导" LLM 的行为。结果反而让 LLM 困惑。工具描述要<strong>直接、明确、无歧义</strong>。</p>
+<h3 id="陷阱二参数校验缺失"><a href="#陷阱二参数校验缺失" class="headerlink" title="陷阱二：参数校验缺失"></a>陷阱二：参数校验缺失</h3>
+<p>永远不要信任 LLM 生成的参数合法——LLM 可能给你传一个 email 格式的 SQL 注入：</p>
+<pre><code class="python">@tool
+def send_email(to: str, subject: str, body: str) -&gt; dict:
+    import re
+    if not re.match(r'^[^@]+@[^@]+\.[^@]+$', to):
+        raise ValueError(f"无效的邮箱地址: {to}")
+    if len(subject) &gt; 200:
+        raise ValueError("标题太长（最大200字符）")
+    # ... 发送逻辑</code></pre>
+<h3 id="陷阱三工具数量爆炸"><a href="#陷阱三工具数量爆炸" class="headerlink" title="陷阱三：工具数量爆炸"></a>陷阱三：工具数量爆炸</h3>
+<p>有些项目把所有功能都做成工具，结果工具列表有几十个。LLM 处理太多工具时会"选择困难症"。</p>
+<p><strong>最佳实践</strong>：保持核心工具 ≤ 15-20 个。如果确实需要更多，实现<strong>工具路由</strong>——先让 LLM 选择工具类别，再从该类别的小集合中选具体工具。</p>
+<h3 id="陷阱四循环调用"><a href="#陷阱四循环调用" class="headerlink" title="陷阱四：循环调用"></a>陷阱四：循环调用</h3>
+<p>Agent 可能陷入死循环：分析结果不满意 → 重新搜索 → 还是不满意 → 再搜索……</p>
+<pre><code class="python">MAX_TOOL_CALLS = 20
+tool_call_count = 0
+
+while True:
+    response = llm.call(messages)
+    if not response.tool_calls:
+        break
+    tool_call_count += len(response.tool_calls)
+    if tool_call_count &gt; MAX_TOOL_CALLS:
+        messages.append({"role": "user", "content": "请基于已有信息直接回答，不要继续调用工具"})</code></pre>
+<p>比粗暴报错更好的策略是：<strong>温柔地告诉 LLM 该停下来了</strong>。</p>
+<h2 id="九从工具调用到真正的-Agent"><a href="#九从工具调用到真正的-Agent" class="headerlink" title="九、从工具调用到真正的 Agent"></a>九、从工具调用到真正的 Agent</h2>
+<p>工具调用是 Agent 能力的基础，但不是全部。一个真正有用的 Agent 需要：</p>
+<ul>
+<li><strong>工具（Tool Use）</strong>：能做什么——本文的主题</li>
+<li><strong>记忆（Memory）</strong>：记住了什么——下一篇展开</li>
+<li><strong>规划（Planning）</strong>：怎么做——后续深入</li>
+</ul>
+<p>这三者缺一不可。工具让 Agent 有了手脚，记忆让它不会失忆，规划让它能把复杂任务拆解成一步步可执行的方案。</p>
+<p>但现在，你已经理解了最关键的部分：<strong>LLM 是大脑，工具是接口，而你——开发者——是设计这个系统的架构师</strong>。</p>
+<p>工具设计得好，Agent 就像一个得心应手的助手，能帮你查数据、写代码、发邮件、做分析，效率提升十倍。工具设计得差，再强大的 LLM 也会在错误的工具调用中迷失方向，给出荒谬的结果。</p>
+<p><strong>记住：好的工具描述值千行代码。</strong></p>
+<p>下一篇，我们聊 Agent 的第二大核心能力——<strong>Memory（记忆）</strong>。一个没有记忆的 Agent，每次对话都像初次见面，这显然不够用。敬请期待。</p>
+<h2 id="十实战案例构建一个智能客服-Agent-的工具集"><a href="#十实战案例构建一个智能客服-Agent-的工具集" class="headerlink" title="十、实战案例：构建一个智能客服 Agent 的工具集"></a>十、实战案例：构建一个智能客服 Agent 的工具集</h2>
+<p>最后，让我们用一个完整的实战案例来串联本文的所有知识点。假设你要构建一个电商智能客服 Agent，它需要以下工具：</p>
+<pre><code class="python">tools = [
+    # 数据获取类
+    query_order(order_id) → 查询订单状态
+    search_products(keyword, category) → 搜索商品
+    get_user_profile(user_id) → 获取用户信息
+    
+    # 计算执行类
+    calculate_shipping(origin, destination, weight) → 计算运费
+    calculate_discount(items, coupon_code) → 计算优惠
+    
+    # 操作交互类
+    create_ticket(title, description, priority) → 创建工单
+    update_order_status(order_id, status) → 更新订单
+    
+    # 通信集成类
+    send_notification(user_id, message) → 发送通知
+    escalate_to_human(conversation_id, reason) → 转人工
+]</code></pre>
+<p>总共 9 个工具，每个职责清晰、参数简洁、描述明确。当用户说"我的订单 12345 怎么还没到"，Agent 会：</p>
+<p>1. 调用 <code>query_order("12345")</code> 查询状态</p>
+<p>2. 如果显示"已发货"，调用 <code>calculate_shipping()</code> 估算到达时间</p>
+<p>3. 生成友好的回复："您的订单已发货，预计明天到达"</p>
+<p>4. 如果发现异常，调用 <code>create_ticket()</code> 自动创建工单并 <code>escalate_to_human()</code> 转人工</p>
+<p>整个流程无需人工干预，但又在关键节点保留了人工兜底——这才是一个设计良好的 Agent 系统。</p>
 <h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2>
 <ul>
-<li><a href="https://platform.openai.com/docs/guides/function-calling" target="_blank" rel="noopener">Function Calling - OpenAI API Documentation</a></li>
-<li><a href="https://docs.anthropic.com/en/docs/build-with-claude/tool-use" target="_blank" rel="noopener">Tool Use (Function Calling) - Anthropic Documentation</a></li>
+<li><a href="https://platform.openai.com/docs/guides/function-calling" target="_blank" rel="noopener">OpenAI Function Calling 官方文档</a></li>
+<li><a href="https://docs.anthropic.com/claude/docs/tool-use" target="_blank" rel="noopener">Anthropic Tool Use 指南</a></li>
+<li><a href="https://ai.google.dev/docs/function_calling" target="_blank" rel="noopener">Google Gemini Function Calling</a></li>
+<li><a href="https://python.langchain.com/docs/modules/agents/tools/" target="_blank" rel="noopener">LangChain Tools 文档</a></li>
 <li><a href="https://arxiv.org/abs/2210.03629" target="_blank" rel="noopener">ReAct: Synergizing Reasoning and Acting in Language Models</a></li>
+<li><a href="https://arxiv.org/abs/2302.04761" target="_blank" rel="noopener">Toolformer: Language Models Can Teach Themselves to Use Tools</a></li>
 </ul>
     </div>
     <footer class="article-footer">
