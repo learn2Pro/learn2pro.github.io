@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html><head>
+  <meta charset="utf-8">
+  <title>RoPE旋转位置编码与GQA分组注意力 | Learn2Pro博客精选</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="从零训练大模型系列 - RoPE旋转位置编码与GQA分组注意力">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="RoPE旋转位置编码与GQA分组注意力">
+  <meta property="article:published_time" content="2026-03-17T04:00:00.000Z">
+  <meta property="article:tag" content="LLM">
+  <link rel="icon" href="/favicon.png">
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div id="container"><div id="wrap">
+    <header id="header"><div id="banner"></div>
+      <div id="header-outer" class="outer"><div id="header-title" class="inner">
+        <h1 id="logo-wrap"><a href="/" id="logo">Learn2Pro博客精选</a></h1>
+        <h2 id="subtitle-wrap"><a href="/" id="subtitle">Learn2Pro</a></h2>
+      </div><div id="header-inner" class="inner">
+        <nav id="main-nav"><a class="main-nav-link" href="/">Home</a><a class="main-nav-link" href="/archives">Archives</a></nav>
+      </div></div>
+    </header>
+    <div class="outer">
+      <section id="main"><article id="post-buddygpt-03-rope-gqa" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta"><a href="/2026/03/17/buddygpt-03-rope-gqa/" class="article-date"><time datetime="2026-03-17T04:00:00.000Z" itemprop="datePublished">2026-03-17</time></a>
+    <div class="article-category"><a class="article-category-link" href="/categories/Technology/">Technology</a></div>
+  </div>
+  <div class="article-inner">
+    <header class="article-header"><h1 class="article-title" itemprop="name">RoPE旋转位置编码与GQA分组注意力</h1></header>
+    <div class="article-entry" itemprop="articleBody">
+      <h2 id="Transformer的"失忆症"：为什么需要位置编码？"><a href="#Transformer的"失忆症"：为什么需要位置编码？" class="headerlink" title="Transformer的"失忆症"：为什么需要位置编码？"></a>Transformer的"失忆症"：为什么需要位置编码？</h2>
+<p>来做个思想实验。把下面两句话喂给一个没有位置编码的Transformer：</p>
+<ul>
+<li>"小明打了小红"</li>
+<li>"小红打了小明"</li>
+</ul>
+<p>在Attention计算中，每个token和其他所有token做交互。但如果没有位置信息，模型看到的是<strong>同一组token的同一组交互</strong>——"小明"和"打了"的注意力权重不会因为顺序不同而改变。换句话说，模型分不清"谁打了谁"。</p>
+<p>这就是位置编码存在的意义：<strong>告诉模型每个token在序列中的位置。</strong></p>
+<p>早期方案包括：</p>
+<ul>
+<li><strong>绝对位置编码</strong>（原始Transformer）：给每个位置一个固定的向量，加到Embedding上</li>
+<li><strong>可学习位置编码</strong>（BERT/GPT-2）：位置向量作为可训练参数</li>
+</ul>
+<p>这些方案的问题是：<strong>训练时见过的最大长度就是天花板。</strong> 训练长度512，推理时给它1024的文本，效果就崩了。</p>
+<h2 id="RoPE：用旋转编码位置"><a href="#RoPE：用旋转编码位置" class="headerlink" title="RoPE：用旋转编码位置"></a>RoPE：用旋转编码位置</h2>
+<p>RoPE（Rotary Position Embedding）是苏剑林在2021年提出的方案，现在几乎所有主流大模型都在用。它的核心思想用一句话概括：<strong>不要把位置信息加到向量上，而是通过旋转向量来编码位置。</strong></p>
+<h3 id="从二维旋转说起"><a href="#从二维旋转说起" class="headerlink" title="从二维旋转说起"></a>从二维旋转说起</h3>
+<p>假设我们有一个二维向量 <code>(x₁, x₂)</code>，想编码它在位置 <code>m</code> 的信息。RoPE的做法是把这个向量旋转 <code>mθ</code> 角度：</p>
+<pre><code>
+旋转前: (x₁, x₂)
+旋转后: (x₁·cos(mθ) - x₂·sin(mθ),  x₁·sin(mθ) + x₂·cos(mθ))
+</code></pre>
+<p>用复数表示更优雅：<code>(x₁ + ix₂) × e^(imθ) = 旋转后的复数</code></p>
+<h3 id="为什么旋转能编码相对位置？"><a href="#为什么旋转能编码相对位置？" class="headerlink" title="为什么旋转能编码相对位置？"></a>为什么旋转能编码相对位置？</h3>
+<p>这是RoPE最精妙的地方。看Q和K的内积：</p>
+<pre><code>
+q在位置m: q' = q × e^(imθ)
+k在位置n: k' = k × e^(inθ)
+
+内积: q' · k'* = q · k* × e^(i(m-n)θ)
+                              ^^^^^^^^
+                        只依赖于位置差 (m-n)！
+</code></pre>
+<p>位置m的Query和位置n的Key做内积，结果只和它们的相对距离 <code>m-n</code> 有关，与绝对位置无关。这就是"旋转位置编码天然支持相对位置"的数学本质。</p>
+<h3 id="推广到高维"><a href="#推广到高维" class="headerlink" title="推广到高维"></a>推广到高维</h3>
+<p>实际的hidden维度不是2，而是64、128这样的数。RoPE的做法是：<strong>每两个维度一组，分别用不同频率旋转。</strong></p>
+<pre><code>
+维度:  [d₀,d₁] [d₂,d₃] [d₄,d₅] ... [d₆₂,d₆₃]
+频率:    θ₀      θ₁      θ₂    ...    θ₃₁
+
+其中 θᵢ = 1 / (base^(2i/dim))
+base = 10000 (Llama2) 或 100000 (Llama3/BuddyGPT)
+</code></pre>
+<p>低维度对用高频旋转（变化快，捕捉近距离关系），高维度对用低频旋转（变化慢，捕捉远距离关系）。base越大，频率整体越低，能支持的序列长度就越长——这就是BuddyGPT选择 <code>rope_theta=100000</code> 的原因。</p>
+<h3 id="RoPE代码实现"><a href="#RoPE代码实现" class="headerlink" title="RoPE代码实现"></a>RoPE代码实现</h3>
+<pre><code class="python">
+class RotaryEmbedding(nn.Module):
+    """旋转位置编码"""
+    def __init__(self, dim, base=100000.0):
+        super().__init__()
+        # 计算每个维度对的频率
+        # dim=64时，生成32个频率值: θ₀, θ₁, ..., θ₃₁
+        inv_freq = 1.0 / (base ** (torch.arange(0, dim, 2).float() / dim))
+        self.register_buffer("inv_freq", inv_freq)
+
+    def forward(self, x, position_ids):
+        # position_ids: [B, L]，每个位置的编号 0,1,2,...
+        # inv_freq: [dim//2]
+
+        # 外积：每个位置 × 每个频率 = [B, L, dim//2]
+        freqs = torch.einsum("bi,j-&gt;bij", position_ids.float(), self.inv_freq)
+
+        # 拼接两份，因为cos和sin要作用于完整维度
+        emb = torch.cat((freqs, freqs), dim=-1)  # [B, L, dim]
+
+        return emb.cos(), emb.sin()  # 返回cos和sin缓存
+
+
+def apply_rotary_pos_emb(q, k, cos, sin):
+    """
+    对Q和K应用旋转位置编码
+    q, k: [B, n_heads, L, head_dim]
+    cos, sin: [B, L, head_dim] → 需要unsqueeze到[B, 1, L, head_dim]
+    """
+    cos = cos.unsqueeze(1)  # [B, 1, L, dim]
+    sin = sin.unsqueeze(1)
+
+    # 旋转的核心操作
+    # rotate_half: [x₁,x₂,x₃,x₄,...] → [-x₂,x₁,-x₄,x₃,...]
+    # 这等价于对每个2D子空间做旋转
+    q_embed = q * cos + rotate_half(q) * sin
+    k_embed = k * cos + rotate_half(k) * sin
+
+    return q_embed, k_embed
+
+
+def rotate_half(x):
+    """将向量的前半部分和后半部分交换并取负，模拟复数乘法"""
+    x1 = x[..., :x.shape[-1] // 2]   # 前半: [x₁, x₂, ...]
+    x2 = x[..., x.shape[-1] // 2:]   # 后半: [x₃, x₄, ...]
+    return torch.cat((-x2, x1), dim=-1)  # [-x₃, -x₄, ..., x₁, x₂, ...]
+</code></pre>
+<h2 id="GQA：在速度和质量之间找到平衡"><a href="#GQA：在速度和质量之间找到平衡" class="headerlink" title="GQA：在速度和质量之间找到平衡"></a>GQA：在速度和质量之间找到平衡</h2>
+<h3 id="从MHA到MQA再到GQA"><a href="#从MHA到MQA再到GQA" class="headerlink" title="从MHA到MQA再到GQA"></a>从MHA到MQA再到GQA</h3>
+<p>传统的Multi-Head Attention（MHA）中，每个Query head都有自己独立的Key head和Value head。如果有16个head，就有16组Q、16组K、16组V。</p>
+<pre><code>
+MHA (Multi-Head Attention):      16 Q heads,  16 K heads,  16 V heads
+                                 每个Q有自己独立的K和V
+                                 参数多，KV Cache大
+
+MQA (Multi-Query Attention):     16 Q heads,   1 K head,    1 V head
+                                 所有Q共享同一个K和V
+                                 参数少，KV Cache小，但质量下降明显
+
+GQA (Grouped Query Attention):   16 Q heads,   8 K heads,   8 V heads
+                                 每2个Q共享一组K和V
+                                 折中方案：质量接近MHA，速度接近MQA
+</code></pre>
+<p>用图来理解：</p>
+<pre><code>
+MHA:  Q₀─K₀  Q₁─K₁  Q₂─K₂  ... Q₁₅─K₁₅     (16组独立的KV)
+
+MQA:  Q₀─┐   Q₁─┐   Q₂─┐   ... Q₁₅─┐
+         └──K₀───┘       └────────────┘         (1组共享的KV)
+
+GQA:  Q₀─┐       Q₂─┐       Q₄─┐             Q₁₄─┐
+      Q₁─┴─K₀    Q₃─┴─K₁    Q₅─┴─K₂   ...   Q₁₅─┴─K₇
+      (每2个Q共享1组KV，共8组)
+</code></pre>
+<p>BuddyGPT使用 <code>num_attention_heads=16, num_key_value_heads=8</code> 的GQA配置。</p>
+<h3 id="repeat_kv：让KV匹配Q的数量"><a href="#repeat_kv：让KV匹配Q的数量" class="headerlink" title="repeat_kv：让KV匹配Q的数量"></a>repeat_kv：让KV匹配Q的数量</h3>
+<p>在实际计算中，我们需要让K和V的head数量和Q匹配。做法很简单——把每组KV复制几份：</p>
+<pre><code class="python">
+def repeat_kv(hidden_states, n_rep):
+    """
+    把KV的head数量通过复制扩展到和Q一样多
+    hidden_states: [B, n_kv_heads, L, head_dim]
+    n_rep: 每组KV需要复制的次数 (= n_heads // n_kv_heads)
+    """
+    if n_rep == 1:
+        return hidden_states  # MHA的情况，不需要复制
+
+    batch, n_kv_heads, seq_len, head_dim = hidden_states.shape
+
+    # 在head维度上增加一个维度，然后expand复制
+    hidden_states = hidden_states[:, :, None, :, :]  # [B, n_kv, 1, L, dim]
+    hidden_states = hidden_states.expand(batch, n_kv_heads, n_rep, seq_len, head_dim)
+
+    # reshape回标准形状
+    return hidden_states.reshape(batch, n_kv_heads * n_rep, seq_len, head_dim)
+</code></pre>
+<p>注意：<code>expand</code> 不会真的复制数据（零内存开销），只是创建了一个"视图"。实际的内存节省发生在KV Cache中——缓存8组KV比缓存16组省了一半的显存。</p>
+<h3 id="GQA省了多少显存？"><a href="#GQA省了多少显存？" class="headerlink" title="GQA省了多少显存？"></a>GQA省了多少显存？</h3>
+<p>以BuddyGPT 0.3B为例，序列长度2048：</p>
+<pre><code>
+KV Cache 每层大小 = 2(K+V) × n_kv_heads × seq_len × head_dim × 2(fp16字节)
+
+MHA (16 KV heads): 2 × 16 × 2048 × 64 × 2 = 8,388,608 bytes ≈ 8MB/层
+GQA ( 8 KV heads): 2 ×  8 × 2048 × 64 × 2 = 4,194,304 bytes ≈ 4MB/层
+
+24层总计:
+MHA: 8MB × 24 = 192MB
+GQA: 4MB × 24 = 96MB  → 节省50%!
+</code></pre>
+<p>在更大的模型和更长的序列下，这个差距会更加显著。对于70B模型+4096长度，GQA可以节省GB级别的显存。</p>
+<h3 id="SdpaAttention：硬件加速"><a href="#SdpaAttention：硬件加速" class="headerlink" title="SdpaAttention：硬件加速"></a>SdpaAttention：硬件加速</h3>
+<p>BuddyGPT使用PyTorch内置的 <code>scaled_dot_product_attention</code> (SDPA) 来计算注意力，它会自动选择最优的底层实现：</p>
+<pre><code class="python">
+class SdpaAttention(nn.Module):
+    def forward(self, hidden_states, attention_mask=None, position_ids=None):
+        B, L, _ = hidden_states.shape
+
+        # 投影Q、K、V
+        q = self.q_proj(hidden_states).view(B, L, self.n_heads, self.head_dim).transpose(1, 2)
+        k = self.k_proj(hidden_states).view(B, L, self.n_kv_heads, self.head_dim).transpose(1, 2)
+        v = self.v_proj(hidden_states).view(B, L, self.n_kv_heads, self.head_dim).transpose(1, 2)
+
+        # 应用RoPE旋转位置编码
+        cos, sin = self.rotary_emb(v, position_ids)
+        q, k = apply_rotary_pos_emb(q, k, cos, sin)
+
+        # GQA: 复制KV以匹配Q的head数
+        k = repeat_kv(k, self.n_heads // self.n_kv_heads)
+        v = repeat_kv(v, self.n_heads // self.n_kv_heads)
+
+        # 使用PyTorch的SDPA，自动选择FlashAttention/Math/Memory-efficient实现
+        # is_causal=True 自动应用因果mask（下三角），无需手动构造mask
+        attn_output = F.scaled_dot_product_attention(
+            q, k, v,
+            attn_mask=attention_mask,
+            is_causal=True  # Decoder-Only必须用因果注意力
+        )
+
+        # 合并多头输出
+        attn_output = attn_output.transpose(1, 2).reshape(B, L, -1)
+        return self.o_proj(attn_output)
+</code></pre>
+<p><code>F.scaled_dot_product_attention</code> 会自动选择FlashAttention v2（如果硬件支持），它的内存复杂度从O(L²)降到O(L)，速度提升2-4倍。不需要你手动实现FlashAttention，PyTorch帮你搞定了。</p>
+<h2 id="个人思考"><a href="#个人思考" class="headerlink" title="个人思考"></a>个人思考</h2>
+<p>RoPE和GQA是现代大模型的两个基础组件。理解它们之后，你会发现大模型的很多设计都遵循一个共同的哲学：<strong>在数学上找到优雅的简化，在工程上找到性价比最高的trade-off。</strong></p>
+<p>RoPE用旋转编码位置，数学上等价于相对位置编码，但实现比传统的相对位置编码简单得多。GQA在MHA和MQA之间找到了甜蜜点，几乎不损失质量但大幅节省资源。</p>
+<p>这种"简化但不简单"的设计哲学，值得我们在其他工程问题中借鉴。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2>
+<ul>
+<li><a href="https://arxiv.org/abs/2104.09864" target="_blank" rel="noopener">RoFormer: Enhanced Transformer with Rotary Position Embedding</a> - 苏剑林的RoPE论文</li>
+<li><a href="https://arxiv.org/abs/2305.13245" target="_blank" rel="noopener">GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints</a></li>
+<li><a href="https://arxiv.org/abs/1911.02150" target="_blank" rel="noopener">Fast Transformer Decoding: One Write-Head is All You Need</a> - MQA原始论文</li>
+<li><a href="https://arxiv.org/abs/2205.14135" target="_blank" rel="noopener">FlashAttention: Fast and Memory-Efficient Exact Attention</a></li>
+<li><a href="https://spaces.ac.cn/archives/8130" target="_blank" rel="noopener">苏剑林的博客：让研究人员绞尽脑汁的Transformer位置编码</a></li>
+</ul>
+    </div>
+    <footer class="article-footer">
+      <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LLM/" rel="tag">LLM</a></li></ul>
+    </footer>
+  </div>
+  <nav id="article-nav">
+  <a href="/2026/03/18/buddygpt-04-mla-deepseek/" id="article-nav-newer" class="article-nav-link-wrap"><strong class="article-nav-caption">Newer</strong><div class="article-nav-title">MLA多头潜注意力：DeepSeek-V3的核心创新</div></a>
+  <a href="/2026/03/16/buddygpt-02-model-architecture/" id="article-nav-older" class="article-nav-link-wrap"><strong class="article-nav-caption">Older</strong><div class="article-nav-title">模型架构深度拆解：从Embedding到输出层</div></a>
+</nav>
+</article></section>
+      <aside id="sidebar">
+  <div class="widget-wrap"><h3 class="widget-title">Recent Posts</h3><div class="widget"><ul><li><a href="/2026/03/17/buddygpt-03-rope-gqa/">RoPE旋转位置编码与GQA分组注意力</a></li>
+<li><a href="/2026/03/16/buddygpt-02-model-architecture/">模型架构深度拆解：从Embedding到输出层</a></li>
+<li><a href="/2026/03/15/buddygpt-01-overview/">从零训练一个中文大模型：BuddyGPT项目全景</a></li></ul></div></div>
+</aside>
+    </div>
+    <footer id="footer"><div class="outer"><div id="footer-info" class="inner">&copy; 2026 learn<br>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></div></div></footer>
+  </div></div>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+  <script src="/js/script.js"></script>
+</body></html>
