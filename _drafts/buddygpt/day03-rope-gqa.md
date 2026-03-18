@@ -238,6 +238,8 @@ RoPE用旋转编码位置，数学上等价于相对位置编码，但实现比�
 
 ## 参考资料
 
+
+- [BuddyGPT项目地址](https://github.com/learn2pro/buddygpt)
 - [RoFormer: Enhanced Transformer with Rotary Position Embedding](https://arxiv.org/abs/2104.09864) - 苏剑林的RoPE论文
 - [GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints](https://arxiv.org/abs/2305.13245)
 - [Fast Transformer Decoding: One Write-Head is All You Need](https://arxiv.org/abs/1911.02150) - MQA原始论文

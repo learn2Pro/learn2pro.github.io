@@ -191,6 +191,8 @@ BuddyGPTConfig(
 
 ## 参考资料
 
+
+- [BuddyGPT项目地址](https://github.com/learn2pro/buddygpt)
 - [Attention Is All You Need](https://arxiv.org/abs/1706.03762) - Transformer原始论文
 - [LLaMA: Open and Efficient Foundation Language Models](https://arxiv.org/abs/2302.13971) - Llama架构
 - [GLU Variants Improve Transformer](https://arxiv.org/abs/2002.05202) - SwiGLU的理论基础

@@ -229,6 +229,8 @@ MLA在KV Cache上实现了约**25倍**的压缩！这意味着同样的显存可
 
 ## 参考资料
 
+
+- [BuddyGPT项目地址](https://github.com/learn2pro/buddygpt)
 - [DeepSeek-V2: A Strong, Economical, and Efficient Mixture-of-Experts Language Model](https://arxiv.org/abs/2405.04434) - MLA首次提出
 - [DeepSeek-V3 Technical Report](https://arxiv.org/abs/2412.19437) - MLA的改进版本
 - [GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints](https://arxiv.org/abs/2305.13245)
