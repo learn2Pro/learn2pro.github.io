@@ -112,7 +112,20 @@ ga('send', 'pageview');
       </header>
     
     <div class="article-entry" itemprop="articleBody">
-      
+      <blockquote style="border-left:4px solid #42b983;padding:8px 16px;background:#f8f8f8;margin:8px 0;color:#666">从零训练大模型系列 · Day 6</blockquote>
+<p style="margin:8px 0;line-height:1.8">大模型的训练其实分两步：第一步是"文字接龙"（预训练），第二步是"学会说话"（SFT）。这两步看似简单，但从一个只会续写文本的模型，到一个能正经回答问题的助手，中间的转变比你想象的更有意思。</p>
+<p style="margin:8px 0;line-height:1.8">这篇文章记录BuddyGPT从预训练到SFT的完整过程，包括数据选择、训练配置、踩过的坑，以及一些个人思考。</p>
+<p style="margin:8px 0;line-height:1.8"><strong>预训练：教模型"读书"</strong></p>
+<p style="margin:8px 0;line-height:1.8"><strong>什么是Next Token Prediction？</strong></p>
+<p style="margin:8px 0;line-height:1.8">预训练的目标极其简单：<strong>给定前面的文字，预测下一个token</strong>。</p>
+<p style="margin:8px 0;line-height:1.8">就是这么朴素。没有问答、没有对话、没有任何"智能"的味道。模型就像一个疯狂读书的学生，读完整个互联网，学会了"什么文字通常跟在什么文字后面"。</p>
+<p style="margin:8px 0;line-height:1.8">但神奇的是，当这个"文字接龙"玩到极致——几十亿参数、几万亿token——模型就突然"涌现"出了推理能力、常识理解、甚至数学能力。这大概是深度学习最让人惊叹的地方。</p>
+<p style="margin:8px 0;line-height:1.8"><strong>数据：35B Token的中文语料</strong></p>
+<p style="margin:8px 0;line-height:1.8">BuddyGPT的预训练数据构成：</p>
+<p style="margin:8px 0;line-height:1.8">为什么选这些数据？几个考虑：</p>
+<p style="margin:8px 0;line-height:1.8">1. <strong>Ultra-FineWeb</strong> 是目前质量最好的开源预训练语料之一，经过严格的质量过滤</p>
+<p style="margin:8px 0;line-height:1.8">2. <strong>Firefly</strong> 提供了高质量的中文文本</p>
+<p style="margin:8px 0;line-height:1.8">3…</p>
     </div>
     <footer class="article-footer">
       <a data-url="http://learn2pro.tech/2026/03/20/buddygpt-06-pretrain-sft/" data-id="buddygpt-06-pretrain-sft" class="article-share-link">Share</a>
@@ -150,10 +163,16 @@ ga('send', 'pageview');
       </header>
     
     <div class="article-entry" itemprop="articleBody">
-      
-        <p>从零训练大模型系列 · Day 5 — GPT-4据传有1.8万亿参数，但推理速度并没有慢到离谱。MOE架构让模型"不是所有人都需要上班"：16个路由专家+2个共享专家，每次只激活2个。</p>
-
-      
+      <blockquote style="border-left:4px solid #42b983;padding:8px 16px;background:#f8f8f8;margin:8px 0;color:#666">从零训练大模型系列 · Day 5</blockquote>
+<p style="margin:8px 0;line-height:1.8">你有没有想过一个问题：GPT-4据传有1.8万亿参数，但推理速度并没有慢到离谱。如果每个token都要过所有参数，那计算量岂不是天文数字？</p>
+<p style="margin:8px 0;line-height:1.8">答案是——它可能根本没有让所有参数都参与每次计算。这就是MOE（Mixture of Experts，混合专家模型）的核心思想。</p>
+<p style="margin:8px 0;line-height:1.8">在BuddyGPT 0.7B版本中，我们引入了MOE架构：16个路由专家 + 2个共享专家，每次只激活2个路由专家。这篇文章就来聊聊，这个"不是所有人都需要上班"的架构是怎么工作的。</p>
+<p style="margin:8px 0;line-height:1.8"><strong>Dense模型的"浪费"</strong></p>
+<p style="margin:8px 0;line-height:1.8">传统的Transformer模型是Dense（稠密）的，意思是每个token都要经过模型的所有参数。打个比方：</p>
+<p style="margin:8px 0;line-height:1.8">这就像一个公司里，不管什么问题，都要所有部门的所有人一起开会讨论。效率低不说，成本也高得吓人。</p>
+<p style="margin:8px 0;line-height:1.8"><strong>MOE的核心思想：按需分配</strong></p>
+<p style="margin:8px 0;line-height:1.8">MOE的思路很简单：把FFN层拆成多个"专家"（Expert），每个token只找最合适的几个专家来处理。</p>
+<p style="margin:8px 0;line-height:1.8">这就像公司把员工分成了16个专业小组，来了一个问题，先由前台（Gate）判断该找哪两个小组，然后只有这两个小组干活，其他人继续摸鱼。</p>
     </div>
     <footer class="article-footer">
       <a data-url="http://learn2pro.tech/2026/03/19/buddygpt-05-moe/" data-id="buddygpt-05-moe" class="article-share-link">Share</a>
@@ -192,10 +211,22 @@ ga('send', 'pageview');
       </header>
     
     <div class="article-entry" itemprop="articleBody">
-      
-        <p>从零训练大模型系列 · Day 4 — 从GQA到MLA：KV Cache还能再压缩吗？DeepSeek团队用低秩压缩将KV Cache缩小到1/6，质量几乎不损失。</p>
-
-      
+      <blockquote style="border-left:4px solid #42b983;padding:8px 16px;background:#f8f8f8;margin:8px 0;color:#666">从零训练大模型系列 · Day 4</blockquote>
+<p style="margin:8px 0;line-height:1.8"><strong>从GQA到MLA：还能再省吗？</strong></p>
+<p style="margin:8px 0;line-height:1.8">上一篇我们讲了GQA，通过让多个Q head共享KV来减少KV Cache。BuddyGPT 0.3B用16Q/8KV的配置，比MHA节省了50%的KV Cache。</p>
+<p style="margin:8px 0;line-height:1.8">但DeepSeek团队问了一个更根本的问题：<strong>KV Cache存的一定要是完整的Key和Value吗？能不能存一个更小的"压缩版"？</strong></p>
+<p style="margin:8px 0;line-height:1.8">这就是MLA（Multi-head Latent Attention）的出发点。</p>
+<p style="margin:8px 0;line-height:1.8"><strong>MLA核心思想：低秩压缩</strong></p>
+<p style="margin:8px 0;line-height:1.8">MLA的核心思路用三句话概括：</p>
+<p style="margin:8px 0;line-height:1.8">1. <strong>训练时</strong>：先把hidden state压缩到一个低维的latent向量，再从latent展开为完整的Q/K/V</p>
+<p style="margin:8px 0;line-height:1.8">2. <strong>推理时</strong>：KV Cache只需要存低维的latent，而不是完整的K和V</p>
+<p style="margin:8px 0;line-height:1.8">3. <strong>效果</strong>：KV Cache可以压缩到原来的1/6甚至更小，而质量几乎不损失</p>
+<p style="margin:8px 0;line-height:1.8">用图来理解：</p>
+<p style="margin:8px 0;line-height:1.8"><strong>MLA的数据流</strong></p>
+<p style="margin:8px 0;line-height:1.8">MLA的完整数据流比GQA复杂，但逻辑很清晰。我们分Q和KV两条路径来看：</p>
+<p style="margin:8px 0;line-height:1.8">关键点：</p>
+<p style="margin:4px 0 4px 20px">• Q和KV都先经过"下投影"压缩到低维（rank=16），再"上投影"展开</p>
+<p style="margin:4px 0 4px 20px">• Q和K都分成两部分：<code>nope</code>（不旋转）和 <code>rope</code>（旋转）</p>
     </div>
     <footer class="article-footer">
       <a data-url="http://learn2pro.tech/2026/03/18/buddygpt-04-mla-deepseek/" data-id="buddygpt-04-mla-deepseek" class="article-share-link">Share</a>
@@ -234,10 +265,20 @@ ga('send', 'pageview');
       </header>
     
     <div class="article-entry" itemprop="articleBody">
-      
-        <p>从零训练大模型系列 · Day 3 — Transformer的"失忆症"：为什么需要位置编码？RoPE如何用旋转矩阵编码位置，GQA如何平衡效率与质量。</p>
-
-      
+      <blockquote style="border-left:4px solid #42b983;padding:8px 16px;background:#f8f8f8;margin:8px 0;color:#666">从零训练大模型系列 · Day 3</blockquote>
+<p style="margin:8px 0;line-height:1.8"><strong>Transformer的"失忆症"：为什么需要位置编码？</strong></p>
+<p style="margin:8px 0;line-height:1.8">来做个思想实验。把下面两句话喂给一个没有位置编码的Transformer：</p>
+<p style="margin:4px 0 4px 20px">• "小明打了小红"</p>
+<p style="margin:4px 0 4px 20px">• "小红打了小明"</p>
+<p style="margin:8px 0;line-height:1.8">在Attention计算中，每个token和其他所有token做交互。但如果没有位置信息，模型看到的是<strong>同一组token的同一组交互</strong>——"小明"和"打了"的注意力权重不会因为顺序不同而改变。换句话说，模型分不清"谁打了谁"。</p>
+<p style="margin:8px 0;line-height:1.8">这就是位置编码存在的意义：<strong>告诉模型每个token在序列中的位置。</strong></p>
+<p style="margin:8px 0;line-height:1.8">早期方案包括：</p>
+<p style="margin:4px 0 4px 20px">• <strong>绝对位置编码</strong>（原始Transformer）：给每个位置一个固定的向量，加到Embedding上</p>
+<p style="margin:4px 0 4px 20px">• <strong>可学习位置编码</strong>（BERT/GPT-2）：位置向量作为可训练参数</p>
+<p style="margin:8px 0;line-height:1.8">这些方案的问题是：<strong>训练时见过的最大长度就是天花板。</strong> 训练长度512，推理时给它1024的文本，效果就崩了。</p>
+<p style="margin:8px 0;line-height:1.8"><strong>RoPE：用旋转编码位置</strong></p>
+<p style="margin:8px 0;line-height:1.8">RoPE（Rotary Position Embedding）是苏剑林在2021年提出的方案，现在几乎所有主流大模型都在用。它的核心思想用一句话概括：<strong>不要把位置信息加到向量上，而是通过旋转向量来编码位置。</strong></p>
+<p style="margin:8px 0;line-height:1.8"><strong>从二维旋转说起</strong></p>
     </div>
     <footer class="article-footer">
       <a data-url="http://learn2pro.tech/2026/03/17/buddygpt-03-rope-gqa/" data-id="buddygpt-03-rope-gqa" class="article-share-link">Share</a>
