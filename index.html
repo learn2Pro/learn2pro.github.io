@@ -104,6 +104,42 @@ ga('send', 'pageview');
 
 
 
+     <article id="post-openclaw-series-02-architecture" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2026-03/openclaw-series-02-architecture/" class="article-date">
+  <time datetime="2026-03-24T04:00:00.000Z" itemprop="datePublished">2026-03-24</time>
+</a>
+    <div class="article-category">
+    <a class="article-category-link" href="/categories/Technology/">Technology</a>
+  </div>
+  </div>
+  <div class="article-inner">
+    <header class="article-header">
+  <h1 itemprop="name">
+      <a class="article-title" href="/2026-03/openclaw-series-02-architecture/">OpenClaw 核心架构：四大支柱</a>
+    </h1>
+    </header>
+    <div class="article-entry" itemprop="articleBody">
+<blockquote style="border-left:4px solid #42b983;padding:8px 16px;background:#f8f8f8;margin:8px 0;color:#666">OpenClaw 深度解析系列 · Day 2</blockquote><p>理解 OpenClaw 的核心是理解它的四大支柱：<strong>Workspace、Memory、Skills、Channel</strong>。</p>
+<h2 id="整体架构"><a href="#整体架构" class="headerlink" title="整体架构"></a>整体架构</h2>
+<p>类比公司：<strong>Workspace</strong> = 办公室；<strong>Memory</strong> = 档案室；<strong>Skills</strong> = 员工技能库；<strong>Channel</strong> = 前台。Claw Core 就是 CEO，调度四个部门协同工作。</p>
+<h2 id="Workspace"><a href="#Workspace" class="headerlink" title="Workspace"></a>Workspace：AI 的工作目录</h2>
+<p>设计原则：<strong>所有 AI 需要知道的东西都在文件里</strong>。不依赖数据库，纯文件系统。</p>
+<h2 id="Memory"><a href="#Memory" class="headerlink" title="Memory"></a>Memory：认知连续性</h2>
+<p>两层：<strong>每日日志</strong>（<code>memory/YYYY-MM-DD.md</code>）+ <strong>长期记忆</strong>（<code>MEMORY.md</code>）。灵感来自人类的日记+年度总结。</p>
+<h2 id="Skills"><a href="#Skills" class="headerlink" title="Skills"></a>Skills：能力模块化</h2>
+<p>核心是写一个 SKILL.md 定义工具，不需要写代码。内置 Skills 包括 weather、discord、coding-agent、clawhub。</p>
+<h2 id="Channel"><a href="#Channel" class="headerlink" title="Channel"></a>Channel：多渠道接入</h2>
+<p>一个 AI，多个平台在线。用户不需要知道消息来自哪里，AI 也不需要关心。</p>
+<p>明天聊如何从零安装配置。</p>
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://learn2pro.tech/2026-03/openclaw-series-02-architecture/" data-id="post-openclaw-series-02-architecture" class="article-share-link">Share</a>
+      <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenClaw/" rel="tag">OpenClaw</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AI/" rel="tag">AI</a></li></ul>
+    </footer>
+  </div>
+</article>
+
 
      <article id="post-openclaw-series-01-what-is-openclaw" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
