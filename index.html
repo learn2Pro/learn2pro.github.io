@@ -120,18 +120,13 @@ ga('send', 'pageview');
     </h1>
     </header>
     <div class="article-entry" itemprop="articleBody">
-<blockquote style="border-left:4px solid #42b983;padding:8px 16px;background:#f8f8f8;margin:8px 0;color:#666">OpenClaw 深度解析系列 · Day 2</blockquote><p>理解 OpenClaw 的核心是理解它的四大支柱：<strong>Workspace、Memory、Skills、Channel</strong>。</p>
-<h2 id="整体架构"><a href="#整体架构" class="headerlink" title="整体架构"></a>整体架构</h2>
-<p>类比公司：<strong>Workspace</strong> = 办公室；<strong>Memory</strong> = 档案室；<strong>Skills</strong> = 员工技能库；<strong>Channel</strong> = 前台。Claw Core 就是 CEO，调度四个部门协同工作。</p>
-<h2 id="Workspace"><a href="#Workspace" class="headerlink" title="Workspace"></a>Workspace：AI 的工作目录</h2>
-<p>设计原则：<strong>所有 AI 需要知道的东西都在文件里</strong>。不依赖数据库，纯文件系统。</p>
-<h2 id="Memory"><a href="#Memory" class="headerlink" title="Memory"></a>Memory：认知连续性</h2>
-<p>两层：<strong>每日日志</strong>（<code>memory/YYYY-MM-DD.md</code>）+ <strong>长期记忆</strong>（<code>MEMORY.md</code>）。灵感来自人类的日记+年度总结。</p>
-<h2 id="Skills"><a href="#Skills" class="headerlink" title="Skills"></a>Skills：能力模块化</h2>
-<p>核心是写一个 SKILL.md 定义工具，不需要写代码。内置 Skills 包括 weather、discord、coding-agent、clawhub。</p>
-<h2 id="Channel"><a href="#Channel" class="headerlink" title="Channel"></a>Channel：多渠道接入</h2>
-<p>一个 AI，多个平台在线。用户不需要知道消息来自哪里，AI 也不需要关心。</p>
-<p>明天聊如何从零安装配置。</p>
+      <blockquote style="border-left:4px solid #42b983;padding:8px 16px;background:#f8f8f8;margin:8px 0;color:#666">OpenClaw 深度解析系列 · Day 2</blockquote>
+<p style="margin:8px 0;line-height:1.8">理解 OpenClaw 的核心是理解它的四大支柱：<strong>Workspace、Memory、Skills、Channel</strong>。这四个组件共同构成了一个完整的 Agent 运行时。</p>
+<p style="margin:8px 0;line-height:1.8">类比公司：<strong>Workspace</strong> = 办公室；<strong>Memory</strong> = 档案室；<strong>Skills</strong> = 员工技能库；<strong>Channel</strong> = 前台。Claw Core 就是公司 CEO，负责调度四个部门协同工作。</p>
+<p style="margin:8px 0;line-height:1.8"><strong>Workspace</strong> 是 OpenClaw 的文件系统。设计原则：所有 AI 需要知道的东西都在文件里。不依赖数据库，不需要 API，纯文件系统。</p>
+<p style="margin:8px 0;line-height:1.8"><strong>Memory</strong> 分两层：每日日志（<code>memory/YYYY-MM-DD.md</code>）记录当天发生的事；长期记忆（<code>MEMORY.md</code>）从日志提炼精华。灵感来自人类的日记+年度总结。</p>
+<p style="margin:8px 0;line-height:1.8"><strong>Skills</strong> 是 OpenClaw 的插件系统。核心是写一个 SKILL.md 定义工具，不需要写代码。内置包括 weather、discord、coding-agent、clawhub 等。</p>
+<p style="margin:8px 0;line-height:1.8"><strong>Channel</strong> 让 OpenClaw 同时在多个平台在线。一个 AI，Telegram、Discord、WhatsApp 都能找到它，用户不需要知道消息来自哪里。</p>
     </div>
     <footer class="article-footer">
       <a data-url="http://learn2pro.tech/2026-03/openclaw-series-02-architecture/" data-id="post-openclaw-series-02-architecture" class="article-share-link">Share</a>
@@ -157,13 +152,14 @@ ga('send', 'pageview');
     </h1>
     </header>
     <div class="article-entry" itemprop="articleBody">
-      <blockquote style="border-left:4px solid #42b983;padding:8px 16px;background:#f8f8f8;margin:8px 0;color:#666">OpenClaw 深度解析系列 &middot; Day 1</blockquote>
-      <p>2026年，AI Agent 框架的竞争已经从能不能跑进化到了谁更好用。LangGraph、CrewAI、AutoGen 各有千秋，但如果你想要一个<strong>本地运行、开源、可扩展、多渠道</strong>的 Agent 运行时，OpenClaw 是一个值得关注的新选择。</p>
-<h2 id="为什么需要OpenClaw"><a href="#为什么需要OpenClaw" class="headerlink" title="为什么需要OpenClaw"></a>为什么需要OpenClaw</h2>
-<p>现有的 Agent 框架大多数面向开发者：写 Python 代码、定义工作流、调用 API。问题是：每次都要写代码，部署依赖云服务，数据不够私密，多渠道支持差。</p>
-<p>OpenClaw 的设计思路不一样——<strong>把框架做成一个本地 Agent 运行时，用配置文件和 Markdown 定义行为</strong>。不需要写多少代码，就能让 AI 完成各种任务。</p>
-<h2 id="核心特性"><a href="#核心特性" class="headerlink" title="核心特性"></a>核心特性</h2>
-<table><tr><th>特性</th><th>说明</th></tr><tr><td>本地运行</td><td>数据不离开机器，隐私有保障</td></tr><tr><td>开源</td><td>GitHub 开源，可审计、可定制</td></tr><tr><td>多渠道</td><td>Telegram、Discord、WhatsApp 等</td></tr><tr><td>Skills 生态</td><td>ClawHub 社区，支持一键安装</td></tr><tr><td>Memory 系统</td><td>长期记忆 + 短期日志</td></tr><tr><td>Heartbeat</td><td>主动任务，定时检查和推送</td></tr></table></div>
+      <blockquote style="border-left:4px solid #42b983;padding:8px 16px;background:#f8f8f8;margin:8px 0;color:#666">OpenClaw 深度解析系列 · Day 1</blockquote>
+<p style="margin:8px 0;line-height:1.8">2026年，AI Agent 框架的竞争已经从"能不能跑"进化到了"谁更好用"。LangGraph、CrewAI、AutoGen 各有千秋，但如果你想要一个<strong>本地运行、开源、可扩展、多渠道</strong>的 Agent 运行时，OpenClaw 是一个值得关注的新选择。</p>
+<p style="margin:8px 0;line-height:1.8">现有的 Agent 框架大多数面向开发者：写 Python 代码、定义工作流、调用 API。问题是每次都要写代码，部署依赖云服务，数据不够私密，多渠道支持差。</p>
+<p style="margin:8px 0;line-height:1.8">OpenClaw 的设计思路不一样——<strong>把框架做成一个本地 Agent 运行时，用配置文件和 Markdown 定义行为</strong>。不需要写多少代码，就能让 AI 完成各种任务。</p>
+<p style="margin:8px 0;line-height:1.8"><strong>一句话定义：OpenClaw = 本地运行的 AI Agent 操作系统</strong></p>
+<p style="margin:8px 0;line-height:1.8">OpenClaw 负责：加载和运行 Agent、管理 Memory（记忆）、调度 Skills（能力）、接入各种 Channel（渠道）、处理 Subagents（子任务）。</p>
+<p style="margin:8px 0;line-height:1.8">和 LangGraph（流程图工具）、CrewAI（角色扮演剧本）不同，OpenClaw 的目标用户是想要一个真正能帮你做事的 AI 助手的人——配置优先，不需要写代码。</p>
+    </div>
     <footer class="article-footer">
       <a data-url="http://learn2pro.tech/2026-03/openclaw-series-01-what-is-openclaw/" data-id="post-openclaw-series-01-what-is-openclaw" class="article-share-link">Share</a>
       <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenClaw/" rel="tag">OpenClaw</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AI/" rel="tag">AI</a></li></ul>
