@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>我的 OpenClaw 实战：从零打造个人 AI 助手 | Learn2Pro博客精选</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="OpenClaw 是一个开源的 AI Agent 框架，本文记录了我用它从零搭建个人 AI 助手的完整过程、踩坑经验和实战心得。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="我的 OpenClaw 实战：从零打造个人 AI 助手">
+<meta property="og:url" content="http://learn2pro.tech/2026/03/22/openclaw-practice/">
+<meta property="og:site_name" content="Learn2Pro博客精选">
+<meta property="og:description" content="OpenClaw 是一个开源的 AI Agent 框架，本文记录了我用它从零搭建个人 AI 助手的完整过程、踩坑经验和实战心得。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2026-03-22T03:00:00.000Z">
+<meta property="article:author" content="learn">
+<meta property="article:tag" content="AI">
+<meta property="article:tag" content="OpenClaw">
+<meta property="article:tag" content="Agent">
+<meta name="twitter:card" content="summary">
+<meta property="fb:admins" content="100023269004018">
+  <link rel="alternate" href="https://github.com/learn2pro" title="Learn2Pro博客精选" type="application/atom+xml">
+  <link rel="icon" href="/favicon.png">
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap"><a href="/" id="logo">Learn2Pro博客精选</a></h1>
+      <h2 id="subtitle-wrap"><a href="/" id="subtitle">Learn2Pro</a></h2>
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        <a class="main-nav-link" href="/">Home</a>
+        <a class="main-nav-link" href="/archives">Archives</a>
+      </nav>
+      <nav id="sub-nav">
+        <a id="nav-rss-link" class="nav-icon" href="https://github.com/learn2pro" target="_blank" rel="noopener" title="RSS Feed"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://learn2pro.tech"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-openclaw-practice" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2026/03/22/openclaw-practice/" class="article-date">
+  <time datetime="2026-03-22T03:00:00.000Z" itemprop="datePublished">2026-03-22</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Technology/">Technology</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      我的 OpenClaw 实战：从零打造个人 AI 助手
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+
+  <div class="article-meta">
+    <time datetime="2026-03-22">2026-03-22</time>
+    <span class="article-category">Technology</span>
+  </div>
+
+  <h1>我的 OpenClaw 实战：从零打造个人 AI 助手</h1>
+
+  <h2 id="背景">背景</h2>
+
+  <p>用大模型 API 做问答已经不够了——我需要的是一个真正能帮我做事的 AI 助手：帮我监控交易、查邮件、管文件、甚至在我不在的时候主动出击。想来想去，自己搭一个 AI Agent 是最靠谱的选择。</p>
+
+  <p>调研了一圈，最后选了 <strong>OpenClaw</strong>。选择它的理由很简单：开源、本地运行、可扩展、支持多渠道（Telegram、Discord 等），而且上手门槛不高。本文就是我从零到跑起来的完整记录，包括核心概念、踩过的坑和实战心得。</p>
+
+  <h2 id="什么是-openclaw">什么是 OpenClaw</h2>
+
+  <p>OpenClaw 是一个开源的 AI Agent 运行时框架。它的核心思路是：<strong>给大模型装上手和脚</strong>——不只是聊天，而是能实际执行操作（读写文件、执行命令、访问网页、调用 API）。</p>
+
+  <p>关键组件：</p>
+  <ul>
+    <li><strong>Workspace</strong>：AI 的工作目录，所有文件、脚本、记忆都在这里</li>
+    <li><strong>Memory</strong>：持久化记忆系统，分短期的每日笔记和长期的 MEMORY.md</li>
+    <li><strong>Skills</strong>：可插拔的能力模块，发布在 ClawHub 上可以一键安装</li>
+    <li><strong>Channel</strong>：对接各种消息渠道（Telegram、Discord、WhatsApp 等），一个 AI 多端在线</li>
+    <li><strong>Subagents</strong>：支持派生子任务，主 agent 统筹调度</li>
+  </ul>
+
+  <h2 id="安装与基础配置">安装与基础配置</h2>
+
+  <p>我是 Ubuntu 22.04 + AMD 7800X3D 的机器，OpenClaw 通过 npm 全局安装：</p>
+
+  <pre><code>npm install -g openclaw
+openclaw init
+openclaw gateway start</code></pre>
+
+  <p>配置文件在 <code>~/.openclaw/config.yaml</code>，核心配置项：</p>
+
+  <pre><code>model: minimax-portal/MiniMax-M2.5  # 主模型
+skills:
+  enabled:
+    - coding-agent
+    - discord
+    - weather
+    - clawhub
+  channel:
+    telegram:
+      enabled: true
+      bot_token: "YOUR_BOT_TOKEN"</code></pre>
+
+  <blockquote>踩坑经验：模型选择上，国产模型（MiniMax、GLM）在中文场景性价比很高，但复杂推理任务我会切到 Claude Opus。OpenClaw 支持会话级模型覆盖，很方便。</blockquote>
+
+  <h2 id="workspace-结构设计">Workspace 结构设计</h2>
+
+  <p>Workspace 是 AI 的"家"，结构要设计好。我的目录布局：</p>
+
+  <pre><code>~/.openclaw/workspace/
+├── AGENTS.md          # 运行规范和流程
+├── SOUL.md            # AI 的灵魂和性格
+├── USER.md            # 用户信息
+├── IDENTITY.md        # AI 身份定义
+├── HEARTBEAT.md       # 定期任务清单
+├── MEMORY.md          # 长期记忆
+├── TOOLS.md           # 本地工具备忘
+├── memory/            # 每日工作记录
+│   ├── 2026-03-22.md
+│   └── heartbeat-state.json
+├── scripts/           # 各种自动化脚本
+│   └── quantrade-monitor.sh
+└── exports/           # 输出文件</code></pre>
+
+  <p>核心文件说明：</p>
+
+  <ul>
+    <li><strong>SOUL.md</strong>：定义 AI 的性格和风格，这个写好了，回复才有"人味"</li>
+    <li><strong>HEARTBEAT.md</strong>：心跳任务清单，AI 会定期检查这些事项</li>
+    <li><strong>MEMORY.md</strong>：长期记忆，AI 每次启动都会加载，决定了它的"认知连续性"</li>
+  </ul>
+
+  <h2 id="实战：量化交易监控">实战：量化交易监控</h2>
+
+  <p>我的核心场景之一是用 OpenClaw 监控我的加密货币量化交易系统（Quantrade）。</p>
+
+  <h3 id="监控脚本">监控脚本</h3>
+
+  <p>写了一个 bash 脚本，定时查 MySQL，有新成交就推 Telegram：</p>
+
+  <pre><code>#!/bin/bash
+# Quantrade 交易监控脚本
+STATE_FILE="/workspace/memory/quantrade-last-order-id.txt"
+LAST_ID=$(cat "$STATE_FILE" 2>/dev/null || echo 0)
+
+RESULT=$(mysql -h 127.0.0.1 -P 3307 -u root -proot123456 quantrade \
+  -N -e "SELECT id, symbol, side, quantity, price, total, status, executed_at
+         FROM t_quantrade_order WHERE id > $LAST_ID ORDER BY id ASC")
+
+if [ -z "$RESULT" ]; then
+    echo "NO_NEW_TRADES"
+    exit 0
+fi
+
+# 发送到 Telegram
+curl -s -X POST "https://api.telegram.org/bot$TOKEN/sendMessage" \
+  -d chat_id="$CHAT_ID" -d text="$MSG" -d parse_mode="Markdown"</code></pre>
+
+  <h3 id="heartbeat-任务">Heartbeat 任务</h3>
+
+  <p>在 HEARTBEAT.md 里注册这个脚本，OpenClaw 会在心跳时自动运行：</p>
+
+  <pre><code># HEARTBEAT.md
+## Quantrade 交易监控
+运行 `bash ~/.openclaw/workspace/scripts/quantrade-monitor.sh`
+- 脚本自动处理通知和状态更新
+- 如果容器挂了 → 通知 Sam</code></pre>
+
+  <h3 id="查询余额">查询余额</h3>
+
+  <p>Sam 随时问"看看 quantrade"，AI 自动查 MySQL 报出现金余额和持仓情况：</p>
+
+  <table>
+    <tr><th>项目</th><th>数值</th></tr>
+    <tr><td>可用现金</td><td>1,548.57 USDT</td></tr>
+    <tr><td>总权益</td><td>10,007.38 USDT</td></tr>
+    <tr><td>持仓</td><td>BTC 0.04 / ETH 1.39 / SOL 29.54</td></tr>
+  </table>
+
+  <h2 id="skills-生态">Skills 生态</h2>
+
+  <p>OpenClaw 的 Skills 系统让我不用重复造轮子。几个常用的：</p>
+
+  <ul>
+    <li><strong>weather</strong>：查天气预报，开箱即用</li>
+    <li><strong>discord</strong>：Discord 渠道运营工具</li>
+    <li><strong>coding-agent</strong>：把复杂编码任务丢给 Claude Code 子 Agent 来做</li>
+    <li><strong>clawhub</strong>：搜索和安装社区 Skills</li>
+    <li><strong>find-skills</strong>：查找某个功能有没有现成的 Skill</li>
+  </ul>
+
+  <p>安装 Skill 很简单：</p>
+
+  <pre><code>clawhub install weather</code></pre>
+
+  <p>自己的 Skill 写起来也不难，核心就是一个 SKILL.md 定义工具和用法，放在 <code>~/.openclaw/workspace/skills/</code> 即可。</p>
+
+  <h2 id="记忆系统设计">记忆系统设计</h2>
+
+  <p>记忆系统是我认为 OpenClaw 最聪明的设计。分两层：</p>
+
+  <ol>
+    <li><strong>每日日志</strong>（<code>memory/YYYY-MM-DD.md</code>）：记录每天发生的事，不需要太讲究，随手记</li>
+    <li><strong>长期记忆</strong>（<code>MEMORY.md</code>）：从每日日志里提炼出来的精华，AI 每次启动必读</li>
+  </ol>
+
+  <p>AI 会定期（通过 heartbeat）做"记忆整理"：读最近几天的日志，提炼重要内容更新到 MEMORY.md。这模拟了人类"事后复盘"的过程。</p>
+
+  <blockquote>关键原则：别什么都往 MEMORY.md 里塞。只留真正重要的决策、教训、偏好。MEMORY.md 越大，每次启动越慢，效果反而差。</blockquote>
+
+  <h2 id="踩过的坑">踩过的坑</h2>
+
+  <ol>
+    <li><strong>磁盘只读</strong>：外接 HDD 挂载成了 ro 模式，写入失败。后来查了 <code>mount</code> 输出，发现是 NTFS 格式需要额外参数重新挂载</li>
+    <li><strong>heartbeat 过频</strong>：一开始设了 5 分钟一次，API 调用飞起。改成 30 分钟，并按功能分批处理</li>
+    <li><strong>模型选择</strong>：便宜模型响应快但复杂任务容易出错。关键任务（交易监控）用好模型，日常闲聊用便宜模型</li>
+    <li><strong>私有信息泄露</strong>：MEMORY.md 里有敏感信息，坚决不在群聊里加载。AGENTS.md 里明确写了"不在共享上下文里读 MEMORY.md"</li>
+  </ol>
+
+  <h2 id="总结">总结</h2>
+
+  <p>用 OpenClaw 跑了几个月下来，最大的感受是：<strong>AI Agent 真正的价值在于自动化</strong>——不是问它答，而是让它主动帮我盯着事情、做记录、推提醒。</p>
+
+  <p>它不一定完美，但足够实用。关键是设计好 Memory 系统和 Heartbeat 任务，让它真正成为一个"活的"助手，而不是每次都要重新解释上下文的陌生人。</p>
+
+  <p>下一步的打算是接入更多 Skills（比如日历、邮件），以及让 Subagents 处理更复杂的分析任务。有兴趣的可以去看看 <a href="https://docs.openclaw.ai" target="_blank">OpenClaw 官方文档</a> 和 <a href="https://clawhub.com" target="_blank">ClawHub</a>。</p>
+
+
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://learn2pro.tech/2026/03/22/openclaw-practice/" data-id="openclaw-practice" class="article-share-link">Share</a>
+      <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AI/" rel="tag">AI</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenClaw/" rel="tag">OpenClaw</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Agent/" rel="tag">Agent</a></li></ul>
+    </footer>
+  </div>
+  <nav id="article-nav">
+  
+    <a href="/2026/03/22/agent-series-08-frameworks/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">Agent框架横评：LangGraph vs CrewAI vs AutoGen</div>
+    </a>
+  
+    <a href="/2026/03/21/agent-series-07-planning-reasoning/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Agent规划与推理：思维链的力量</div>
+    </a>
+</nav>
+</article>
+</section>
+        <aside id="sidebar">
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget"><ul><li><a href="/2026/03/22/openclaw-practice/">我的 OpenClaw 实战：从零打造个人 AI 助手</a></li>
+<li><a href="/2026/03/22/agent-series-08-frameworks/">Agent框架横评：LangGraph vs CrewAI vs AutoGen</a></li>
+<li><a href="/2026/03/21/agent-series-07-planning-reasoning/">Agent规划与推理：思维链的力量</a></li>
+<li><a href="/2026/03/20/agent-series-06-memory/">Agent记忆系统：如何让AI不再失忆</a></li>
+<li><a href="/2026/03/19/agent-series-05-a2a/">A2A协议：Agent之间怎么对话</a></li></ul></div>
+  </div>
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Essay/">Essay</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Life/">Life</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Technology/">Technology</a></li></ul>
+    </div>
+  </div>
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AI/" style="font-size: 15px;">AI</a> <a href="/tags/Agent/" style="font-size: 15px;">Agent</a> <a href="/tags/LLM/" style="font-size: 10px;">LLM</a> <a href="/tags/OpenClaw/" style="font-size: 15px;">OpenClaw</a>    </div>
+  </div>
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/03/">March 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li></ul>
+    </div>
+  </div>
+</aside>
+      </div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2026 learn<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+      <a href="/" class="mobile-nav-link">Home</a>
+      <a href="/archives" class="mobile-nav-link">Archives</a>
+    </nav>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script src="/fancybox/jquery.fancybox.pack.js"></script>
+    <script src="/js/script.js"></script>
+  </div>
+</body>
+</html>
