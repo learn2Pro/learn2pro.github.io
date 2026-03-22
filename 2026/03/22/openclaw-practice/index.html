@@ -2,21 +2,12 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>什么是AI Agent：从聊天机器人到自主智能体 | Learn2Pro博客精选</title>
+  <title>我的 OpenClaw 实战：从零打造个人 AI 助手 | Learn2Pro博客精选</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Agent深度解析系列 - 什么是AI Agent：从聊天机器人到自主智能体">
-<meta property="og:type" content="article">
-<meta property="og:title" content="什么是AI Agent：从聊天机器人到自主智能体">
-<meta property="og:url" content="http://learn2pro.tech/2026/03/15/agent-series-01-what-is-agent/index.html">
+  <meta name="description" content="OpenClaw 是一个开源的 AI Agent 框架，本文记录了我用它从零搭建个人 AI 助手的完整过程、踩坑经验和实战心得。">
+<meta property="og:url" content="http://learn2pro.tech/2026/03/22/openclaw-practice/index.html">
 <meta property="og:site_name" content="Learn2Pro博客精选">
-<meta property="og:description" content="Agent深度解析系列 - 什么是AI Agent：从聊天机器人到自主智能体">
-<meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2026-03-15T04:00:00.000Z">
-<meta property="article:author" content="learn">
-<meta property="article:tag" content="Agent">
-<meta property="article:tag" content="LLM">
-<meta name="twitter:card" content="summary">
-<meta property="fb:admins" content="100023269004018">
+<meta property="og:description" content="OpenClaw 是一个开源的 AI Agent 框架，本文记录了我用它从零搭建个人 AI 助手的完整过程、踩坑经验和实战心得。">
   <link rel="alternate" href="https://github.com/learn2pro" title="Learn2Pro博客精选" type="application/atom+xml">
   <link rel="icon" href="/favicon.png">
   <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
@@ -50,10 +41,10 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-agent-series-01-what-is-agent" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-openclaw-practice" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2026/03/15/agent-series-01-what-is-agent/" class="article-date">
-  <time datetime="2026-03-15T04:00:00.000Z" itemprop="datePublished">2026-03-15</time>
+    <a href="/2026/03/22/openclaw-practice/" class="article-date">
+  <time datetime="2026-03-22T03:00:00.000Z" itemprop="datePublished">2026-03-22</time>
 </a>
     <div class="article-category">
     <a class="article-category-link" href="/categories/Technology/">Technology</a>
@@ -61,10 +52,10 @@
   </div>
   <div class="article-inner">
     <header class="article-header">
-  <h1 class="article-title" itemprop="name">什么是AI Agent：从聊天机器人到自主智能体</h1>
+  <h1 class="article-title" itemprop="name">我的 OpenClaw 实战：从零打造个人 AI 助手</h1>
     </header>
-    <div class="article-entry" itemprop="articleBody">
-<p style="margin-bottom:15px"><img src="/image/openclaw/cover.png" alt="OpenClaw 实战" style="width:100%;border-radius:6px;box-shadow:0 2px 12px rgba(0,0,0,0.15)"></p>
+        <div class="article-entry" itemprop="articleBody">
+      <p><img src="/image/openclaw/cover.png" alt="OpenClaw 实战" style="width:100%;border-radius:6px;box-shadow:0 2px 12px rgba(0,0,0,0.15)"></p>
 <h2 id="为什么需要个人AI助手"><a href="#为什么需要个人AI助手" class="headerlink" title="为什么需要个人AI助手"></a>为什么需要个人AI助手</h2>
 <p>用大模型 API 做问答已经不够了。我需要的是一个真正能帮我做事的 AI 助手——帮我监控交易、查邮件、管文件、甚至在我不在的时候主动出击。</p>
 <p>市面上的产品要么太封闭，要么太贵，要么不够定制化。想来想去，自己搭一个 AI Agent 是最靠谱的选择。</p>
@@ -135,7 +126,6 @@ RESULT=$(mysql -h 127.0.0.1 -P 3307 -u root -proot123456 quantrade \
 
 if [ -z "$RESULT" ]; then exit 0; fi
 
-# 发送到 Telegram
 curl -s -X POST "https://api.telegram.org/bot$TOKEN/sendMessage" \
   -d chat_id="$CHAT_ID" -d text="$MSG" -d parse_mode="Markdown"
 echo $LAST_ID > $STATE_FILE</code></pre>
@@ -190,68 +180,67 @@ echo $LAST_ID > $STATE_FILE</code></pre>
 <p>用 OpenClaw 跑了几个月下来，最大的感受是：<strong>AI Agent 真正的价值在于自动化</strong>——不是问它答，而是让它主动帮我盯着事情、做记录、推提醒。</p>
 <p>它不一定完美，但足够实用。关键是设计好 Memory 系统和 Heartbeat 任务，让它真正成为一个"活的"助手，而不是每次都要重新解释上下文的陌生人。</p>
 <p>下一步的打算是接入更多 Skills（比如日历、邮件），以及让 Subagents 处理更复杂的分析任务。有兴趣的可以去看看 <a href="https://docs.openclaw.ai" target="_blank" rel="noopener">OpenClaw 官方文档</a> 和 <a href="https://clawhub.com" target="_blank" rel="noopener">ClawHub</a>。</p>
-</div>    <footer class="article-footer">
-      <a data-url="http://learn2pro.tech/2026/03/22/openclaw-practice/" data-id="openclaw-practice" class="article-share-link">Share</a>
-      <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AI/" rel="tag">AI</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenClaw/" rel="tag">OpenClaw</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Agent/" rel="tag">Agent</a></li></ul>
+    </div>
+  </div>
+    <footer class="article-footer">
+      <a data-url="http://learn2pro.tech/2026/03/22/openclaw-practice/" data-id="agent-series-08-frameworks" class="article-share-link">Share</a>
+      <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LLM/" rel="tag">LLM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Agent/" rel="tag">Agent</a></li></ul>
     </footer>
   </div>
   <nav id="article-nav">
-    <a href="/2026/03/22/agent-series-08-frameworks/" id="article-nav-newer" class="article-nav-link-wrap">
+  
+    <a href="/2026/03/23/agent-series-09-coding-agent/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">Agent框架横评：LangGraph vs CrewAI vs AutoGen</div>
+      <div class="article-nav-title">Coding Agent：AI写代码的现在与未来</div>
     </a>
+  
     <a href="/2026/03/21/agent-series-07-planning-reasoning/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
       <div class="article-nav-title">Agent规划与推理：思维链的力量</div>
     </a>
-  </nav>
+</nav>
 </article>
 </section>
-<aside id="sidebar">
-<div class="widget-wrap">
-<h3 class="widget-title">Recent Posts</h3>
-<div class="widget"><ul><li><a href="/2026/03/22/openclaw-practice/">我的 OpenClaw 实战：从零打造个人 AI 助手</a></li>
-<li><a href="/2026/03/22/agent-series-08-frameworks/">Agent框架横评：LangGraph vs CrewAI vs AutoGen</a></li>
+        <aside id="sidebar">
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget"><ul><li><a href="/2026/03/22/openclaw-practice/">我的 OpenClaw 实战：从零打造个人 AI 助手</a></li>
 <li><a href="/2026/03/21/agent-series-07-planning-reasoning/">Agent规划与推理：思维链的力量</a></li>
 <li><a href="/2026/03/20/agent-series-06-memory/">Agent记忆系统：如何让AI不再失忆</a></li>
-<li><a href="/2026/03/19/agent-series-05-a2a/">A2A协议：Agent之间怎么对话</a></li></ul></div>
-</div>
-<div class="widget-wrap">
-<h3 class="widget-title">Categories</h3>
-<div class="widget">
-<ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Essay/">Essay</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Life/">Life</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Technology/">Technology</a></li></ul>
-</div>
-</div>
-<div class="widget-wrap">
-<h3 class="widget-title">Tags</h3>
-<div class="widget tagcloud">
-<a href="/tags/AI/" style="font-size: 15px;">AI</a> <a href="/tags/Agent/" style="font-size: 15px;">Agent</a> <a href="/tags/LLM/" style="font-size: 10px;">LLM</a> <a href="/tags/OpenClaw/" style="font-size: 15px;">OpenClaw</a>
-</div>
-</div>
-<div class="widget-wrap">
-<h3 class="widget-title">Archives</h3>
-<div class="widget">
-<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/03/">March 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li></ul>
-</div>
-</div>
+<li><a href="/2026/03/19/agent-series-05-a2a/">A2A协议：Agent之间怎么对话</a></li>
+<li><a href="/2026/03/18/agent-series-04-mcp/">MCP协议：Agent工具调用的USB标准</a></li></ul></div>
+  </div>
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Essay/">Essay</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Life/">Life</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Technology/">Technology</a></li></ul>
+    </div>
+  </div>
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Agent/" rel="tag">Agent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLM/" rel="tag">LLM</a></li></ul>
+    </div>
+  </div>
 </aside>
-</div>
-<footer id="footer">
-<div class="outer">
-<div id="footer-info" class="inner">
-&copy; 2026 learn<br>
-Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
-</div>
-</div>
+      </div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2026 learn<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
 </footer>
-</div>
-<nav id="mobile-nav">
-<a href="/" class="mobile-nav-link">Home</a>
-<a href="/archives" class="mobile-nav-link">Archives</a>
-</nav>
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-<script src="/fancybox/jquery.fancybox.pack.js"></script>
-<script src="/js/script.js"></script>
-</div>
+    </div>
+    <nav id="mobile-nav">
+      <a href="/" class="mobile-nav-link">Home</a>
+      <a href="/archives" class="mobile-nav-link">Archives</a>
+    </nav>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+    <script src="/fancybox/jquery.fancybox.pack.js"></script>
+    <script src="/js/script.js"></script>
+  </div>
 </body>
 </html>
