@@ -91,210 +91,7 @@ ga('send', 'pageview');
   
 
   
-    <article id="post-buddygpt-06-pretrain-sft" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2026/03/20/buddygpt-06-pretrain-sft/" class="article-date">
-  <time datetime="2026-03-20T01:00:00.000Z" itemprop="datePublished">2026-03-20</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2026/03/20/buddygpt-06-pretrain-sft/">预训练与SFT：从文字接龙到对话能力</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      <blockquote style="border-left:4px solid #42b983;padding:8px 16px;background:#f8f8f8;margin:8px 0;color:#666">从零训练大模型系列 · Day 6</blockquote>
-<p style="margin:8px 0;line-height:1.8">大模型的训练其实分两步：第一步是"文字接龙"（预训练），第二步是"学会说话"（SFT）。这两步看似简单，但从一个只会续写文本的模型，到一个能正经回答问题的助手，中间的转变比你想象的更有意思。</p>
-<p style="margin:8px 0;line-height:1.8">这篇文章记录BuddyGPT从预训练到SFT的完整过程，包括数据选择、训练配置、踩过的坑，以及一些个人思考。</p>
-<p style="margin:8px 0;line-height:1.8"><strong>预训练：教模型"读书"</strong></p>
-<p style="margin:8px 0;line-height:1.8"><strong>什么是Next Token Prediction？</strong></p>
-<p style="margin:8px 0;line-height:1.8">预训练的目标极其简单：<strong>给定前面的文字，预测下一个token</strong>。</p>
-<p style="margin:8px 0;line-height:1.8">就是这么朴素。没有问答、没有对话、没有任何"智能"的味道。模型就像一个疯狂读书的学生，读完整个互联网，学会了"什么文字通常跟在什么文字后面"。</p>
-<p style="margin:8px 0;line-height:1.8">但神奇的是，当这个"文字接龙"玩到极致——几十亿参数、几万亿token——模型就突然"涌现"出了推理能力、常识理解、甚至数学能力。这大概是深度学习最让人惊叹的地方。</p>
-<p style="margin:8px 0;line-height:1.8"><strong>数据：35B Token的中文语料</strong></p>
-<p style="margin:8px 0;line-height:1.8">BuddyGPT的预训练数据构成：</p>
-<p style="margin:8px 0;line-height:1.8">为什么选这些数据？几个考虑：</p>
-<p style="margin:8px 0;line-height:1.8">1. <strong>Ultra-FineWeb</strong> 是目前质量最好的开源预训练语料之一，经过严格的质量过滤</p>
-<p style="margin:8px 0;line-height:1.8">2. <strong>Firefly</strong> 提供了高质量的中文文本</p>
-<p style="margin:8px 0;line-height:1.8">3…</p>
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://learn2pro.tech/2026/03/20/buddygpt-06-pretrain-sft/" data-id="buddygpt-06-pretrain-sft" class="article-share-link">Share</a>
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LLM/" rel="tag">LLM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/BuddyGPT/" rel="tag">BuddyGPT</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-  
-    <article id="post-buddygpt-05-moe" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2026/03/19/buddygpt-05-moe/" class="article-date">
-  <time datetime="2026-03-19T01:00:00.000Z" itemprop="datePublished">2026-03-19</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Technology/">Technology</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2026/03/19/buddygpt-05-moe/">MOE混合专家模型：用16个专家实现0.7B的效果</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      <blockquote style="border-left:4px solid #42b983;padding:8px 16px;background:#f8f8f8;margin:8px 0;color:#666">从零训练大模型系列 · Day 5</blockquote>
-<p style="margin:8px 0;line-height:1.8">你有没有想过一个问题：GPT-4据传有1.8万亿参数，但推理速度并没有慢到离谱。如果每个token都要过所有参数，那计算量岂不是天文数字？</p>
-<p style="margin:8px 0;line-height:1.8">答案是——它可能根本没有让所有参数都参与每次计算。这就是MOE（Mixture of Experts，混合专家模型）的核心思想。</p>
-<p style="margin:8px 0;line-height:1.8">在BuddyGPT 0.7B版本中，我们引入了MOE架构：16个路由专家 + 2个共享专家，每次只激活2个路由专家。这篇文章就来聊聊，这个"不是所有人都需要上班"的架构是怎么工作的。</p>
-<p style="margin:8px 0;line-height:1.8"><strong>Dense模型的"浪费"</strong></p>
-<p style="margin:8px 0;line-height:1.8">传统的Transformer模型是Dense（稠密）的，意思是每个token都要经过模型的所有参数。打个比方：</p>
-<p style="margin:8px 0;line-height:1.8">这就像一个公司里，不管什么问题，都要所有部门的所有人一起开会讨论。效率低不说，成本也高得吓人。</p>
-<p style="margin:8px 0;line-height:1.8"><strong>MOE的核心思想：按需分配</strong></p>
-<p style="margin:8px 0;line-height:1.8">MOE的思路很简单：把FFN层拆成多个"专家"（Expert），每个token只找最合适的几个专家来处理。</p>
-<p style="margin:8px 0;line-height:1.8">这就像公司把员工分成了16个专业小组，来了一个问题，先由前台（Gate）判断该找哪两个小组，然后只有这两个小组干活，其他人继续摸鱼。</p>
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://learn2pro.tech/2026/03/19/buddygpt-05-moe/" data-id="buddygpt-05-moe" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LLM/" rel="tag">LLM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/BuddyGPT/" rel="tag">BuddyGPT</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-  
-    <article id="post-buddygpt-04-mla-deepseek" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2026/03/18/buddygpt-04-mla-deepseek/" class="article-date">
-  <time datetime="2026-03-18T01:00:00.000Z" itemprop="datePublished">2026-03-18</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Technology/">Technology</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2026/03/18/buddygpt-04-mla-deepseek/">MLA多头潜注意力：DeepSeek-V3的核心创新</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      <blockquote style="border-left:4px solid #42b983;padding:8px 16px;background:#f8f8f8;margin:8px 0;color:#666">从零训练大模型系列 · Day 4</blockquote>
-<p style="margin:8px 0;line-height:1.8"><strong>从GQA到MLA：还能再省吗？</strong></p>
-<p style="margin:8px 0;line-height:1.8">上一篇我们讲了GQA，通过让多个Q head共享KV来减少KV Cache。BuddyGPT 0.3B用16Q/8KV的配置，比MHA节省了50%的KV Cache。</p>
-<p style="margin:8px 0;line-height:1.8">但DeepSeek团队问了一个更根本的问题：<strong>KV Cache存的一定要是完整的Key和Value吗？能不能存一个更小的"压缩版"？</strong></p>
-<p style="margin:8px 0;line-height:1.8">这就是MLA（Multi-head Latent Attention）的出发点。</p>
-<p style="margin:8px 0;line-height:1.8"><strong>MLA核心思想：低秩压缩</strong></p>
-<p style="margin:8px 0;line-height:1.8">MLA的核心思路用三句话概括：</p>
-<p style="margin:8px 0;line-height:1.8">1. <strong>训练时</strong>：先把hidden state压缩到一个低维的latent向量，再从latent展开为完整的Q/K/V</p>
-<p style="margin:8px 0;line-height:1.8">2. <strong>推理时</strong>：KV Cache只需要存低维的latent，而不是完整的K和V</p>
-<p style="margin:8px 0;line-height:1.8">3. <strong>效果</strong>：KV Cache可以压缩到原来的1/6甚至更小，而质量几乎不损失</p>
-<p style="margin:8px 0;line-height:1.8">用图来理解：</p>
-<p style="margin:8px 0;line-height:1.8"><strong>MLA的数据流</strong></p>
-<p style="margin:8px 0;line-height:1.8">MLA的完整数据流比GQA复杂，但逻辑很清晰。我们分Q和KV两条路径来看：</p>
-<p style="margin:8px 0;line-height:1.8">关键点：</p>
-<p style="margin:4px 0 4px 20px">• Q和KV都先经过"下投影"压缩到低维（rank=16），再"上投影"展开</p>
-<p style="margin:4px 0 4px 20px">• Q和K都分成两部分：<code>nope</code>（不旋转）和 <code>rope</code>（旋转）</p>
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://learn2pro.tech/2026/03/18/buddygpt-04-mla-deepseek/" data-id="buddygpt-04-mla-deepseek" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LLM/" rel="tag">LLM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/BuddyGPT/" rel="tag">BuddyGPT</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-  
-    <article id="post-buddygpt-03-rope-gqa" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2026/03/17/buddygpt-03-rope-gqa/" class="article-date">
-  <time datetime="2026-03-17T01:00:00.000Z" itemprop="datePublished">2026-03-17</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Technology/">Technology</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2026/03/17/buddygpt-03-rope-gqa/">RoPE旋转位置编码与GQA分组注意力</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      <blockquote style="border-left:4px solid #42b983;padding:8px 16px;background:#f8f8f8;margin:8px 0;color:#666">从零训练大模型系列 · Day 3</blockquote>
-<p style="margin:8px 0;line-height:1.8"><strong>Transformer的"失忆症"：为什么需要位置编码？</strong></p>
-<p style="margin:8px 0;line-height:1.8">来做个思想实验。把下面两句话喂给一个没有位置编码的Transformer：</p>
-<p style="margin:4px 0 4px 20px">• "小明打了小红"</p>
-<p style="margin:4px 0 4px 20px">• "小红打了小明"</p>
-<p style="margin:8px 0;line-height:1.8">在Attention计算中，每个token和其他所有token做交互。但如果没有位置信息，模型看到的是<strong>同一组token的同一组交互</strong>——"小明"和"打了"的注意力权重不会因为顺序不同而改变。换句话说，模型分不清"谁打了谁"。</p>
-<p style="margin:8px 0;line-height:1.8">这就是位置编码存在的意义：<strong>告诉模型每个token在序列中的位置。</strong></p>
-<p style="margin:8px 0;line-height:1.8">早期方案包括：</p>
-<p style="margin:4px 0 4px 20px">• <strong>绝对位置编码</strong>（原始Transformer）：给每个位置一个固定的向量，加到Embedding上</p>
-<p style="margin:4px 0 4px 20px">• <strong>可学习位置编码</strong>（BERT/GPT-2）：位置向量作为可训练参数</p>
-<p style="margin:8px 0;line-height:1.8">这些方案的问题是：<strong>训练时见过的最大长度就是天花板。</strong> 训练长度512，推理时给它1024的文本，效果就崩了。</p>
-<p style="margin:8px 0;line-height:1.8"><strong>RoPE：用旋转编码位置</strong></p>
-<p style="margin:8px 0;line-height:1.8">RoPE（Rotary Position Embedding）是苏剑林在2021年提出的方案，现在几乎所有主流大模型都在用。它的核心思想用一句话概括：<strong>不要把位置信息加到向量上，而是通过旋转向量来编码位置。</strong></p>
-<p style="margin:8px 0;line-height:1.8"><strong>从二维旋转说起</strong></p>
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://learn2pro.tech/2026/03/17/buddygpt-03-rope-gqa/" data-id="buddygpt-03-rope-gqa" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LLM/" rel="tag">LLM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/BuddyGPT/" rel="tag">BuddyGPT</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-agent-series-14-future" class="article article-type-post" itemscope itemprop="blogPost">
+     <article id="post-agent-series-14-future" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2026/03/28/agent-series-14-future/" class="article-date">
   <time datetime="2026-03-28T04:00:00.000Z" itemprop="datePublished">2026-03-28</time>
@@ -339,7 +136,6 @@ ga('send', 'pageview');
   </div>
   
 </article>
-
 
     <article id="post-agent-series-13-personal-agent" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -389,7 +185,6 @@ ga('send', 'pageview');
   </div>
   
 </article>
-
 
     <article id="post-agent-series-12-production" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -448,7 +243,6 @@ ga('send', 'pageview');
   
 </article>
 
-
     <article id="post-agent-series-11-safety-guardrails" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2026/03/25/agent-series-11-safety-guardrails/" class="article-date">
@@ -497,7 +291,6 @@ ga('send', 'pageview');
   
 </article>
 
-
     <article id="post-agent-series-10-multi-agent" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2026/03/24/agent-series-10-multi-agent/" class="article-date">
@@ -544,7 +337,6 @@ ga('send', 'pageview');
   
 </article>
 
-
     <article id="post-agent-series-09-coding-agent" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2026/03/23/agent-series-09-coding-agent/" class="article-date">
@@ -590,7 +382,6 @@ ga('send', 'pageview');
   </div>
   
 </article>
-
 
     <article id="post-agent-series-08-frameworks" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -639,8 +430,7 @@ ga('send', 'pageview');
   
 </article>
 
-
-        <article id="post-openclaw-practice" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-openclaw-practice" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2026/03/22/openclaw-practice/" class="article-date">
   <time datetime="2026-03-22T03:00:00.000Z" itemprop="datePublished">2026-03-22</time>
@@ -679,17 +469,12 @@ ga('send', 'pageview');
   
 </article>
 
-
-<article id="post-agent-series-07-planning-reasoning" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-buddygpt-06-pretrain-sft" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2026/03/21/agent-series-07-planning-reasoning/" class="article-date">
-  <time datetime="2026-03-21T04:00:00.000Z" itemprop="datePublished">2026-03-21</time>
+    <a href="/2026/03/20/buddygpt-06-pretrain-sft/" class="article-date">
+  <time datetime="2026-03-20T01:00:00.000Z" itemprop="datePublished">2026-03-20</time>
 </a>
     
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Technology/">Technology</a>
-  </div>
-
   </div>
   <div class="article-inner">
     
@@ -698,34 +483,37 @@ ga('send', 'pageview');
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2026/03/21/agent-series-07-planning-reasoning/">Agent规划与推理：思维链的力量</a>
+      <a class="article-title" href="/2026/03/20/buddygpt-06-pretrain-sft/">预训练与SFT：从文字接龙到对话能力</a>
     </h1>
   
 
       </header>
     
     <div class="article-entry" itemprop="articleBody">
-      <blockquote style="border-left:4px solid #42b983;padding:8px 16px;background:#f8f8f8;margin:8px 0;color:#666">如果说工具调用让Agent有了"手"，那么规划与推理就是Agent的"大脑"。一个没有推理能力的Agent，顶多是个自动化脚本；而一个具备规划能力的Agent，才能真正解决复杂问题。</blockquote>
-<p style="margin:8px 0;line-height:1.8"><strong>什么是推理，为什么它如此重要</strong></p>
-<p style="margin:8px 0;line-height:1.8">在讨论Chain-of-Thought之前，先问一个基础问题：模型"推理"和"记忆"有什么区别？</p>
-<p style="margin:8px 0;line-height:1.8">模型的权重里存着世界知识（记忆），但面对一个新问题时，它需要<strong>在上下文窗口里进行实时计算</strong>——这就是推理。推理的质量决定了模型能否把已知知识正确应用到未知问题上。</p>
-<p style="margin:8px 0;line-height:1.8">大量实验表明，同一个模型，用不同的提示方式，推理质量可以相差20-40%。这意味着提示工程不是玄学，而是直接影响模型内部计算路径的工程手段。</p>
-<p style="margin:8px 0;line-height:1.8">CoT（Chain-of-Thought，思维链）就是其中最重要的发现之一。</p>
-<p style="margin:8px 0;line-height:1.8"><strong>Chain-of-Thought：让模型"说出思考过程"</strong></p>
-<p style="margin:8px 0;line-height:1.8">2022年，Google Brain的研究人员发现了一个惊人的现象：只要在提示词里加上<strong>"Let's think step by step"</strong>，模型在数学推理任务上的准确率就能大幅提升。这就是Zero-shot CoT的核心思想。</p>
-<p style="margin:8px 0;line-height:1.8">原理并不神秘：当模型被迫"说出"中间步…</p>
+      <blockquote style="border-left:4px solid #42b983;padding:8px 16px;background:#f8f8f8;margin:8px 0;color:#666">从零训练大模型系列 · Day 6</blockquote>
+<p style="margin:8px 0;line-height:1.8">大模型的训练其实分两步：第一步是"文字接龙"（预训练），第二步是"学会说话"（SFT）。这两步看似简单，但从一个只会续写文本的模型，到一个能正经回答问题的助手，中间的转变比你想象的更有意思。</p>
+<p style="margin:8px 0;line-height:1.8">这篇文章记录BuddyGPT从预训练到SFT的完整过程，包括数据选择、训练配置、踩过的坑，以及一些个人思考。</p>
+<p style="margin:8px 0;line-height:1.8"><strong>预训练：教模型"读书"</strong></p>
+<p style="margin:8px 0;line-height:1.8"><strong>什么是Next Token Prediction？</strong></p>
+<p style="margin:8px 0;line-height:1.8">预训练的目标极其简单：<strong>给定前面的文字，预测下一个token</strong>。</p>
+<p style="margin:8px 0;line-height:1.8">就是这么朴素。没有问答、没有对话、没有任何"智能"的味道。模型就像一个疯狂读书的学生，读完整个互联网，学会了"什么文字通常跟在什么文字后面"。</p>
+<p style="margin:8px 0;line-height:1.8">但神奇的是，当这个"文字接龙"玩到极致——几十亿参数、几万亿token——模型就突然"涌现"出了推理能力、常识理解、甚至数学能力。这大概是深度学习最让人惊叹的地方。</p>
+<p style="margin:8px 0;line-height:1.8"><strong>数据：35B Token的中文语料</strong></p>
+<p style="margin:8px 0;line-height:1.8">BuddyGPT的预训练数据构成：</p>
+<p style="margin:8px 0;line-height:1.8">为什么选这些数据？几个考虑：</p>
+<p style="margin:8px 0;line-height:1.8">1. <strong>Ultra-FineWeb</strong> 是目前质量最好的开源预训练语料之一，经过严格的质量过滤</p>
+<p style="margin:8px 0;line-height:1.8">2. <strong>Firefly</strong> 提供了高质量的中文文本</p>
+<p style="margin:8px 0;line-height:1.8">3…</p>
     </div>
     <footer class="article-footer">
-      <a data-url="http://learn2pro.tech/2026/03/21/agent-series-07-planning-reasoning/" data-id="agent-series-07-planning-reasoning" class="article-share-link">Share</a>
+      <a data-url="http://learn2pro.tech/2026/03/20/buddygpt-06-pretrain-sft/" data-id="buddygpt-06-pretrain-sft" class="article-share-link">Share</a>
       
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LLM/" rel="tag">LLM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Agent/" rel="tag">Agent</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LLM/" rel="tag">LLM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/BuddyGPT/" rel="tag">BuddyGPT</a></li></ul>
 
     </footer>
   </div>
   
 </article>
-
 
     <article id="post-agent-series-06-memory" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -773,6 +561,52 @@ ga('send', 'pageview');
   
 </article>
 
+    <article id="post-buddygpt-05-moe" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2026/03/19/buddygpt-05-moe/" class="article-date">
+  <time datetime="2026-03-19T01:00:00.000Z" itemprop="datePublished">2026-03-19</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Technology/">Technology</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2026/03/19/buddygpt-05-moe/">MOE混合专家模型：用16个专家实现0.7B的效果</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      <blockquote style="border-left:4px solid #42b983;padding:8px 16px;background:#f8f8f8;margin:8px 0;color:#666">从零训练大模型系列 · Day 5</blockquote>
+<p style="margin:8px 0;line-height:1.8">你有没有想过一个问题：GPT-4据传有1.8万亿参数，但推理速度并没有慢到离谱。如果每个token都要过所有参数，那计算量岂不是天文数字？</p>
+<p style="margin:8px 0;line-height:1.8">答案是——它可能根本没有让所有参数都参与每次计算。这就是MOE（Mixture of Experts，混合专家模型）的核心思想。</p>
+<p style="margin:8px 0;line-height:1.8">在BuddyGPT 0.7B版本中，我们引入了MOE架构：16个路由专家 + 2个共享专家，每次只激活2个路由专家。这篇文章就来聊聊，这个"不是所有人都需要上班"的架构是怎么工作的。</p>
+<p style="margin:8px 0;line-height:1.8"><strong>Dense模型的"浪费"</strong></p>
+<p style="margin:8px 0;line-height:1.8">传统的Transformer模型是Dense（稠密）的，意思是每个token都要经过模型的所有参数。打个比方：</p>
+<p style="margin:8px 0;line-height:1.8">这就像一个公司里，不管什么问题，都要所有部门的所有人一起开会讨论。效率低不说，成本也高得吓人。</p>
+<p style="margin:8px 0;line-height:1.8"><strong>MOE的核心思想：按需分配</strong></p>
+<p style="margin:8px 0;line-height:1.8">MOE的思路很简单：把FFN层拆成多个"专家"（Expert），每个token只找最合适的几个专家来处理。</p>
+<p style="margin:8px 0;line-height:1.8">这就像公司把员工分成了16个专业小组，来了一个问题，先由前台（Gate）判断该找哪两个小组，然后只有这两个小组干活，其他人继续摸鱼。</p>
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://learn2pro.tech/2026/03/19/buddygpt-05-moe/" data-id="buddygpt-05-moe" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LLM/" rel="tag">LLM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/BuddyGPT/" rel="tag">BuddyGPT</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
 
     <article id="post-agent-series-05-a2a" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -824,6 +658,58 @@ ga('send', 'pageview');
   
 </article>
 
+    <article id="post-buddygpt-04-mla-deepseek" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2026/03/18/buddygpt-04-mla-deepseek/" class="article-date">
+  <time datetime="2026-03-18T01:00:00.000Z" itemprop="datePublished">2026-03-18</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Technology/">Technology</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2026/03/18/buddygpt-04-mla-deepseek/">MLA多头潜注意力：DeepSeek-V3的核心创新</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      <blockquote style="border-left:4px solid #42b983;padding:8px 16px;background:#f8f8f8;margin:8px 0;color:#666">从零训练大模型系列 · Day 4</blockquote>
+<p style="margin:8px 0;line-height:1.8"><strong>从GQA到MLA：还能再省吗？</strong></p>
+<p style="margin:8px 0;line-height:1.8">上一篇我们讲了GQA，通过让多个Q head共享KV来减少KV Cache。BuddyGPT 0.3B用16Q/8KV的配置，比MHA节省了50%的KV Cache。</p>
+<p style="margin:8px 0;line-height:1.8">但DeepSeek团队问了一个更根本的问题：<strong>KV Cache存的一定要是完整的Key和Value吗？能不能存一个更小的"压缩版"？</strong></p>
+<p style="margin:8px 0;line-height:1.8">这就是MLA（Multi-head Latent Attention）的出发点。</p>
+<p style="margin:8px 0;line-height:1.8"><strong>MLA核心思想：低秩压缩</strong></p>
+<p style="margin:8px 0;line-height:1.8">MLA的核心思路用三句话概括：</p>
+<p style="margin:8px 0;line-height:1.8">1. <strong>训练时</strong>：先把hidden state压缩到一个低维的latent向量，再从latent展开为完整的Q/K/V</p>
+<p style="margin:8px 0;line-height:1.8">2. <strong>推理时</strong>：KV Cache只需要存低维的latent，而不是完整的K和V</p>
+<p style="margin:8px 0;line-height:1.8">3. <strong>效果</strong>：KV Cache可以压缩到原来的1/6甚至更小，而质量几乎不损失</p>
+<p style="margin:8px 0;line-height:1.8">用图来理解：</p>
+<p style="margin:8px 0;line-height:1.8"><strong>MLA的数据流</strong></p>
+<p style="margin:8px 0;line-height:1.8">MLA的完整数据流比GQA复杂，但逻辑很清晰。我们分Q和KV两条路径来看：</p>
+<p style="margin:8px 0;line-height:1.8">关键点：</p>
+<p style="margin:4px 0 4px 20px">• Q和KV都先经过"下投影"压缩到低维（rank=16），再"上投影"展开</p>
+<p style="margin:4px 0 4px 20px">• Q和K都分成两部分：<code>nope</code>（不旋转）和 <code>rope</code>（旋转）</p>
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://learn2pro.tech/2026/03/18/buddygpt-04-mla-deepseek/" data-id="buddygpt-04-mla-deepseek" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LLM/" rel="tag">LLM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/BuddyGPT/" rel="tag">BuddyGPT</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
 
     <article id="post-agent-series-04-mcp" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -874,6 +760,56 @@ ga('send', 'pageview');
   
 </article>
 
+    <article id="post-buddygpt-03-rope-gqa" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2026/03/17/buddygpt-03-rope-gqa/" class="article-date">
+  <time datetime="2026-03-17T01:00:00.000Z" itemprop="datePublished">2026-03-17</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Technology/">Technology</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2026/03/17/buddygpt-03-rope-gqa/">RoPE旋转位置编码与GQA分组注意力</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      <blockquote style="border-left:4px solid #42b983;padding:8px 16px;background:#f8f8f8;margin:8px 0;color:#666">从零训练大模型系列 · Day 3</blockquote>
+<p style="margin:8px 0;line-height:1.8"><strong>Transformer的"失忆症"：为什么需要位置编码？</strong></p>
+<p style="margin:8px 0;line-height:1.8">来做个思想实验。把下面两句话喂给一个没有位置编码的Transformer：</p>
+<p style="margin:4px 0 4px 20px">• "小明打了小红"</p>
+<p style="margin:4px 0 4px 20px">• "小红打了小明"</p>
+<p style="margin:8px 0;line-height:1.8">在Attention计算中，每个token和其他所有token做交互。但如果没有位置信息，模型看到的是<strong>同一组token的同一组交互</strong>——"小明"和"打了"的注意力权重不会因为顺序不同而改变。换句话说，模型分不清"谁打了谁"。</p>
+<p style="margin:8px 0;line-height:1.8">这就是位置编码存在的意义：<strong>告诉模型每个token在序列中的位置。</strong></p>
+<p style="margin:8px 0;line-height:1.8">早期方案包括：</p>
+<p style="margin:4px 0 4px 20px">• <strong>绝对位置编码</strong>（原始Transformer）：给每个位置一个固定的向量，加到Embedding上</p>
+<p style="margin:4px 0 4px 20px">• <strong>可学习位置编码</strong>（BERT/GPT-2）：位置向量作为可训练参数</p>
+<p style="margin:8px 0;line-height:1.8">这些方案的问题是：<strong>训练时见过的最大长度就是天花板。</strong> 训练长度512，推理时给它1024的文本，效果就崩了。</p>
+<p style="margin:8px 0;line-height:1.8"><strong>RoPE：用旋转编码位置</strong></p>
+<p style="margin:8px 0;line-height:1.8">RoPE（Rotary Position Embedding）是苏剑林在2021年提出的方案，现在几乎所有主流大模型都在用。它的核心思想用一句话概括：<strong>不要把位置信息加到向量上，而是通过旋转向量来编码位置。</strong></p>
+<p style="margin:8px 0;line-height:1.8"><strong>从二维旋转说起</strong></p>
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://learn2pro.tech/2026/03/17/buddygpt-03-rope-gqa/" data-id="buddygpt-03-rope-gqa" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LLM/" rel="tag">LLM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/BuddyGPT/" rel="tag">BuddyGPT</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
 
     <article id="post-agent-series-03-tool-use" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -924,7 +860,6 @@ ga('send', 'pageview');
   
 </article>
 
-
     <article id="post-agent-series-02-architecture" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2026/03/16/agent-series-02-architecture/" class="article-date">
@@ -974,7 +909,6 @@ ga('send', 'pageview');
   
 </article>
 
-
     <article id="post-agent-series-01-what-is-agent" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2026/03/15/agent-series-01-what-is-agent/" class="article-date">
@@ -1021,8 +955,6 @@ ga('send', 'pageview');
   
 </article>
 
-
-  
     <article id="post-my-three-years" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2023/10/27/my-three-years/" class="article-date">
@@ -1081,8 +1013,6 @@ ga('send', 'pageview');
   
 </article>
 
-
-  
     <article id="post-my-view-of-llm" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2023/10/11/my-view-of-llm/" class="article-date">
@@ -1163,8 +1093,6 @@ ga('send', 'pageview');
   
 </article>
 
-
-  
     <article id="post-infra-design" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2020/07/22/infra-design/" class="article-date">
@@ -1216,8 +1144,6 @@ ga('send', 'pageview');
   
 </article>
 
-
-  
     <article id="post-ali-learn" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2020/07/18/ali-learn/" class="article-date">
@@ -1277,8 +1203,6 @@ ga('send', 'pageview');
   
 </article>
 
-
-  
     <article id="post-manachers-algorithm" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2020/07/18/manachers-algorithm/" class="article-date">
@@ -1339,8 +1263,6 @@ ga('send', 'pageview');
   
 </article>
 
-
-  
     <article id="post-snowflake-alg" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2020/07/09/snowflake-alg/" class="article-date">
@@ -1388,8 +1310,6 @@ ga('send', 'pageview');
   
 </article>
 
-
-  
     <article id="post-write-a-easy-rpc" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2019/07/09/write-a-easy-rpc/" class="article-date">
@@ -1486,8 +1406,6 @@ ga('send', 'pageview');
   
 </article>
 
-
-  
     <article id="post-hexo" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/01/24/hexo/" class="article-date">
@@ -1547,8 +1465,6 @@ ga('send', 'pageview');
   
 </article>
 
-
-  
     <article id="post-2017-01-23-dl-algorithm-SVM" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/01/24/2017-01-23-dl-algorithm-SVM/" class="article-date">
@@ -1606,8 +1522,6 @@ ga('send', 'pageview');
   
 </article>
 
-
-  
     <article id="post-2017-01-22-dl-demo-flabby-bird" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/01/23/2017-01-22-dl-demo-flabby-bird/" class="article-date">
@@ -1657,17 +1571,7 @@ ga('send', 'pageview');
 </article>
 
 
-  
-
-
-  <nav id="page-nav">
-    
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
-  </nav>
-
-</section>
-        
-          <aside id="sidebar">
+<aside id="sidebar">
   
     
   <div class="widget-wrap">
