@@ -103,6 +103,51 @@ ga('send', 'pageview');
 
 
 
+     <article id="post-openclaw-series-03-installation" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2026-03/openclaw-series-03-installation/" class="article-date">
+  <time datetime="2026-03-25T04:00:00.000Z" itemprop="datePublished">2026-03-25</time>
+</a>
+    <div class="article-category">
+    <a class="article-category-link" href="/categories/Technology/">Technology</a>
+  </div>
+  </div>
+  <div class="article-inner">
+    <header class="article-header">
+  <h1 itemprop="name">
+      <a class="article-title" href="/2026-03/openclaw-series-03-installation/">安装与配置：从零跑起来</a>
+    </h1>
+    </header>
+    <div class="article-entry" itemprop="articleBody">
+<p style="margin:8px 0;line-height:1.8">从零把 OpenClaw 跑起来，整个过程大约 10 分钟。</p>
+
+<pre><code>npm install -g openclaw
+openclaw init
+openclaw gateway start</code></pre>
+
+<pre><code>model: minimax-portal/MiniMax-M2.5
+skills:
+  enabled: [coding-agent, clawhub, find-skills]
+channel:
+  telegram:
+    enabled: true
+    bot_token: "YOUR_BOT_TOKEN"</code></pre>
+
+<p style="margin:8px 0;line-height:1.8">找 BotFather，发 <code>/newbot</code>，拿到 token 填进配置，然后 <code>openclaw gateway restart</code>。</p>
+
+<pre><code>openclaw chat "你好"</code></pre>
+<p style="margin:8px 0;line-height:1.8">或直接给 Telegram Bot 发消息测试。</p>
+
+<table><tr><th>问题</th><th>方案</th></tr><tr><td>端口占用</td><td>换端口或 kill 进程</td></tr><tr><td>Bot 不响应</td><td>检查 token，设 webhook</td></tr><tr><td>权限报错</td><td>确保 ~/.openclaw 权限正确</td></tr></table>
+<p style="margin:8px 0;line-height:1.8">明天聊 Workspace 的设计。</p></div>
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://learn2pro.tech/2026-03/openclaw-series-03-installation/" data-id="post-openclaw-series-03-installation" class="article-share-link">Share</a>
+      <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenClaw/" rel="tag">OpenClaw</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AI/" rel="tag">AI</a></li></ul>
+    </footer>
+  </div>
+</article>
+
 
      <article id="post-openclaw-series-02-architecture" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
