@@ -103,8 +103,7 @@ ga('send', 'pageview');
       </h1>
     </header>
     <div class="article-entry" itemprop="articleBody">
-      <blockquote>BuddyGPT系列 · Day 01</blockquote>
-      <p>ChatGPT发布的那天晚上，我打开网页聊了两个小时，然后关掉，心里只有一个念头：<strong>它到底是怎么做到的？</strong> 这个念头催生了 BuddyGPT 项目。从最小的 0.1b 参数模型开始，一路做到 0.7b，实现了 MLA、MoE，跑完了预训练、SFT、DPO 全流程，在 HuggingFace 上发布了可以公开下载的模型。这个系列就是完整的记录：我是怎么从零造出一个中文大模型的，踩了哪些坑，学到了什么。</p>
+      <p>BuddyGPT系列 · Day 01 ChatGPT发布的那天晚上，我打开网页聊了两个小时，然后关掉，心里只有一个念头： 它到底是怎么做到的？ 这个念头催生了 BuddyGPT 项目。从最小的 0.1b 参数模型开始，一路做到 0.7b，实现了 MLA、MoE，跑完了预训练、SFT、DPO 全流程，在 HuggingFace 上发布了可以公开下载的模型。这个系列就是完整的记录：我是怎么从零造出一个中文大模型的，踩了哪些坑，学到了什么。</p>
     </div>
     <footer class="article-footer">
       <a data-url="/2026/03/28/buddygpt-01-intro/" class="article-share-link">Share</a>
@@ -145,17 +144,7 @@ ga('send', 'pageview');
     </h1>
     </header>
     <div class="article-entry" itemprop="articleBody">
-      <p style="margin:8px 0;line-height:1.8">Skills 是 OpenClaw 的插件系统。不需要写代码，配一下就能给 AI 装上新能力。</p>
-
-<p style="margin:8px 0;line-height:1.8">核心是 <code>SKILL.md</code>，用 Markdown 定义工具的用途和参数。AI 读完就知道怎么用。</p>
-
-<table><tr><th>Skill</th><th>功能</th></tr><tr><td>weather</td><td>查天气预报</td></tr><tr><td>discord</td><td>Discord 运营</td></tr><tr><td>coding-agent</td><td>Claude Code 子任务</td></tr><tr><td>clawhub</td><td>社区 Skills 管理</td></tr></table>
-
-<pre><code>clawhub search "email"
-clawhub install email-skill</code></pre>
-
-<p style="margin:8px 0;line-height:1.8">写一个 SKILL.md，放到 <code>skills/</code> 目录即可。不需要写代码。</p>
-<p style="margin:8px 0;line-height:1.8">明天聊 Channel——让 AI 同时在多个平台在线。</p></div>
+      <p>Skills 是 OpenClaw 的插件系统。不需要写代码，配一下就能给 AI 装上新能力。 核心是 SKILL.md ，用 Markdown 定义工具的用途和参数。AI 读完就知道怎么用。 Skill 功能 weather 查天气预报 discord Discord 运营 coding-agent Claude Code 子任务 clawhub 社区 Skills 管理 clawhub search "email" clawhub install email-skill 写一个 SKILL.</p>
     </div>
     <footer class="article-footer">
       <a data-url="http://learn2pro.tech/2026-03/openclaw-series-06-skills/" data-id="post-openclaw-series-06-skills" class="article-share-link">Share</a>
@@ -233,7 +222,7 @@ clawhub install email-skill</code></pre>
     </h1>
     </header>
     <div class="article-entry" itemprop="articleBody">
-      <p>从零把 OpenClaw 跑起来，整个过程大约 10 分钟。 npm install -g openclaw openclaw init openclaw gateway start model: minimax-portal/MiniMax-M2.5 skills: enabled: [coding-agent, clawhub, find-skills] channel: telegram: enabled: true bot_token: "YOUR_BOT_TOKEN" 找 BotFather，发 /newbot，拿到 token 填进配置，</p>
+      <p>从零把 OpenClaw 跑起来，整个过程大约 10 分钟。 npm install -g openclaw openclaw init openclaw gateway start model: minimax-portal/MiniMax-M2.5 skills: enabled: [coding-agent, clawhub, find-skills] channel: telegram: enabled: true bot_token: "YOUR_BOT_TOKEN" 找 BotFat……</p>
     </div>
     <footer class="article-footer">
       <a data-url="http://learn2pro.tech/2026-03/openclaw-series-03-installation/" data-id="post-openclaw-series-03-installation" class="article-share-link">Share</a>
@@ -259,7 +248,7 @@ clawhub install email-skill</code></pre>
     </h1>
     </header>
     <div class="article-entry" itemprop="articleBody">
-      <p>OpenClaw 深度解析系列 · Day 2 理解 OpenClaw 的核心是理解它的四大支柱：Workspace、Memory、Skills、Channel。这四个组件共同构成了一个完整的 Agent 运行时。 类比公司：Workspace = 办公室；Memory = 档案室；Skills = 员工技能库；Channel = 前台。Claw Core 就是公司 CEO，负责调度四个部门协同工作。 Workspace 是 OpenClaw 的文件系统。设计原则：所有 AI 需要知道的东西都在文件里。不依赖数据库，不需要 API，纯文件系统。</p>
+      <p>OpenClaw 深度解析系列 · Day 2 理解 OpenClaw 的核心是理解它的四大支柱：Workspace、Memory、Skills、Channel。这四个组件共同构成了一个完整的 Agent 运行时。 类比公司：Workspace = 办公室；Memory = 档案室；Skills = 员工技能库；Channel = 前台。Claw Core 就是公司 CEO，负责调度四个部门协同工作。 Workspace 是 OpenClaw 的文件系统。</p>
     </div>
     <footer class="article-footer">
       <a data-url="http://learn2pro.tech/2026-03/openclaw-series-02-architecture/" data-id="post-openclaw-series-02-architecture" class="article-share-link">Share</a>
@@ -285,7 +274,7 @@ clawhub install email-skill</code></pre>
     </h1>
     </header>
     <div class="article-entry" itemprop="articleBody">
-      <p>OpenClaw 深度解析系列 · Day 1 2026年，AI Agent 框架的竞争已经从"能不能跑"进化到了"谁更好用"。LangGraph、CrewAI、AutoGen 各有千秋，但如果你想要一个本地运行、开源、可扩展、多渠道的 Agent 运行时，OpenClaw 是一个值得关注的新选择。 现有的 Agent 框架大多数面向开发者：写 Python 代码、定义工作流、调用 API。问题是每次都要写代码，部署依赖云服务，数据不够私密，多渠道支持差。 OpenClaw 的设计思路不一样——把框架做成一个本地 Agent 运行时，用配置文件和 Markdown 定义行为。</p>
+      <p>OpenClaw 深度解析系列 · Day 1 2026年，AI Agent 框架的竞争已经从"能不能跑"进化到了"谁更好用"。LangGraph、CrewAI、AutoGen 各有千秋，但如果你想要一个本地运行、开源、可扩展、多渠道的 Agent 运行时，OpenClaw 是一个值得关注的新选择。 现有的 Agent 框架大多数面向开发者：写 Python 代码、定义工作流、调用 API。问题是每次都要写代码，部署依赖云服务，数据不够私密，多渠道支持差。</p>
     </div>
     <footer class="article-footer">
       <a data-url="http://learn2pro.tech/2026-03/openclaw-series-01-what-is-openclaw/" data-id="post-openclaw-series-01-what-is-openclaw" class="article-share-link">Share</a>
@@ -320,7 +309,7 @@ clawhub install email-skill</code></pre>
       </header>
     
     <div class="article-entry" itemprop="articleBody">
-      <p>Agent深度解析系列 · Day 14 过去14天我们拆解了Agent的方方面面。最后一篇，聊聊未来。预测未来是危险的——但有些趋势已经清晰到不需要预测，只需要外推。 Agent能力的摩尔定律 推理能力正在以惊人的速度迭代：GPT-4（2023）→ o1（2024）→ o3（2025）→ ?（2026）。每一代在复杂推理、代码生成、多步规划上都有质的飞跃。 更关键的是成本曲线：同等能力的推理成本每年下降5-10倍。2023年GPT-4级别的能力，2025年用GPT-4o-mini就能实现，成本从$30/M tokens降到$0.15/M tokens。</p>
+      <p>Agent深度解析系列 · Day 14 过去14天我们拆解了Agent的方方面面。最后一篇，聊聊未来。预测未来是危险的——但有些趋势已经清晰到不需要预测，只需要外推。 Agent能力的摩尔定律 推理能力正在以惊人的速度迭代：GPT-4（2023）→ o1（2024）→ o3（2025）→ ?（2026）。每一代在复杂推理、代码生成、多步规划上都有质的飞跃。 更关键的是成本曲线：同等能力的推理成本每年下降5-10倍。</p>
     </div>
     <footer class="article-footer">
       <a data-url="http://learn2pro.tech/2026/03/28/agent-series-14-future/" data-id="agent-series-14-future" class="article-share-link">Share</a>
@@ -358,7 +347,7 @@ clawhub install email-skill</code></pre>
       </header>
     
     <div class="article-entry" itemprop="articleBody">
-      <p>Day 13 · AI Agent 30天系列 理论讲够了。今天聊点实际的——我自己用AI Agent做什么，怎么做的。 我用的是 OpenClaw，一个开源的个人AI Agent平台，跑在自己的机器上，连接Telegram、飞书、Discord等渠道，可以随时唤醒我的AI助手处理各种任务。已经用了几个月，它已经彻底改变了我的工作方式。 这篇文章分享OpenClaw的架构设计、核心设计理念，以及三个我实际在用的Agent案例。 个人Agent：你真正需要什么 在开始之前，先想清楚个人Agent应该解决什么问题。</p>
+      <p>Day 13 · AI Agent 30天系列 理论讲够了。今天聊点实际的——我自己用AI Agent做什么，怎么做的。 我用的是 OpenClaw，一个开源的个人AI Agent平台，跑在自己的机器上，连接Telegram、飞书、Discord等渠道，可以随时唤醒我的AI助手处理各种任务。已经用了几个月，它已经彻底改变了我的工作方式。 这篇文章分享OpenClaw的架构设计、核心设计理念，以及三个我实际在用的Agent案例。</p>
     </div>
     <footer class="article-footer">
       <a data-url="http://learn2pro.tech/2026/03/27/agent-series-13-personal-agent/" data-id="agent-series-13-personal-agent" class="article-share-link">Share</a>
@@ -396,7 +385,7 @@ clawhub install email-skill</code></pre>
       </header>
     
     <div class="article-entry" itemprop="articleBody">
-      <p>Day 12 · AI Agent 30天系列 每个开发者都经历过这个时刻：Demo跑得完美，演示成功，大家都鼓掌。然后你把它部署到生产环境…… 然后就开始崩了。 延迟高得离谱，偶尔幻觉，用户反馈"说了半天没做成事"，成本比预期高了10倍，出了问题根本不知道从哪查。 这不是你的Agent不好——这是Demo和Production之间的那道鸿沟。几乎每个做Agent的人都会掉进去。 今天这篇文章，聊聊怎么跨越这道鸿沟。 为什么90%的Agent项目死在Demo阶段 首先要理解，Demo和Production面对的是完全不同的问题。</p>
+      <p>Day 12 · AI Agent 30天系列 每个开发者都经历过这个时刻：Demo跑得完美，演示成功，大家都鼓掌。然后你把它部署到生产环境…… 然后就开始崩了。 延迟高得离谱，偶尔幻觉，用户反馈"说了半天没做成事"，成本比预期高了10倍，出了问题根本不知道从哪查。 这不是你的Agent不好——这是Demo和Production之间的那道鸿沟。几乎每个做Agent的人都会掉进去。 今天这篇文章，聊聊怎么跨越这道鸿沟。</p>
     </div>
     <footer class="article-footer">
       <a data-url="http://learn2pro.tech/2026/03/26/agent-series-12-production/" data-id="agent-series-12-production" class="article-share-link">Share</a>
@@ -434,7 +423,7 @@ clawhub install email-skill</code></pre>
       </header>
     
     <div class="article-entry" itemprop="articleBody">
-      <p>Day 11 · AI Agent 30天系列 当我们把越来越多的任务交给AI Agent去自主完成，一个问题越来越紧迫：我们真的能信任它吗？ 不是信任它的能力——这点大多数人已经接受了。问题是信任它的边界。当Agent有权限读取你的邮件、调用API、执行代码、发送消息，一旦出了问题，代价可能远超"AI给了个错误答案"。 这篇文章聊聊Agent安全的本质矛盾，以及工程上怎么应对。 Agent安全的核心矛盾 Agent的价值在于自主性——它能自己判断、自己决策、自己执行，不需要每一步都问你。但这种自主性天然与可控性冲突。 传统软件没有这个问题。你写了一个按钮，点下去只能做一件事。</p>
+      <p>Day 11 · AI Agent 30天系列 当我们把越来越多的任务交给AI Agent去自主完成，一个问题越来越紧迫：我们真的能信任它吗？ 不是信任它的能力——这点大多数人已经接受了。问题是信任它的边界。当Agent有权限读取你的邮件、调用API、执行代码、发送消息，一旦出了问题，代价可能远超"AI给了个错误答案"。 这篇文章聊聊Agent安全的本质矛盾，以及工程上怎么应对。 Agent安全的核心矛盾 Agent的价值在于自主性——它能自己判断、自己决策、自己执行，不需要每一步都问你。</p>
     </div>
     <footer class="article-footer">
       <a data-url="http://learn2pro.tech/2026/03/25/agent-series-11-safety-guardrails/" data-id="agent-series-11-safety-guardrails" class="article-share-link">Share</a>
@@ -472,7 +461,7 @@ clawhub install email-skill</code></pre>
       </header>
     
     <div class="article-entry" itemprop="articleBody">
-      <p>Agent深度解析系列 · Day 10 单个Agent再强，也有能力天花板。让它既写代码又做测试还管部署？结果大概率是三件事都做得半吊子。多Agent的核心逻辑和人类组织一样：专业化分工 + 协调机制。 为什么需要多Agent 单Agent的局限性体现在三个维度：上下文窗口有限（一个Agent塞不下所有领域知识）、能力边界模糊（什么都能做 = 什么都做不好）、错误传播不可控（一步错步步错，没有纠偏机制）。 多Agent系统的本质是把一个复杂任务分解成多个可独立执行的子任务，每个Agent专注自己的领域，通过明确的接口交互。这不是什么新概念——微服务架构的思想在Agent领域的复刻。</p>
+      <p>Agent深度解析系列 · Day 10 单个Agent再强，也有能力天花板。让它既写代码又做测试还管部署？结果大概率是三件事都做得半吊子。多Agent的核心逻辑和人类组织一样：专业化分工 + 协调机制。 为什么需要多Agent 单Agent的局限性体现在三个维度：上下文窗口有限（一个Agent塞不下所有领域知识）、能力边界模糊（什么都能做 = 什么都做不好）、错误传播不可控（一步错步步错，没有纠偏机制）。</p>
     </div>
     <footer class="article-footer">
       <a data-url="http://learn2pro.tech/2026/03/24/agent-series-10-multi-agent/" data-id="agent-series-10-multi-agent" class="article-share-link">Share</a>
@@ -510,7 +499,7 @@ clawhub install email-skill</code></pre>
       </header>
     
     <div class="article-entry" itemprop="articleBody">
-      <p>Agent深度解析系列 · Day 9 2024年我们用Copilot补全代码，2025年我们用Cursor生成函数，2026年我们让Agent独立完成Feature。从自动补全到全栈开发Agent，代码生成经历了三次范式跃迁，而我们正站在第三次的起点上。 进化路线：补全→生成→Agent 第一阶段（2021-2023）：代码补全。GitHub Copilot开创了"写几个字母，Tab补全一行"的范式。本质是自动完成，开发者仍然主导每一行代码。 第二阶段（2023-2025）：代码生成。Cursor、Copilot Chat让你用自然语言描述需求，AI生成整块代码。</p>
+      <p>Agent深度解析系列 · Day 9 2024年我们用Copilot补全代码，2025年我们用Cursor生成函数，2026年我们让Agent独立完成Feature。从自动补全到全栈开发Agent，代码生成经历了三次范式跃迁，而我们正站在第三次的起点上。 进化路线：补全→生成→Agent 第一阶段（2021-2023）：代码补全。GitHub Copilot开创了"写几个字母，Tab补全一行"的范式。本质是自动完成，开发者仍然主导每一行代码。 第二阶段（2023-2025）：代码生成。</p>
     </div>
     <footer class="article-footer">
       <a data-url="http://learn2pro.tech/2026/03/23/agent-series-09-coding-agent/" data-id="agent-series-09-coding-agent" class="article-share-link">Share</a>
@@ -582,7 +571,7 @@ clawhub install email-skill</code></pre>
       </header>
     
     <div class="article-entry" itemprop="articleBody">
-      <p>从零训练大模型系列 · Day 6 大模型的训练其实分两步：第一步是"文字接龙"（预训练），第二步是"学会说话"（SFT）。这两步看似简单，但从一个只会续写文本的模型，到一个能正经回答问题的助手，中间的转变比你想象的更有意思。 这篇文章记录BuddyGPT从预训练到SFT的完整过程，包括数据选择、训练配置、踩过的坑，以及一些个人思考。 预训练：教模型"读书" 什么是Next Token Prediction？ 预训练的目标极其简单：给定前面的文字，预测下一个token。 就是这么朴素。没有问答、没有对话、没有任何"智能"的味道。</p>
+      <p>从零训练大模型系列 · Day 6 大模型的训练其实分两步：第一步是"文字接龙"（预训练），第二步是"学会说话"（SFT）。这两步看似简单，但从一个只会续写文本的模型，到一个能正经回答问题的助手，中间的转变比你想象的更有意思。 这篇文章记录BuddyGPT从预训练到SFT的完整过程，包括数据选择、训练配置、踩过的坑，以及一些个人思考。 预训练：教模型"读书" 什么是Next Token Prediction？ 预训练的目标极其简单：给定前面的文字，预测下一个token。 就是这么朴素。</p>
     </div>
     <footer class="article-footer">
       <a data-url="http://learn2pro.tech/2026/03/20/buddygpt-06-pretrain-sft/" data-id="buddygpt-06-pretrain-sft" class="article-share-link">Share</a>
@@ -619,7 +608,7 @@ clawhub install email-skill</code></pre>
       </header>
     
     <div class="article-entry" itemprop="articleBody">
-      <p>Agent深度解析系列 · Day 6 每次对话都从零开始，是当前AI Agent最大的体验断裂点。 你花了20分钟教会它项目背景，关掉窗口再打开——它什么都不记得了。你上周让它帮你整理了一份报告，这周再问它，它完全不知道有这回事。你反复告诉它"我不吃香菜"，但它每次推荐餐厅都会附上香菜拌面。 这就是当前大多数AI Agent的现状：每一次对话都是一张白纸。 对人类来说，记忆是认知的基础。没有记忆，我们无法积累经验、无法从错误中学习、无法维持任何持续性的关系。对Agent来说也是如此——记忆系统，是Agent从"一次性工具"进化为"持久助手"的关键基础设施。</p>
+      <p>Agent深度解析系列 · Day 6 每次对话都从零开始，是当前AI Agent最大的体验断裂点。 你花了20分钟教会它项目背景，关掉窗口再打开——它什么都不记得了。你上周让它帮你整理了一份报告，这周再问它，它完全不知道有这回事。你反复告诉它"我不吃香菜"，但它每次推荐餐厅都会附上香菜拌面。 这就是当前大多数AI Agent的现状：每一次对话都是一张白纸。 对人类来说，记忆是认知的基础。没有记忆，我们无法积累经验、无法从错误中学习、无法维持任何持续性的关系。</p>
     </div>
     <footer class="article-footer">
       <a data-url="http://learn2pro.tech/2026/03/20/agent-series-06-memory/" data-id="agent-series-06-memory" class="article-share-link">Share</a>
@@ -695,7 +684,7 @@ clawhub install email-skill</code></pre>
       </header>
     
     <div class="article-entry" itemprop="articleBody">
-      <p>MCP 解决了"AI 如何使用工具"的问题。但当工具本身也是一个 AI Agent 时，情况就不一样了。 一个 MCP 解决不了的场景 想象一下这个场景：你的公司有三个 AI Agent： • 销售Agent：负责分析客户数据，制定销售策略 • 财务Agent：负责预算分析，审核支出合理性 • 营销Agent：负责制作推广方案，预测转化率 你希望这三个 Agent 能够协作完成一个复杂任务："为新产品制定上市计划，包括定价策略、推广预算和预期回报"。 用 MCP 能做到吗？ 技术上可以——你可以把销售Agent、财务Agent 封装成 MCP 工具，让营销Agent 调用。</p>
+      <p>MCP 解决了"AI 如何使用工具"的问题。但当工具本身也是一个 AI Agent 时，情况就不一样了。 一个 MCP 解决不了的场景 想象一下这个场景：你的公司有三个 AI Agent： • 销售Agent：负责分析客户数据，制定销售策略 • 财务Agent：负责预算分析，审核支出合理性 • 营销Agent：负责制作推广方案，预测转化率 你希望这三个 Agent 能够协作完成一个复杂任务："为新产品制定上市计划，包括定价策略、推广预算和预期回报"。</p>
     </div>
     <footer class="article-footer">
       <a data-url="http://learn2pro.tech/2026/03/19/agent-series-05-a2a/" data-id="agent-series-05-a2a" class="article-share-link">Share</a>
@@ -809,7 +798,7 @@ clawhub install email-skill</code></pre>
       </header>
     
     <div class="article-entry" itemprop="articleBody">
-      <p>从零训练大模型系列 · Day 3 Transformer的"失忆症"：为什么需要位置编码？ 来做个思想实验。把下面两句话喂给一个没有位置编码的Transformer： • "小明打了小红" • "小红打了小明" 在Attention计算中，每个token和其他所有token做交互。但如果没有位置信息，模型看到的是同一组token的同一组交互——"小明"和"打了"的注意力权重不会因为顺序不同而改变。换句话说，模型分不清"谁打了谁"。 这就是位置编码存在的意义：告诉模型每个token在序列中的位置。</p>
+      <p>从零训练大模型系列 · Day 3 Transformer的"失忆症"：为什么需要位置编码？ 来做个思想实验。把下面两句话喂给一个没有位置编码的Transformer： • "小明打了小红" • "小红打了小明" 在Attention计算中，每个token和其他所有token做交互。但如果没有位置信息，模型看到的是同一组token的同一组交互——"小明"和"打了"的注意力权重不会因为顺序不同而改变。换句话说，模型分不清"谁打了谁"。</p>
     </div>
     <footer class="article-footer">
       <a data-url="http://learn2pro.tech/2026/03/17/buddygpt-03-rope-gqa/" data-id="buddygpt-03-rope-gqa" class="article-share-link">Share</a>
@@ -847,7 +836,7 @@ clawhub install email-skill</code></pre>
       </header>
     
     <div class="article-entry" itemprop="articleBody">
-      <p>一个没有工具的 Agent，就像一个困在玻璃箱里的天才——看得见外面的世界，却什么都做不了。 LLM 的能力边界：为什么需要工具？ 在深入讲解 Function Calling 之前，我们先聊一个最基础的问题：大语言模型（LLM）到底能做什么，不能做什么？ LLM 本质上是一个文本预测机器。给它一段文字，它根据训练数据中的统计规律，输出最可能的下一个 token。它的能力令人惊叹——推理、写作、翻译、代码生成……但它有几条铁的边界： 1. 无法访问实时数据 LLM 有个训练截止日期。问它"今天比特币多少钱"，它只能说"我的知识截止于 2024 年 X 月"。这不是在卖关子——它真的不知道。</p>
+      <p>一个没有工具的 Agent，就像一个困在玻璃箱里的天才——看得见外面的世界，却什么都做不了。 LLM 的能力边界：为什么需要工具？ 在深入讲解 Function Calling 之前，我们先聊一个最基础的问题：大语言模型（LLM）到底能做什么，不能做什么？ LLM 本质上是一个文本预测机器。给它一段文字，它根据训练数据中的统计规律，输出最可能的下一个 token。它的能力令人惊叹——推理、写作、翻译、代码生成……但它有几条铁的边界： 1. 无法访问实时数据 LLM 有个训练截止日期。</p>
     </div>
     <footer class="article-footer">
       <a data-url="http://learn2pro.tech/2026/03/17/agent-series-03-tool-use/" data-id="agent-series-03-tool-use" class="article-share-link">Share</a>
@@ -885,7 +874,7 @@ clawhub install email-skill</code></pre>
       </header>
     
     <div class="article-entry" itemprop="articleBody">
-      <p>Agent深度解析系列 · Day 2 2024年我们还在讨论"LLM能做什么"，2026年问题已经变成"Agent该怎么搭"。架构决定了Agent的能力上限，选错架构，再强的模型也白搭。 四大核心模块 一个完整的Agent系统由四个模块构成，缺一不可： • LLM核心：大脑，负责理解意图、推理决策、生成输出。它不是Agent本身，只是Agent的引擎。 • Tools（工具）：手和脚，让Agent能搜索、计算、调用API、操作文件。没有工具的Agent就是个聊天机器人。 • Memory（记忆）：短期记忆是对话上下文，长期记忆是向量数据库或外部存储。没有记忆，Agent每次对话都是失忆状态。</p>
+      <p>Agent深度解析系列 · Day 2 2024年我们还在讨论"LLM能做什么"，2026年问题已经变成"Agent该怎么搭"。架构决定了Agent的能力上限，选错架构，再强的模型也白搭。 四大核心模块 一个完整的Agent系统由四个模块构成，缺一不可： • LLM核心：大脑，负责理解意图、推理决策、生成输出。它不是Agent本身，只是Agent的引擎。 • Tools（工具）：手和脚，让Agent能搜索、计算、调用API、操作文件。没有工具的Agent就是个聊天机器人。</p>
     </div>
     <footer class="article-footer">
       <a data-url="http://learn2pro.tech/2026/03/16/agent-series-02-architecture/" data-id="agent-series-02-architecture" class="article-share-link">Share</a>
@@ -923,7 +912,7 @@ clawhub install email-skill</code></pre>
       </header>
     
     <div class="article-entry" itemprop="articleBody">
-      <p>Agent深度解析系列 · Day 1 一句话定义 AI Agent不是聊天机器人。聊天机器人是"你问我答"，Agent是"你说目标，我去完成"。 这个区别看似简单，实际上是AI应用的分水岭。ChatBot的核心循环是 输入 → 生成 → 输出，Agent的核心循环是 感知 → 规划 → 行动 → 观察 → 再规划。一个是单轮映射，一个是持续的目标驱动行为。 Agent的四要素 2023年6月，OpenAI的Lilian Weng发表了一篇影响深远的博客《LLM Powered Autonomous Agents》，首次系统地定义了Agent的核心架构。</p>
+      <p>Agent深度解析系列 · Day 1 一句话定义 AI Agent不是聊天机器人。聊天机器人是"你问我答"，Agent是"你说目标，我去完成"。 这个区别看似简单，实际上是AI应用的分水岭。ChatBot的核心循环是 输入 → 生成 → 输出，Agent的核心循环是 感知 → 规划 → 行动 → 观察 → 再规划。一个是单轮映射，一个是持续的目标驱动行为。</p>
     </div>
     <footer class="article-footer">
       <a data-url="http://learn2pro.tech/2026/03/15/agent-series-01-what-is-agent/" data-id="agent-series-01-what-is-agent" class="article-share-link">Share</a>
@@ -961,7 +950,7 @@ clawhub install email-skill</code></pre>
       </header>
     
     <div class="article-entry" itemprop="articleBody">
-      <p>一些认知 产品为王，如果说paper是research成果到展现，那产品就是你的标签和态度 用户为先，一个产品首先要有用户，定义清楚你的用户群体比什么都重要 细节很重要，在腾讯成功的产品中，所有老板都非常抠细节，并且是产品的资深用户 实施也是一种思考，如果想不太清楚的时候，大概率认知没到，可以先做做看，这个过程也是提升认知的过程 如果永远在想，而不去做，认知大概率是很浅的，只有真正去做了，才能深入的思考 认知决定了你的上限，人生需要去刷新认知，不然再努力也是原地踏步 人的成就的上限由两部分组成，（能力*network），在初级阶段，你的能力很重要，越到后面你的network越重要，</p>
+      <p>一些认知 产品为王，如果说paper是research成果到展现，那产品就是你的标签和态度 用户为先，一个产品首先要有用户，定义清楚你的用户群体比什么都重要 细节很重要，在腾讯成功的产品中，所有老板都非常抠细节，并且是产品的资深用户 实施也是一种思考，如果想不太清楚的时候，大概率认知没到，可以先做做看，这个过程也是提升认知的过程 如果永远在想，而不去做，认知大概率是很浅的，只有真正去做了，才能深入的思考 认知决定了你的上限，人生需要去刷新认知，不然再努力也是原地踏步 人的成就的上限由两部分组成，……</p>
     </div>
     <footer class="article-footer">
       <a data-url="http://learn2pro.tech/2023/10/27/my-three-years/" data-id="clotpmomx000eftqma8rnbn3f" class="article-share-link">Share</a>
@@ -999,7 +988,7 @@ clawhub install email-skill</code></pre>
       </header>
     
     <div class="article-entry" itemprop="articleBody">
-      <p>背景 2017.06 transformer模型架构论文发布 2018.06 gpt-1模型发布，参数量1.17亿 2019.02 gpt-2模型发布，参数量15亿，decoder-only的模型通过prompt解决非常多task，泛化能力强 2020.05 gpt-3模型发布，参数量1750亿，大力出奇迹，提出zero-shot，few-shot概念 2022.03 instruct-gpt, 参数量1750亿+RLHF，基于RLHF对齐人类偏好 2023.03 gpt-4发布，多模态，参数量预估万亿规模 2022.11 chatgpt横空出世，</p>
+      <p>背景 2017.06 transformer模型架构论文发布 2018.06 gpt-1模型发布，参数量1.17亿 2019.02 gpt-2模型发布，参数量15亿，decoder-only的模型通过prompt解决非常多task，泛化能力强 2020.05 gpt-3模型发布，参数量1750亿，大力出奇迹，提出zero-shot，few-shot概念 2022.03 instruct-gpt, 参数量1750亿+RLHF，基于RLHF对齐人类偏好 2023.</p>
     </div>
     <footer class="article-footer">
       <a data-url="http://learn2pro.tech/2023/10/11/my-view-of-llm/" data-id="clotpmon1000uftqmh7kichwf" class="article-share-link">Share</a>
@@ -1075,7 +1064,7 @@ clawhub install email-skill</code></pre>
       </header>
     
     <div class="article-entry" itemprop="articleBody">
-      <p>背景即将从阿里毕业了，因为各种各样的原因，选择了离开；很感谢这接近三年的经历，忙碌而充实；在这样的环境中学到了很多，如果用两个字总结是感恩，感恩同事(不方便写名字了。。。)，感恩这里的平台，如果你也准备去阿里，我想讲讲你可能要关注的一些事情！ 我在阿里学到的一些事 要有会折腾的心态，即使开始看起来不怎么靠谱，路是越走越顺的 学会沟通很重要，能快速提升你的认知，人类有了语言以后，才建立起了统治地位 要用善意的眼光去看人看事，这样干起来才更有动力 千里马常有，而伯乐不常有，一个适合你的团队至关重要 要有空杯的心态，这很重要，其他能力都可以快速补齐 要善于使用平台，</p>
+      <p>背景即将从阿里毕业了，因为各种各样的原因，选择了离开；很感谢这接近三年的经历，忙碌而充实；在这样的环境中学到了很多，如果用两个字总结是感恩，感恩同事(不方便写名字了。。。)，感恩这里的平台，如果你也准备去阿里，我想讲讲你可能要关注的一些事情！ 我在阿里学到的一些事 要有会折腾的心态，即使开始看起来不怎么靠谱，路是越走越顺的 学会沟通很重要，能快速提升你的认知，人类有了语言以后，才建立起了统治地位 要用善意的眼光去看人看事，这样干起来才更有动力 千里马常有，而伯乐不常有，一个适合你的团队至关重要 ……</p>
     </div>
     <footer class="article-footer">
       <a data-url="http://learn2pro.tech/2020/07/18/ali-learn/" data-id="clotpmomv0009ftqmema132z5" class="article-share-link">Share</a>
@@ -1151,7 +1140,7 @@ clawhub install email-skill</code></pre>
       </header>
     
     <div class="article-entry" itemprop="articleBody">
-      <p>背景雪花算法解决的问题是，如何在分布式环境下产生一个唯一的id，而这些唯一id在业务或者技术上都会有广泛使用，比如订单号，一次请求的requestId，traceId等；现有的一些算法比如微软的UUID，他能保证唯一，但是雪花算法相较于他更有优势的一点，它能保证整体递增，这对我们业务类的id很有用；取名的出处是，世界上找不到两片相同的 雪花,在我们rpc的框架中，也用到了雪花算法来生成request-id; 算法雪花算法的ID占用64bit，其中分别有不同的含义，第一位bit是符号位，因为我们时间都是正的，所以为0；</p>
+      <p>背景雪花算法解决的问题是，如何在分布式环境下产生一个唯一的id，而这些唯一id在业务或者技术上都会有广泛使用，比如订单号，一次请求的requestId，traceId等；现有的一些算法比如微软的UUID，他能保证唯一，但是雪花算法相较于他更有优势的一点，它能保证整体递增，这对我们业务类的id很有用；</p>
     </div>
     <footer class="article-footer">
       <a data-url="http://learn2pro.tech/2020/07/09/snowflake-alg/" data-id="clotpmomz000mftqmeajd8z60" class="article-share-link">Share</a>
@@ -1189,7 +1178,7 @@ clawhub install email-skill</code></pre>
       </header>
     
     <div class="article-entry" itemprop="articleBody">
-      <p>背景在Cloud Native大火的今天，我们想来讲讲在这个体系下比较重要的东西RPC-framework,为什么需要有这个东西呢，需要来讲讲历史了；最开始代码组织的方式，最原始就是所有code都在一个repo里面，高内聚模式，在业务比较小的时候，这没什么问题！但是到了业务快速发展的时候就会带来致命的缺陷了： 敏捷性 code全部写在一个repo里面，导致每次开发/测试/上线，编译会花很多时间 不同模块间的相互影响，比如模块A需要上线，依赖模块B，模块B由于比较复杂需要很多时间进行测试，导致功能很简单的A迭代速度强依赖于B，无法隔离 扩展性 不同的模块，承载的业务不同，</p>
+      <p>背景在Cloud Native大火的今天，我们想来讲讲在这个体系下比较重要的东西RPC-framework,为什么需要有这个东西呢，需要来讲讲历史了；最开始代码组织的方式，最原始就是所有code都在一个repo里面，高内聚模式，在业务比较小的时候，这没什么问题！</p>
     </div>
     <footer class="article-footer">
       <a data-url="http://learn2pro.tech/2019/07/09/write-a-easy-rpc/" data-id="clotpmon0000pftqm6neshvnd" class="article-share-link">Share</a>
@@ -1303,14 +1292,7 @@ clawhub install email-skill</code></pre>
       </header>
     
     <div class="article-entry" itemprop="articleBody">
-      <p><img src="/image/bird/bird.gif" alt=""></p>
-<p>环境 opencv/mxnet/python</p>
-<p>1.安装opencv (ps:编译mxnet首先需要cv库)</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ yum install cmake gcc gcc-c++</span><br></pre></td></tr></table></figure>
-        
-          <p class="article-more-link">
-            <a href="/2017/01/23/2017-01-22-dl-demo-flabby-bird/#more">Read More</a>
-          </p>
+      <p>环境 opencv/mxnet/python 1.安装opencv (ps:编译mxnet首先需要cv库) 1 $ yum install cmake gcc gcc-c++ Read More</p>
     </div>
     <footer class="article-footer">
       <a data-url="http://learn2pro.tech/2017/01/23/2017-01-22-dl-demo-flabby-bird/" data-id="clotpmomh0000ftqmg0g1gxoy" class="article-share-link">Share</a>
