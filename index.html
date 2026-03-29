@@ -126,6 +126,46 @@ ga('send', 'pageview');
 
 
 
+     <article id="post-openclaw-series-08-subagents" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2026-03/openclaw-series-08-subagents/" class="article-date">
+  <time datetime="2026-03-30T04:00:00.000Z" itemprop="datePublished">2026-03-30</time>
+</a>
+    <div class="article-category">
+    <a class="article-category-link" href="/categories/Technology/">Technology</a>
+  </div>
+  </div>
+  <div class="article-inner">
+    <header class="article-header">
+  <h1 itemprop="name">
+      <a class="article-title" href="/2026-03/openclaw-series-08-subagents/">Subagents：分布式任务处理</a>
+    </h1>
+    </header>
+    <div class="article-entry" itemprop="articleBody">
+<p style="margin:8px 0;line-height:1.8">当任务太复杂时，Subagents 把任务拆解，交给多个子 Agent 并行处理，主 Agent 统筹协调汇总。</p>
+
+<ul><li>任务可自然拆解成独立子任务</li><li>子任务无强依赖，可并行</li><li>context 太长，需要拆分</li></ul>
+
+<pre><code>主 Agent（Planner）
+  ├── 子 Agent A（分析 A股）
+  ├── 子 Agent B（分析 H股）
+  └── 子 Agent C（分析 美股）
+  汇总结果 → 用户</code></pre>
+
+<pre><code>spawn(task="分析三个币种走势",
+  runtime="subagent",
+  model="sonnet",
+  timeout=60)</code></pre>
+<p style="margin:8px 0;line-height:1.8">子 Agent 可以用不同的模型，节省成本。</p>
+<p style="margin:8px 0;line-height:1.8">明天聊 Heartbeat——让 AI 主动出击。</p></div>
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://learn2pro.tech/2026-03/openclaw-series-08-subagents/" data-id="post-openclaw-series-08-subagents" class="article-share-link">Share</a>
+      <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenClaw/" rel="tag">OpenClaw</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AI/" rel="tag">AI</a></li></ul>
+    </footer>
+  </div>
+</article>
+
 
      <article id="post-openclaw-series-07-channels" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
