@@ -125,6 +125,50 @@ ga('send', 'pageview');
 
 
 
+     <article id="post-openclaw-series-09-heartbeat" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2026-03/openclaw-series-09-heartbeat/" class="article-date">
+  <time datetime="2026-03-31T04:00:00.000Z" itemprop="datePublished">2026-03-31</time>
+</a>
+    <div class="article-category">
+    <a class="article-category-link" href="/categories/Technology/">Technology</a>
+  </div>
+  </div>
+  <div class="article-inner">
+    <header class="article-header">
+  <h1 itemprop="name">
+      <a class="article-title" href="/2026-03/openclaw-series-09-heartbeat/">Heartbeat：让 AI 主动出击</a>
+    </h1>
+    </header>
+    <div class="article-entry" itemprop="articleBody">
+<p style="margin:8px 0;line-height:1.8">真正有用的 AI 应该是"主动出击"的。Heartbeat 就是 OpenClaw 实现主动 AI 的机制——AI 定期醒来，检查任务清单，有事就做，不用等着被问。</p>
+
+<p style="margin:8px 0;line-height:1.8">定时任务系统。AI 定期（默认 30 分钟）醒来，检查 HEARTBEAT.md，执行需要做的事情。类比：手机推送服务。</p>
+
+<pre><code>## Quantrade 监控（每 5 分钟）
+bash scripts/quantrade-monitor.sh
+
+## 磁盘检查（每天上午）
+df -h，超过 90% 通知
+
+## 记忆整理（每周六）
+读 memory/（7天），提炼更新 MEMORY.md
+
+## 新闻推送（每天 9 点）
+抓取新闻，过滤后推送 Telegram</code></pre>
+
+<p style="margin:8px 0;line-height:1.8">用游标文件记录上次处理到哪里：<code>echo $NEW_MAX_ID > last-order-id.txt</code>，下次从断点继续。</p>
+
+<ul><li>量化交易：每 5 分钟</li><li>新闻推送：每天 1-2 次</li><li>记忆整理：每周 1 次</li><li>一般检查：每 30 分钟</li></ul>
+<p style="margin:8px 0;line-height:1.8">明天开始实战篇——从零搭建完整的个人 AI 助手。</p></div>
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://learn2pro.tech/2026-03/openclaw-series-09-heartbeat/" data-id="post-openclaw-series-09-heartbeat" class="article-share-link">Share</a>
+      <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenClaw/" rel="tag">OpenClaw</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AI/" rel="tag">AI</a></li></ul>
+    </footer>
+  </div>
+</article>
+
 
      <article id="post-openclaw-series-08-subagents" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
