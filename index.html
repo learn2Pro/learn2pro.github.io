@@ -123,6 +123,53 @@ ga('send', 'pageview');
 
 
 
+     <article id="post-openclaw-series-11-quantrade" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2026-04/openclaw-series-11-quantrade/" class="article-date">
+  <time datetime="2026-04-02T04:00:00.000Z" itemprop="datePublished">2026-04-02</time>
+</a>
+    <div class="article-category">
+    <a class="article-category-link" href="/categories/Technology/">Technology</a>
+  </div>
+  </div>
+  <div class="article-inner">
+    <header class="article-header">
+  <h1 itemprop="name">
+      <a class="article-title" href="/2026-04/openclaw-series-11-quantrade/">实战：量化交易监控</a>
+    </h1>
+    </header>
+    <div class="article-entry" itemprop="articleBody">
+<p style="margin:8px 0;line-height:1.8">让 AI 帮你盯盘——有新成交实时推送 Telegram，余额和持仓随时可查。</p>
+
+<pre><code>#!/bin/bash
+STATE="$WORKSPACE/memory/quantrade-last-order-id.txt"
+LAST=$(cat "$STATE" 2>/dev/null || echo 0)
+
+RESULT=$(mysql -h 127.0.0.1 -P 3307 -u root -proot123456 quantrade   -N -e "SELECT id,symbol,side,qty,price,total,status,executed_at          FROM t_quantrade_order WHERE id > $LAST ORDER BY id ASC")
+
+[ -z "$RESULT" ] && exit 0
+
+# 构建 Telegram 消息并发送
+MSG="📊 *新成交*"$'
+'"$RESULT"
+curl -s -X POST "https://api.telegram.org/bot$TOKEN/sendMessage"   -d chat_id="$CHAT_ID" -d text="$MSG" -d parse_mode="Markdown"
+
+echo $MAX_ID > "$STATE"</code></pre>
+
+<p style="margin:8px 0;line-height:1.8">Sam 随时问"看看 quantrade"，AI 查 MySQL 报告：</p>
+<table><tr><th>项目</th><th>数值</th></tr><tr><td>可用现金</td><td>1,548.57 USDT</td></tr><tr><td>总权益</td><td>9,885.09 USDT</td></tr><tr><td>BTC 持仓</td><td>0.04 @ 69,690</td></tr><tr><td>SOL 持仓</td><td>29.54 @ 88.99</td></tr></table>
+
+<pre><code>## Quantrade 监控（每 5 分钟）
+bash scripts/quantrade-monitor.sh</code></pre>
+<p style="margin:8px 0;line-height:1.8">明天继续加自动化运维任务。</p></div>
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://learn2pro.tech/2026-04/openclaw-series-11-quantrade/" data-id="post-openclaw-series-11-quantrade" class="article-share-link">Share</a>
+      <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenClaw/" rel="tag">OpenClaw</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AI/" rel="tag">AI</a></li></ul>
+    </footer>
+  </div>
+</article>
+
 
      <article id="post-openclaw-series-10-personal-assistant" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
