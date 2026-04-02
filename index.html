@@ -122,6 +122,45 @@ ga('send', 'pageview');
 
 
 
+     <article id="post-openclaw-series-12-automation" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2026-04/openclaw-series-12-automation/" class="article-date">
+  <time datetime="2026-04-03T04:00:00.000Z" itemprop="datePublished">2026-04-03</time>
+</a>
+    <div class="article-category">
+    <a class="article-category-link" href="/categories/Technology/">Technology</a>
+  </div>
+  </div>
+  <div class="article-inner">
+    <header class="article-header">
+  <h1 itemprop="name">
+      <a class="article-title" href="/2026-04/openclaw-series-12-automation/">实战：自动化运维任务</a>
+    </h1>
+    </header>
+    <div class="article-entry" itemprop="articleBody">
+<p style="margin:8px 0;line-height:1.8">除了盯盘，OpenClaw 还能帮你做大量日常运维工作——定时检查磁盘、日报生成、报警统计。</p>
+
+<pre><code>#!/bin/bash
+USE=$(df -h | grep nvme0n1p7 | awk '{print $5}' | tr -d '%')
+if [ "$USE" -gt 90 ]; then
+  curl -s -X POST "...sendMessage"     -d text="⚠️ 磁盘使用率 ${USE}%，建议清理"
+fi</code></pre>
+
+<p style="margin:8px 0;line-height:1.8">每天早上，AI 自动生成一份简报发到 Telegram：</p>
+<ul><li>Quantrade 昨日收益</li><li>磁盘使用情况</li><li>待办事项提醒</li></ul>
+
+<p style="margin:8px 0;line-height:1.8">AI 定时抓取报警群过去24小时的消息，统计各服务报警次数，生成摘要发给值班人员。</p>
+<pre><code>## 报警日报（每天 9:00）
+bash scripts/alerts-report.sh</code></pre>
+<p style="margin:8px 0;line-height:1.8">明天聊最新发展趋势——2026年的 OpenClaw 生态。</p></div>
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://learn2pro.tech/2026-04/openclaw-series-12-automation/" data-id="post-openclaw-series-12-automation" class="article-share-link">Share</a>
+      <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenClaw/" rel="tag">OpenClaw</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AI/" rel="tag">AI</a></li></ul>
+    </footer>
+  </div>
+</article>
+
 
      <article id="post-openclaw-series-11-quantrade" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
