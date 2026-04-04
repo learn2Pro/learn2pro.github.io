@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html><head>
+  <meta charset="utf-8">
+  <title>从零训练一个中文大模型：BuddyGPT项目全景 | Learn2Pro博客精选</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="从零训练大模型系列 · Day 1">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="从零训练一个中文大模型：BuddyGPT项目全景">
+  <meta property="article:published_time" content="2026-04-05T04:00:00.000Z">
+  <meta property="article:tag" content="LLM">
+  <link rel="icon" href="/favicon.png">
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div id="container"><div id="wrap">
+    <header id="header"><div id="banner"></div>
+      <div id="header-outer" class="outer"><div id="header-title" class="inner">
+        <h1 id="logo-wrap"><a href="/" id="logo">Learn2Pro博客精选</a></h1>
+        <h2 id="subtitle-wrap"><a href="/" id="subtitle">Learn2Pro</a></h2>
+      </div><div id="header-inner" class="inner">
+        <nav id="main-nav"><a class="main-nav-link" href="/">Home</a><a class="main-nav-link" href="/archives">Archives</a></nav>
+      </div></div>
+    </header>
+    <div class="outer">
+      <section id="main"><article id="post-buddygpt-01-overview" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta"><a href="/2026/04/05/buddygpt-01-overview/" class="article-date"><time datetime="2026-04-05T04:00:00.000Z" itemprop="datePublished">2026-04-05</time></a>
+    <div class="article-category"><a class="article-category-link" href="/categories/Technology/">Technology</a></div>
+  </div>
+  <div class="article-inner">
+    <header class="article-header"><h1 class="article-title" itemprop="name">从零训练一个中文大模型：BuddyGPT项目全景</h1></header>
+    <div class="article-entry" itemprop="articleBody">
+<p style="margin:8px 0;line-height:1.8">> 从零训练大模型系列 · Day 1</p>
+<h2 id="为什么要从零训练-"><a href="#为什么要从零训练-" class="headerlink" title="为什么要从零训练？"></a>为什么要从零训练？</h2>
+<p style="margin:8px 0;line-height:1.8">2024年，大模型遍地开花。GPT-4、Claude、Gemini、Qwen、DeepSeek……随便拉一个出来都能聊天写代码。那我们为什么还要从零训练一个？</p>
+<p style="margin:8px 0;line-height:1.8">答案很简单：<strong>理解原理比调API重要100倍。</strong></p>
+<p style="margin:8px 0;line-height:1.8">调API就像开车——你知道踩油门会走、踩刹车会停，但你不知道发动机怎么运转。从零训练就像自己造一辆车——哪怕造出来的是辆三轮车，你对"车"的理解也远超任何老司机。</p>
+<p style="margin:8px 0;line-height:1.8">我在做BuddyGPT的过程中，很多之前"知道但不理解"的概念突然就通了：</p>
+<li>为什么Decoder-Only架构胜出？自己写一遍Attention就明白了</li>
+<li>KV Cache到底省了什么？自己跑一次推理就懂了</li>
+<li>RLHF为什么难？自己训一次DPO就知道数据有多重要了</li>
+<p style="margin:8px 0;line-height:1.8">所以，BuddyGPT不是为了和GPT-4竞争（那是痴人说梦），而是一个<strong>学习项目</strong>——通过亲手实现完整的训练流程，真正搞懂大模型的每一个环节。</p>
+<h2 id="BuddyGPT总览-从0-1B到0-7B"><a href="#BuddyGPT总览-从0-1B到0-7B" class="headerlink" title="BuddyGPT总览：从0.1B到0.7B"></a>BuddyGPT总览：从0.1B到0.7B</h2>
+<p style="margin:8px 0;line-height:1.8">BuddyGPT经历了三个版本的进化：</p>
+<pre><code class="">
+版本       参数量    架构特点              状态
+─────────────────────────────────────────────────
+0.1B      ~100M    基础Llama架构, MHA      ✅ 完成
+0.3B      ~300M    GQA + SwiGLU           ✅ 完成
+0.7B      ~700M    MLA/MOE (实验中)        🔧 进行中
+</code></pre>
+<p style="margin:8px 0;line-height:1.8">为什么从小模型开始？因为<strong>调试成本</strong>。0.1B模型在单卡A100上几小时就能跑完一轮pretrain，快速验证代码是否正确。等流程跑通了，再逐步放大——这和软件工程里"先跑通再优化"的原则一模一样。</p>
+<p style="margin:8px 0;line-height:1.8">每个版本都发布到了HuggingFace Hub（<code>learn2pro/buddygpt-*</code>），任何人都可以下载体验。</p>
+<h2 id="训练全流程Pipeline"><a href="#训练全流程Pipeline" class="headerlink" title="训练全流程Pipeline"></a>训练全流程Pipeline</h2>
+<p style="margin:8px 0;line-height:1.8">一个大模型从"什么都不会"到"能正常对话"，需要经过四个阶段：</p>
+<pre><code class="">
+┌─────────────┐    ┌─────────┐    ┌──────────┐    ┌─────────┐
+│  Pretrain    │───>│   SFT   │───>│ RLHF/DPO │───>│  Eval   │
+│  预训练      │    │ 监督微调 │    │ 对齐优化  │    │  评测   │
+└─────────────┘    └─────────┘    └──────────┘    └─────────┘
+  35B Token          400万条        偏好数据        CMMLU/MMLU
+  学会"语言"        学会"对话"      学会"做人"      检验成果
+</code></pre>
+<p style="margin:8px 0;line-height:1.8"><strong>Pretrain（预训练）</strong>：喂给模型海量文本，让它学会语言的基本规律。就像小孩子大量听、大量读，先建立语感。BuddyGPT用了约35B Token的数据。</p>
+<p style="margin:8px 0;line-height:1.8"><strong>SFT（监督微调）</strong>：用精心构造的"问-答"对训练，让模型学会按指令回答问题。相当于上学——从自由阅读变成有目标的学习。BuddyGPT用了约400万条SFT数据。</p>
+<p style="margin:8px 0;line-height:1.8"><strong>RLHF/DPO（对齐优化）</strong>：通过人类偏好数据，让模型学会给出更好的回答。DPO（Direct Preference Optimization）是RLHF的简化版，不需要单独训练奖励模型，实现更简洁。</p>
+<p style="margin:8px 0;line-height:1.8"><strong>Eval（评测）</strong>：用标准化的benchmark测试模型能力。BuddyGPT主要用CMMLU（中文）、MMLU（英文）和CEval来评测。</p>
+<h2 id="技术栈"><a href="#技术栈" class="headerlink" title="技术栈"></a>技术栈</h2>
+<pre><code class="">
+核心框架:    PyTorch + HuggingFace Transformers
+分布式训练:   Accelerate (DeepSpeed ZeRO Stage 2/3)
+实验追踪:    WandB (Weights & Biases)
+Tokenizer:  Qwen的Tokenizer (151669词表)
+评测框架:    lm-evaluation-harness
+代码管理:    Git + GitHub
+模型发布:    HuggingFace Hub
+</code></pre>
+<p style="margin:8px 0;line-height:1.8">选择HuggingFace Transformers作为基础框架，是因为它的生态最成熟——模型定义、数据加载、训练循环、模型发布都有现成的工具链。站在巨人的肩膀上，我们可以把精力集中在模型架构和训练策略上。</p>
+<h2 id="模型架构选择"><a href="#模型架构选择" class="headerlink" title="模型架构选择"></a>模型架构选择</h2>
+<p style="margin:8px 0;line-height:1.8">BuddyGPT以Llama2/3的架构为基础，这是目前开源社区最主流的Decoder-Only架构。在此基础上，逐步引入更先进的技术：</p>
+<li><strong>GQA（Grouped Query Attention）</strong>：减少KV Cache，加速推理</li>
+<li><strong>MLA（Multi-head Latent Attention）</strong>：DeepSeek-V3的核心创新，进一步压缩KV Cache</li>
+<li><strong>MOE（Mixture of Experts）</strong>：用更少的计算资源训练更大的模型</li>
+<p style="margin:8px 0;line-height:1.8">后续的文章会逐一深入讲解这些技术。</p>
+<h2 id="为什么选中文-"><a href="#为什么选中文-" class="headerlink" title="为什么选中文？"></a>为什么选中文？</h2>
+<p style="margin:8px 0;line-height:1.8">训练中文LLM有两个独特挑战：</p>
+<p style="margin:8px 0;line-height:1.8"><strong>1. 数据问题</strong>：高质量中文语料远少于英文。英文有Common Crawl、Wikipedia等海量数据源，中文的数据量和质量都要打折扣。BuddyGPT的预训练数据来自：</p>
+<li>中文Wikipedia</li>
+<li>Firefly数据集</li>
+<li>Ultra-FineWeb（多语言高质量语料）</li>
+<p style="margin:8px 0;line-height:1.8"><strong>2. Tokenizer问题</strong>：中文的分词比英文复杂得多。英文基本以空格分词，中文没有天然分隔符。BuddyGPT直接采用了Qwen的Tokenizer（151669个token），省去了自己训练Tokenizer的麻烦，也保证了对中文的良好支持。</p>
+<p style="margin:8px 0;line-height:1.8">选择中文，一方面是因为自己的母语，另一方面也是想亲身体验中文LLM训练的痛点。</p>
+<h2 id="整体架构图"><a href="#整体架构图" class="headerlink" title="整体架构图"></a>整体架构图</h2>
+<pre><code class="">
+┌─────────────────────────────────────────────────────────────────┐
+│                    BuddyGPT 训练流程全景                         │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────────────────────┐                                       │
+│  │      数据准备         │                                       │
+│  │  Wikipedia (中文)     │                                       │
+│  │  Firefly (对话数据)   │──┐                                    │
+│  │  Ultra-FineWeb       │  │                                    │
+│  └──────────────────────┘  │                                    │
+│                            v                                    │
+│  ┌──────────────────────┐  ┌──────────────┐  ┌──────────────┐  │
+│  │ Tokenizer (Qwen)     │─>│ Pretrain     │─>│ SFT          │  │
+│  │ vocab=151669         │  │ 35B Tokens   │  │ 400万条       │  │
+│  └──────────────────────┘  └──────────────┘  └──────┬───────┘  │
+│                                                      │          │
+│                                                      v          │
+│                            ┌──────────────┐  ┌──────────────┐  │
+│                            │ Eval         │<─│ DPO          │  │
+│                            │ CMMLU/MMLU   │  │ 偏好对齐      │  │
+│                            │ CEval        │  │              │  │
+│                            └──────────────┘  └──────────────┘  │
+│                                                                 │
+│  模型发布: HuggingFace Hub (learn2pro/buddygpt-*)               │
+└─────────────────────────────────────────────────────────────────┘
+</code></pre>
+<h2 id="接下来"><a href="#接下来" class="headerlink" title="接下来"></a>接下来</h2>
+<p style="margin:8px 0;line-height:1.8">这个系列会深入每一个环节：</p>
+<li>Day 2: 模型架构深度拆解</li>
+<li>Day 3: RoPE位置编码与GQA</li>
+<li>Day 4: MLA——DeepSeek-V3的核心创新</li>
+<li>Day 5+: 预训练、SFT、DPO、评测……</li>
+<p style="margin:8px 0;line-height:1.8">每一篇都会有代码、有推导、有踩坑经验。目标是让你读完之后，也能自己动手训一个。</p>
+<h2 id="个人思考"><a href="#个人思考" class="headerlink" title="个人思考"></a>个人思考</h2>
+<p style="margin:8px 0;line-height:1.8">做BuddyGPT最大的感受是：<strong>大模型没有想象中那么神秘。</strong> 架构就是标准的Transformer，训练就是标准的梯度下降，数据就是标准的文本。真正的难点在于规模——如何高效处理TB级数据、如何在多卡上稳定训练、如何在有限算力下做出效果。</p>
+<p style="margin:8px 0;line-height:1.8">但对于学习目的来说，0.3B的模型已经足够让你理解所有核心概念。就像学开车不需要从法拉利开始，一辆教练车就够了。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2>
+<li>[Llama 2: Open Foundation and Fine-Tuned Chat Models](https://arxiv.org/abs/2307.09288)</li>
+<li>[HuggingFace Transformers 文档](https://huggingface.co/docs/transformers)</li>
+<li>[BuddyGPT 模型合集 - HuggingFace Hub](https://huggingface.co/learn2pro)</li>
+<li>[DeepSpeed ZeRO: Memory Optimizations Toward Training Trillion Parameter Models](https://arxiv.org/abs/1910.02054)</li>
+<li>[Direct Preference Optimization (DPO)](https://arxiv.org/abs/2305.18290)</li>
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://learn2pro.tech/2026/04/05/buddygpt-01-overview/" data-id="post-buddygpt-01-overview" class="article-share-link">Share</a>
+      <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LLM/" rel="tag">LLM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/BuddyGPT/" rel="tag">BuddyGPT</a></li></ul>
+    </footer>
+  </div>
+</article></section>
+      <aside id="sidebar"></aside>
+    </div>
+    <footer id="footer" class="outer"><div class="inner">
+      <div id="footer-info">© Learn2Pro 2024-2026 | Powered by Hexo</div>
+    </div></footer>
+  </div></div>
+</body></html>
