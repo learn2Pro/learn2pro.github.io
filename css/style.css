@@ -131,7 +131,7 @@ body {
   max-width: 1220px;
   margin: 0 auto;
   padding: 0 20px;
-  display: flow-root;
+  display: flex;
 }
 .outer:before,
 .outer:after {
@@ -182,9 +182,8 @@ body {
 }
 @media screen and (min-width: 768px) {
   #main {
-    display: inline;
-    float: left;
-    width: 73.33333333333333%;
+    flex: 1;
+    min-width: 0;
     margin: 0 0.833333333333333%;
   }
 }
@@ -1290,10 +1289,9 @@ pre .javascript .function {
 }
 @media screen and (min-width: 768px) {
   #sidebar {
-    display: inline;
-    float: left;
     width: 23.333333333333332%;
     margin: 0 0.833333333333333%;
+    flex-shrink: 0;
   }
 }
 .widget-wrap {
