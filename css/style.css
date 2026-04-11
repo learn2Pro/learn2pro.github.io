@@ -131,9 +131,6 @@ body {
   max-width: 1220px;
   margin: 0 auto;
   padding: 0 20px;
-  display: grid;
-  grid-template-columns: 73.333% 23.333%;
-  gap: 0 1.666%;
 }
 .outer:before,
 .outer:after {
@@ -183,11 +180,16 @@ body {
   left: 280px;
 }
 @media screen and (max-width: 767px) {
-  .outer {
+  #wrap > .outer {
     display: block;
   }
 }
 @media screen and (min-width: 768px) {
+  #wrap > .outer {
+    display: grid;
+    grid-template-columns: 73.333% 23.333%;
+    gap: 0 1.666%;
+  }
   #main {
     min-width: 0;
   }
