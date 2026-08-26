@@ -21,18 +21,42 @@
   <style>
 .article-featured-img { margin-bottom: 10px; }
 .article-featured-img img { width: 100%; border-radius: 4px; box-shadow: 0 1px 8px rgba(0,0,0,0.1); }
-.archive-article { display: flex; align-items: flex-start; gap: 15px; }
-.archive-article img { width: 120px; flex-shrink: 0; border-radius: 4px; }
-.archive-article-inner { flex: 1; }
-  </style>
 
-  <style>
-.archive-article { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+/* 年份归档页：用卡片网格替代主题的多列(column-count)布局，避免卡片被切碎 */
+.archives {
+  -webkit-column-count: initial;
+  -moz-column-count: initial;
+  column-count: initial;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 15px;
+}
+/* grid/flex 容器里 clearfix 伪元素会变成布局项，必须去掉 */
+.archives:before,
+.archives:after { content: none; }
+
+.archive-article { display: flex; align-items: center; gap: 12px; }
 .archive-article-img { flex-shrink: 0; }
-.archive-article-img img { width: 100px; border-radius: 4px; box-shadow: 0 1px 6px rgba(0,0,0,0.1); }
-.archive-article-inner { flex: 1; display: flex; flex-direction: column; }
-.archive-article-inner a { font-size: 16px; font-weight: 500; }
-.archive-article-inner .article-date { font-size: 13px; color: #888; margin-top: 4px; }
+.archive-article-img img { display: block; width: 88px; border-radius: 4px; box-shadow: 0 1px 6px rgba(0,0,0,0.1); }
+.archive-article-inner { flex: 1; min-width: 0; margin-bottom: 0; }
+.archive-article-inner > a {
+  display: block;
+  color: #555;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.6;
+  -webkit-transition: color 0.2s;
+  transition: color 0.2s;
+}
+.archive-article-inner > a:hover { color: #258fb8; }
+.archive-article-inner .article-date {
+  float: none;
+  display: block;
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #999;
+}
   </style>
 </head>
 <body>
@@ -148,5 +172,6 @@
   </div>
 </footer>
     </div>
+  </div>
 </body>
 </html>
